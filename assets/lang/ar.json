@@ -1,0 +1,373 @@
+{
+    "loading": "جار التحميل",
+    "Skip": "تخطي",
+    "title_on_boarding_one": "بحث سهل عن المتبرعين",
+    "subtitle_on_boarding_one": "من السهل العثور على متبرع متاح بالقرب منك وسنقوم بالتحقق عند اقترابه من موقعك",
+    "title_on_boarding_two": "تتبع المتبرع الخاص بك",
+    "subtitle_on_boarding_two": "يمكنك تتبع موقع المتبرع ومعرفة الوقت المقدر للوصول",
+    "title_on_boarding_three": "منشور الطوارئ",
+    "subtitle_on_boarding_three": "يمكنك النشر عند حدوث حالة طارئة ليتمكن المتبرعون من العثور عليك بسهولة للتبرع",
+    "title_on_boarding_four": "تبرع بالدم",
+    "subtitle_on_boarding_four": "يمكن لتبرعك أن ينقذ العديد من الأرواح، اصنع فارقًا",
+    "sign_up": "إنشاء حساب",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "Prev": "السابق",
+    "next": "التالي",
+    "Start": "ابدأ",
+    "Create your account": "إنشاء حسابك",
+    "Register": "سجل الآن لإنشاء حساب جديد",
+    "Already have an account": " لديك حساب بالفعل؟",
+    "Name": "الاسم",
+    "Email": "البريد الإلكتروني",
+    "Password": "كلمة المرور",
+    "Confirm Password": "تأكيد كلمة المرور",
+    "Enter your name": "أدخل اسمك",
+    "Enter your email": "أدخل بريدك الإلكتروني",
+    "Enter your password": "أدخل كلمة المرور الخاصة بك",
+    "Enter your confirm password": "أدخل تأكيد كلمة المرور",
+    "Welcome Back": "مرحبًا بعودتك!",
+    "Let’s login for explore continues": "دعنا نسجل الدخول لمواصلة الاستكشاف.",
+    "Forgot Password": "نسيت كلمة المرور",
+    "Don't have an account": "ليس لديك حساب؟",
+
+    "choose_preference": "اختر أيهما تفضل؟",
+    "need": "احتياج",
+    "donor": "متبرع",
+    "saving": "جارٍ الحفظ...",
+    "user_not_authenticated": "المستخدم غير مسجل الدخول",
+    "update_successful": "تم تحديث حالة المستخدم بنجاح",
+    "update_failed": "فشل في تحديث حالة المستخدم",
+    "please_select_an_option": "يرجى اختيار أحد الخيارات",
+    "Remember me": "تذكرني",
+    "Enter Eamil": "يرجى إدخال بريدك الإلكتروني. سنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+    "Send code": "إرسال الرمز",
+    "Go Back To?": "العودة إلى؟",
+    "or continue with": "أو تابع باستخدام",
+    "By creating an account, you agree to": "بإنشائك حسابًا، فإنك توافق على",
+    "the terms": "الشروط",
+    "and conditions of our policy": "والأحكام الخاصة بسياسة الخصوصية",
+    "Please accept terms and conditions": "يرجى قبول الشروط والأحكام",
+    "Choose which one do you prefer?" : "اختر أيهما تفضل؟",
+      "signed_in_successfully": "تم تسجيل الدخول بنجاح!",
+
+
+          "see_all": "عرض الكل",
+    "blood_types": "فصيلة الدم",
+
+
+    "no_name": "لا اسم",
+    "unknown_hospital": "مستشفى غير معروف",
+
+"no_donation_requests_available": "لا توجد طلبات تبرع متاحة حالياً.",
+    "donation_request": "طلبات المتبرعين",
+
+
+      "find_donors": "ابحث عن المتبرعين",
+      "request_for_blood": "طلب دم",
+      "blood_instructions": "تعليمات الدم",
+      "blood_needed": "الدم المطلوب",
+      "request_accepted": "تم قبول الطلب",
+"request_rejected": "تم رفض الطلب",
+"request_pending":  "سوف نقوم بالرد على طلبك في أقرب وقت ممكن",
+
+"user_not": "المستخدم غير موجود",
+    "failed_to_update_user_state": "فشل في تحديث حالة المستخدم",
+
+    "account_created_successfully": "تم إنشاء الحساب بنجاح، تحقق من حسابك",
+    "email_verification_link_sent": "تم إرسال رابط التحقق من البريد الإلكتروني.",
+    "unable_to_send_verification_email": "تعذر إرسال بريد التحقق.",
+    "verify_email": "تحقق من البريد الإلكتروني",
+    "resend_verification_email": "إعادة إرسال رابط التحقق",
+    "please_verify_email_address": "يرجى التحقق من عنوان بريدك الإلكتروني."
+
+
+
+,
+
+"no_user_data_available": "No user data available",
+  "password_reset_link_sent_to": "تم إرسال رابط إعادة تعيين كلمة المرور إلى",
+    "forgot_password": "نسيت كلمة المرور"
+,
+"error": "خطاء",
+"my_donations": "تبرعاتي",
+"user_state": "حالة المستخدم"
+,
+
+
+
+
+
+
+
+
+"donation_details": "تفاصيل التبرع",
+"hospital_name": "اسم المستشفى",
+"address": "العنوان",
+"contact": "الاتصال",
+"distance": "المسافة",
+"donation_type": "نوع التبرع",
+"id_card": "رقم الهوية",
+"last_request_date": "تاريخ آخر طلب",
+"medical_conditions": "الحالات الطبية",
+"notes": "ملاحظات",
+"no_hospital": "لا يوجد مستشفى",
+"not_available": "غير متوفر"
+
+,
+
+
+
+"302090********* only 14": "302090********* (فقط 14 رقم)"
+,
+
+
+
+
+"error_occurred": "حدث خطأ.",
+"available_to_donate": "متاح للتبرع",
+"notification": "الإشعارات",
+"allow_tracking": "السماح بالتتبع",
+"manage_address": "إدارة العنوان",
+"language": "اللغة",
+"contact_details": "تفاصيل الاتصال",
+"lives_saved": "الأرواح التي تم إنقاذها",
+"group": "فصيلة الدم",
+"next_donation_date": "موعد التبرع القادم",
+"choose_language": "اختر اللغة",
+"english": "الإنجليزية",
+"arabic": "العربية"
+,
+"home": "الرئيسية",
+"hello": "مرحبًا",
+"edit_user_info": "تعديل معلومات المستخدم",
+"tap_here_to_update_your_profile_information": "اضغط هنا لتحديث معلومات ملفك الشخصي.",
+"state": "الحالة" 
+,
+
+"profile": "الملف الشخصي",
+"doner": "متبرع",
+  "user_state_updated_successfully": "تم تحديث حالة المستخدم بنجاح", "product_added_successfully": "تمت إضافة التبرع بنجاح",
+    "something_went_wrong": "حدث خطأ ما",
+
+    "patientName": "اسم المريض",
+    "age": "العمر",
+    "bloodType": "فصيلة الدم",
+    "donationType": "نوع التبرع",
+    "gender": "الجنس",
+    "nationalId": "الرقم القومي",
+    "medicalConditions": "الحالات الطبية",
+    "contactNumber": "رقم الاتصال",
+    "governorate": "المحافظة",
+    "hospitalName": "اسم المستشفى",
+    "addRequest": "إضافة طلب"
+,    "patientNameError": "الرجاء إدخال اسم المريض",
+    "ageError": "الرجاء إدخال العمر"
+,  "idCardError": "الرجاء إدخال رقم بطاقة الهوية",
+"contactNumberError": "الرجاء إدخال رقم الاتصال",
+"hospitalNameError": "الرجاء إدخال اسم المستشفى",   "selectGender": "اختر الجنس",
+    "pleaseSelectGender": "الرجاء تحديد الجنس",    "pleaseSelectDonationType": "الرجاء تحديد نوع التبرع",
+    "selectDonationType": "اختر نوع التبرع",    "pleaseSelectDate": "الرجاء تحديد تاريخ"
+    ,
+    "activeRequest": "لديك طلب نشط. يرجى إكماله قبل تقديم طلب جديد."
+
+
+
+
+
+
+
+    
+    ,    "appName": "بنك الدم",
+        "name": "الاسم",
+        "national_id": "رقم الهوية",
+        "last_donation_date": "تاريخ آخر تبرع",
+        "select_blood_type": "اختر فصيلة الدم",
+        "select_donation_type": "اختر نوع التبرع",
+        "select_gender": "اختر الجنس",
+        "please_enter_name": "يرجى إدخال الاسم.",
+        "please_enter_age": "يرجى إدخال العمر.",
+        "please_enter_id": "يرجى إدخال رقم الهوية.",
+        "please_select_blood_type": "يرجى اختيار فصيلة الدم.",
+        "please_select_donation_type": "يرجى اختيار نوع التبرع.",
+        "please_select_gender": "يرجى اختيار الجنس.",
+        "please_select_date": "يرجى اختيار التاريخ.",
+        "submit": "إرسال",
+        "already_submitted_request": "لقد قمت بالفعل بتقديم طلب اليوم.",
+        "submit_after_date": "يمكنك تقديم طلب جديد بعد",
+        "request_submitted_successfully": "تم تقديم طلبك بنجاح!",
+        "next_eligible_request_date": "تاريخ الطلب المؤهل التالي الخاص بك هو",   
+        "donationDetails":"يمكنك رؤية جميع التفاصيل حول طلب {name} بالذهاب إلى الشاشة الطلبات",
+        "emergency":"حاجة طارئة",
+        "n_a": "غير متوفر",
+        "unknown_date": "تاريخ غير معروف",
+        "accept": "قبول",
+        "decline": "رفض"
+
+,
+
+        "additional_tips_before": "نصائح إضافية قبل التبرع:",
+        "no_aspirin": "لا تأخذ الأسبرين لمدة يومين قبل موعدك.",
+        "ask_friend": "اطلب من صديق التبرع في نفس الوقت. يمكنكم دعم بعضكم البعض وتحقيق ضعف الفائدة!",
+        "download_app": "قم بتنزيل تطبيق بنك الدم لتلقي تذكيرات المواعيد والمزيد.",
+        "additional_tips_day": "نصائح إضافية في يوم التبرع:",
+        "drink_extra_water": "اشرب 16 أونصة إضافية من الماء (أو مشروب غير كحولي) قبل موعدك.",
+        "eat_healthy_meal": "تناول وجبة صحية وتجنب الأطعمة الدهنية مثل البرغر أو البطاطس أو الآيس كريم.",
+        "preferred_arm": "أخبرنا إذا كان لديك ذراع مفضل أو وريد معين تم استخدامه بنجاح في الماضي لسحب الدم.",
+        "additional_tips_after": "نصائح إضافية بعد التبرع:",
+        "keep_bandage": "احتفظ بالشريط اللاصق لعدة ساعات. لتجنب الطفح الجلدي، نظف المنطقة حول اللاصق.",
+        "no_heavy_lifting": "تجنب رفع الأشياء الثقيلة أو ممارسة التمارين الشاقة بقية اليوم.",
+        "eat_iron_rich": "استمر في تناول الأطعمة الغنية بالحديد.",
+        "blood_type_matching": "مطابقة فصائل الدم:",
+        "blood_type": "فصيلة الدم",
+        "give_blood_to": "يمكنك التبرع بالدم لـ",
+        "receive_blood_from": "يمكنك تلقي"
+,
+
+  "A+": "أ+",
+  "A-": "أ-",
+  "B+": "ب+",
+  "B-": "ب-",
+  "O+": "و+",
+  "O-": "و-",
+  "AB+": "أ ب+",
+  "AB-": "أ ب-",
+
+
+
+  "delete_donation": "حذف التبرع",
+  "confirm_delete_donation": "هل أنت متأكد أنك تريد حذف هذا التبرع؟",
+  "delete": "حذف",
+
+
+  "hospital": "المستشفى",
+  "my_requests": "طلباتي",
+  "no_requests_found": "لا يوجد طلبات مسجلة لديك",
+  "edit_donation_data": "تعديل بيانات التبرع",
+
+
+          "wholeBlood": "الدم الكامل",
+        "plasma": "البلازما",
+        "need_details": "تفاصبل الطلب",
+        "platelets": "الصفائح الدموية",
+        "male": "ذكر",
+        "female": "أنثى",
+  "cairo": "القاهرة",
+  "alexandria": "الإسكندرية",
+  "giza": "الجيزة",
+  "dakahlia": "الدقهلية",
+  "red sea": "البحر الأحمر",
+  "beheira": "البحيرة",
+  "fayoum": "الفيوم",
+  "gharbia": "الغربية",
+  "ismailia": "الإسماعيلية",
+  "menofia": "المنوفية",
+  "minya": "المنيا",
+  "qaliubiya": "القليوبية",
+  "new valley": "الوادي الجديد",
+  "suez": "السويس",
+  "aswan": "أسوان",
+  "assiut": "أسيوط",
+  "beni suef": "بني سويف",
+  "port said": "بورسعيد",
+  "damietta": "دمياط",
+  "sharkia": "الشرقية",
+  "south sinai": "جنوب سيناء",
+  "kafr el sheikh": "كفر الشيخ",
+  "matrouh": "مطروح",
+  "north sinai": "شمال سيناء",
+  "qena": "قنا",
+  "sohag": "سوهاج",
+  "luxor": "الأقصر",
+  "select_governorate": "اختر المحافظة",
+  "please_select_governorate": "الرجاء اختيار المحافظة",
+  "selectBloodType": "اختر فصيلة الدم",
+  "pleaseSelectBloodType": "الرجاء تحديد فصيلة الدم",
+  "km" : "كم",
+ "UnitsRequired": "الوحدات المطلوبة",
+  "Please enter the units required": "الرجاء إدخال الوحدات المطلوبة",
+ "Notes": "ملاحظات",
+ "Please enter the distance": "الرجاء إدخال المسافة",
+ "Submit Request": "إرسال الطلب",
+"Distance": "المسافة", 
+"choose_blood_group": "اختر فصيلة الدم",
+"blood_unit_needed": "عدد وحدات الدم المطلوبة",
+"enter_location": "أدخل موقعك",
+"find_donors_button": "ابحث عن المتبرعين",
+"please_fill_all_fields": "الرجاء تعبئة جميع الحقول.",
+"failed_to_fetch_donors": "فشل في جلب المتبرعين.",
+"no_donors_found": "لم يتم العثور على متبرعين وفقًا للمعايير المحددة.",
+"unknown": "غير معروف",
+"location": "الموقع",
+"blood_group": "فصيلة الدم",
+"Confirm Logout" : "تأكيد تسجيل الخروج",
+"Are you sure you want to logout?" : "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+"cancel" : "إلغاء",
+"Alert for Notification" : "تنبيهات",
+"you dont have notifications yet" : "ليس لديك أي تنبيهات بعد",
+"Notifications" : "التنبيهات",
+"thanks for your contribution" : "شكرًا لمساهمتك",
+"No requests available at the moment" : "لا توجد طلبات متاحة في الوقت الحالي.",
+"Delete" : "حذف",
+"All notifications deleted": "تم حذف جميع التنبيهات",
+"Delete All Notifications": "حذف جميع التنبيهات",
+"chat_bot": "الدردشة",
+"Are you sure you want to delete all notifications?": "هل أنت متأكد أنك تريد حذف جميع التنبيهات؟",
+"Name Your Session": "اسم جلستك",
+"Enter session name": "أدخل اسم الجلسة",
+"Create Session": "إنشاء جلسة",
+"Failed to create session. Please try again.": "فشل إنشاء الجلسة. يرجى المحاولة مرة أخرى.",
+"Session name cannot be empty!": "لا يمكن ان يكون اسم الجلسة فارغًا!",
+"Sorry, something went wrong. Please try again later.": "عذرًا، حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقًا.",
+"Choose an Action": "اختر إجراء",
+"Previous Chats": "الدردشات السابقة",
+"Would you like to start a new session or view previous chats?": "هل ترغب في بحث جديد أم عرض الدردشات السابقة؟",
+"New Session": "جلسة جديدة",
+"Today is your donation day": "يوم التبرع",
+"Type a message...": "...اكتب رسالة",
+
+
+
+
+
+
+
+
+
+
+
+  "donation_request_alert": "تنبيه طلب التبرع",
+  "must_wait_days": "يجب أن تنتظر {remainingDays} أيام أخرى قبل تقديم طلب تبرع جديد.",
+  "next_eligible_date": "تاريخ التبرع التالي المتاح لك هو: {nextDonationDate}."
+
+,
+
+
+
+"new_chat": "جلسة جديدة",
+"view_chats": "عرض الدردشات",
+"Start New Chat": "بدء دردشة جديدة",
+"View Previous Chats": "عرض الدردشات السابقة",
+"Save": "حفظ",
+"Check for updates": "التحقق من التحديثات",
+"update_downloaded": "تم تحميل التحديثات",
+"updat_failed": "فشل في تحميل التحديثات",
+"no_updates_available": "لا توجد تحديثات متاحة",
+"update_now": "تحديث الان",
+"later": "لاحقًا",
+"update_available": "تحديث متاح",
+"restart_required": "تطلب إعادة تشغيل",
+"restart_required_message": "يحتاج التطبيق إلى إعادة التشغيل لتطبيق التحديث. هل ترغب في إعادة التشغيل الآن؟",
+"restart_now": "إعادة تشغيل الان",
+"up_to_date": "متحدث",
+"update_unavailable": "تحديث غير متاح",
+"error_checking_for_update": "خطاء في التحقق من التحديثات",
+"update_error": "خطاء في التحديثات",
+"update_available_message": "يوجد تحديث متاح. هل ترغب في التحديث الان؟",
+"update_downloaded_restart": "تم تحميل التحديثات. هل ترغب في إعادة التشغيل الان؟",
+"Restart": "إعادة التشغيل الان",
+"units": "وحدات"
+
+
+
+}
