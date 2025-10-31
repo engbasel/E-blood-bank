@@ -1,3 +1,4 @@
 {
-    "svg.preview.background": "editor"
+  "svg.preview.background": "editor",
+  "dart.flutterSdkPath": ".fvm/versions/3.35.7"
 }
