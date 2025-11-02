@@ -4,7 +4,8 @@ import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/widget/custom_button.dart';
 import 'package:blood_bank/core/widget/custom_name.dart';
 import 'package:blood_bank/core/widget/custom_text_field.dart';
-import 'package:blood_bank/feature/auth/presentation/manager/signup_cubit/signup_cubit.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/have_an_account_widget.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/password_field.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/terms_and_condition.dart';
@@ -21,7 +22,7 @@ class SignupViewBody extends StatefulWidget {
 
 class _SignupViewBodyState extends State<SignupViewBody> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   late String email, name, password, confirmPassword;
   late bool isTermsAccepted = false;
   final TextEditingController nameController = TextEditingController();
@@ -37,7 +38,7 @@ class _SignupViewBodyState extends State<SignupViewBody> {
         padding: const EdgeInsets.symmetric(horizontal: kHorizintalPadding),
         child: Form(
           key: formKey,
-          autovalidateMode: autovalidateMode,
+          autovalidateMode: autoValidateMode,
           child: Column(
             children: [
               const SizedBox(
@@ -152,13 +153,10 @@ class _SignupViewBodyState extends State<SignupViewBody> {
                         failureTopSnackBar(context,
                             'Please accept terms and conditions'.tr(context));
                       } else {
-                        await context
-                            .read<SignupCubit>()
-                            .createUserWithEmailAndPassword(
-                              email,
-                              password,
-                              name,
-                            );
+                         context
+                            .read<AuthBloc>()
+                            .add(SignUpWithEmailEvent(email: emailController.text,
+                             password: passwordController.text, name: nameController.text));
                       }
                     }
                   },

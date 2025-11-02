@@ -1,6 +1,6 @@
 import 'package:blood_bank/core/utils/custom_progrss_hud.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_cubit/add_doner_request_cubit.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_need_request_cubit/add_need_request_cubit.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_state.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/need/add_need_request.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -15,21 +15,18 @@ class AddNeedRequestViewBodyBlocBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddNeederRequestCubit, AddNeedRequestState>(
+    return BlocConsumer<AddNeederRequestBloc, AddNeederRequestState>(
       listener: (context, state) {
-        if (state is AddDonerRequestSuccess) {
-          successTopSnackBar(
-            context,
-            'product_added_successfully'.tr(context),
-          );
+        if (state is AddNeederRequestSuccess) {
+          successTopSnackBar(context, 'product_added_successfully'.tr(context));
         }
-        if (state is AddDonerRequestFailure) {
-          failureTopSnackBar(context, 'something_went_wrong'.tr(context));
+        if (state is AddNeederRequestFailure) {
+          failureTopSnackBar(context, state.message.tr(context));
         }
       },
       builder: (context, state) {
         return CustomProgrssHud(
-            isLoading: state is AddDonerRequestLoading,
+            isLoading: state is AddNeederRequestLoading,
             child: const NeedRequest());
       },
     );

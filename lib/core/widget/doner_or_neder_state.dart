@@ -4,8 +4,8 @@ import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 
 class StateDropdown extends StatelessWidget {
-  final String? selectedKey; // المفتاح المحدد مسبقًا
-  final ValueChanged<String?> onChanged; // حدث عند تغيير القيمة
+  final String? selectedKey;
+  final ValueChanged<String?> onChanged;
 
   const StateDropdown({
     super.key,
@@ -15,7 +15,7 @@ class StateDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> governorates = [
+    final List<Map<String, dynamic>> states = [
       {
         'key': 'doner',
         'name': 'doner'.tr(context),
@@ -28,21 +28,27 @@ class StateDropdown extends StatelessWidget {
       },
     ];
 
+    // استخراج القيم المسموح بها
+    final validKeys = states.map((e) => e['key'] as String).toList();
+
+    // التأكد من أن القيمة المختارة موجودة ضمن القائمة
+    final safeSelectedKey = validKeys.contains(selectedKey) ? selectedKey : null;
+
     return DropdownButtonFormField<String>(
-      value: selectedKey, // القيمة المحددة حاليًا
-      items: governorates.map((governorate) {
+      value: safeSelectedKey,
+      items: states.map((state) {
         return DropdownMenuItem<String>(
-          value: governorate['key'] as String, // تخزين المفتاح
+          value: state['key'] as String,
           child: Row(
             children: [
               Icon(
-                governorate['icon'] as IconData, // الأيقونة
+                state['icon'] as IconData,
                 color: AppColors.lightPrimaryColor,
                 size: 20,
               ),
               const SizedBox(width: 10),
               Text(
-                governorate['name'] as String, // الاسم المترجم
+                state['name'] as String,
                 style: TextStyles.semiBold14.copyWith(
                   color: AppColors.lightPrimaryColor,
                 ),
@@ -51,11 +57,12 @@ class StateDropdown extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: onChanged, // تحديث القيمة عند التغيير
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: 'state'.tr(context),
-        labelStyle:
-            TextStyles.semiBold14.copyWith(color: AppColors.backgroundColor),
+        labelStyle: TextStyles.semiBold14.copyWith(
+          color: AppColors.backgroundColor,
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -76,3 +83,4 @@ class StateDropdown extends StatelessWidget {
     );
   }
 }
+

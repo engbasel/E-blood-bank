@@ -1,11 +1,11 @@
 import 'package:blood_bank/core/utils/custom_progrss_hud.dart';
+import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/doner/add_doner_request.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_cubit/add_doner_request_cubit.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_state.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../../../core/helper_function/scccess_top_snak_bar.dart';
 
 class AddDonerRequestViewBodyBlocBuilder extends StatelessWidget {
   const AddDonerRequestViewBodyBlocBuilder({
@@ -14,7 +14,7 @@ class AddDonerRequestViewBodyBlocBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddDonerRequestCubit, AddDonerRequestState>(
+    return BlocConsumer<AddDonerRequestBloc, AddDonerRequestState>(
       listener: (context, state) {
         if (state is AddDonerRequestSuccess) {
           successTopSnackBar(context, 'product_added_successfully'.tr(context));

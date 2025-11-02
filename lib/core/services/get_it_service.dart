@@ -2,32 +2,122 @@ import 'package:blood_bank/core/services/data_service.dart';
 import 'package:blood_bank/core/services/fire_storage.dart';
 import 'package:blood_bank/core/services/firebase_auth_service.dart';
 import 'package:blood_bank/core/services/firestor_service.dart';
+import 'package:blood_bank/core/services/health_request.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:blood_bank/core/services/storage_service.dart';
-import 'package:blood_bank/feature/auth/data/repos/auth_repo_impl.dart';
-import 'package:blood_bank/feature/auth/domain/repos/auth_repo.dart';
 import 'package:blood_bank/feature/home/data/repos/doner_repo_impl.dart';
+import 'package:blood_bank/feature/home/data/repos/health_repo_impl.dart';
 import 'package:blood_bank/feature/home/data/repos/needer_repo_impl.dart';
+import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
+import 'package:blood_bank/feature/home/data/datasources/needer_remote_data_source.dart';
+import 'package:blood_bank/feature/home/domain/repos/health_repo.dart';
+import 'package:blood_bank/feature/home/domain/usecases/add_doner_request_usecase.dart';
+import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_health_news_usecase.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_bloc.dart';
 import 'package:blood_bank/feature/home/domain/repos/doner_repo.dart';
 import 'package:blood_bank/feature/home/domain/repos/needer_repo.dart';
 import 'package:get_it/get_it.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_in_with_email.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_up_with_email.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_in_with_google.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_in_with_facebook.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_out.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/reset_password.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/verify_email.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/delete_account.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/update_user_profile.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/get_current_user.dart';
+import 'package:blood_bank/feature/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:blood_bank/feature/auth/data/repositories/auth_repository_impl.dart';
+import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 
 final getIt = GetIt.instance;
 
-void setupGetit() {
+void setupGetIt() {
+
+  getIt.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+
+  // Core services registration
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
   getIt.registerSingleton<DatabaseService>(FirestorService());
   getIt.registerSingleton<StorageService>(FireStorage());
+  getIt.registerSingleton<Dio>(Dio());
+  getIt.registerSingleton<HealthRequest>(HealthRequest(getIt<Dio>()));
 
-  getIt.registerSingleton<AuthRepo>(
-    AuthRepoImpl(
-      firebaseAuthService: getIt<FirebaseAuthService>(),
-      databaseService: getIt<DatabaseService>(),
-    ),
+  getIt.registerFactory<DonerRemoteDataSource>(
+    () => DonerRemoteDataSourceImpl(getIt<DatabaseService>()),
   );
-  getIt.registerSingleton<DonerRepo>(DonerRepoImpl(
-    getIt.get<DatabaseService>(),
-  ));
-  getIt.registerSingleton<NeederRepo>(NeederRepoImpl(
-    getIt.get<DatabaseService>(),
-  ));
+
+  getIt.registerSingleton<DonerRepo>(
+    DonerRepoImpl(donerRemoteDataSource: getIt<DonerRemoteDataSource>()),
+  );
+
+  getIt.registerFactory<AddDonerRequestUseCase>(
+    () => AddDonerRequestUseCase(getIt<DonerRepo>()),
+  );
+
+  getIt.registerFactory<AddDonerRequestBloc>(
+    () => AddDonerRequestBloc(getIt<AddDonerRequestUseCase>()),
+  );
+  // Remote data source and usecase registration
+  getIt.registerFactory<NeederRemoteDataSource>(
+    () => NeederRemoteDataSourceImpl(getIt<DatabaseService>()),
+  );
+
+  getIt.registerSingleton<NeederRepo>(
+    NeederRepoImpl(getIt<NeederRemoteDataSource>()),
+  );
+
+  // Health feature registration
+  getIt.registerSingleton<HealthRepo>(
+    HealthRepoImpl(healthRequest: getIt<HealthRequest>()),
+  );
+
+  getIt.registerFactory<GetHealthNewsUseCase>(
+    () => GetHealthNewsUseCase(getIt<HealthRepo>()),
+  );
+
+  getIt.registerFactory<HealthBloc>(
+    () => HealthBloc(getIt<GetHealthNewsUseCase>()),
+  );
+
+  getIt.registerFactory<AddNeederRequestUseCase>(
+    () => AddNeederRequestUseCase(getIt<NeederRepo>()),
+  );
+
+  // Register bloc as factory to ensure fresh state
+  getIt.registerFactory<AddNeederRequestBloc>(
+    () => AddNeederRequestBloc(getIt<AddNeederRequestUseCase>()),
+  );
+
+
+  getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(firebaseAuth: getIt<FirebaseAuth>(), firestore: getIt()),
+  );
+
+  // Repository
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(remoteDataSource: getIt<AuthRemoteDataSource>()),
+  );
+
+  // Use cases
+  getIt.registerFactory(() => SignInWithEmail(getIt<AuthRepository>()));
+  getIt.registerFactory(() => SignUpWithEmail(getIt<AuthRepository>()));
+  getIt.registerFactory(() => SignInWithGoogle(getIt<AuthRepository>()));
+  getIt.registerFactory(() => SignInWithFacebook(getIt<AuthRepository>()));
+  getIt.registerFactory(() => SignOut(getIt<AuthRepository>()));
+  getIt.registerFactory(() => ResetPassword(getIt<AuthRepository>()));
+  getIt.registerFactory(() => VerifyEmail(getIt<AuthRepository>()));
+  getIt.registerFactory(() => DeleteAccount(getIt<AuthRepository>()));
+  getIt.registerFactory(() => UpdateUserProfile(getIt<AuthRepository>()));
+  getIt.registerFactory(() => GetCurrentUser(getIt<AuthRepository>()));
+
+
 }

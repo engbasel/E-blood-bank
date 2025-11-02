@@ -1,11 +1,11 @@
-import 'package:blood_bank/core/services/health_request.dart';
+import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
-import 'package:blood_bank/feature/home/presentation/views/widget/home/manager/health_cubit/health_cubit.dart';
-import 'package:blood_bank/feature/home/presentation/views/widget/home/manager/health_cubit/health_state.dart';
+import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_event.dart';
+import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_state.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class DonorCarousel extends StatelessWidget {
@@ -14,8 +14,12 @@ class DonorCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HealthCubit(HealthRequest(Dio()))..fetchHealthNews(),
-      child: BlocBuilder<HealthCubit, HealthState>(
+      create: (context) {
+        final bloc = getIt<HealthBloc>();
+        bloc.add(const FetchHealthNewsEvent());
+        return bloc;
+      },
+      child: BlocBuilder<HealthBloc, HealthState>(
         builder: (context, state) {
           if (state is HealthLoading) {
             return SizedBox(

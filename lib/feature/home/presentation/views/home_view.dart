@@ -1,8 +1,8 @@
 import 'package:blood_bank/feature/home/presentation/views/widget/home/blood_needed.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/custom_card_items.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/donor_carousel.dart';
-import 'package:blood_bank/feature/home/presentation/views/widget/home/manager/user_handler.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/requestes_for_donation.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/user_handler.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatelessWidget {
@@ -20,9 +20,9 @@ class HomeView extends StatelessWidget {
             SizedBox(
               height: 290,
               child: Stack(
-                children: const [
-                  UserHandler(),
-                  Positioned(
+                children: [
+                  const UserHandler(),
+                  const Positioned(
                     top: 115,
                     left: 0,
                     right: -20,

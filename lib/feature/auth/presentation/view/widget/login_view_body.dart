@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:blood_bank/constants.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
@@ -8,7 +7,8 @@ import 'package:blood_bank/core/widget/custom_button.dart';
 import 'package:blood_bank/core/widget/custom_name.dart';
 import 'package:blood_bank/core/widget/custom_text_field.dart';
 import 'package:blood_bank/core/widget/under_line.dart';
-import 'package:blood_bank/feature/auth/presentation/manager/signin_cubit/signin_cubit.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
 import 'package:blood_bank/feature/auth/presentation/view/forgot_password_view.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/dont_have_an_account_widget.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/or_divider.dart';
@@ -113,10 +113,9 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
-                      context.read<SigninCubit>().signIn(
-                            email,
-                            password,
-                          );
+                      context.read<AuthBloc>().add(SignInWithEmailEvent(
+                            email: email, password: password,
+                      ) );
                     }
                   },
                   text: "login".tr(context)),
@@ -130,7 +129,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                 children: [
                   SocialLoginButton(
                     onPressed: () {
-                      context.read<SigninCubit>().signInWithGoogle();
+                      context.read<AuthBloc>().add(SignInWithGoogleEvent());
                     },
                     image: Assets.imagesGoogel,
                   ),

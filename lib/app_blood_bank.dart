@@ -1,3 +1,6 @@
+import 'package:blood_bank/core/services/get_it_service.dart';
+import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/localization/cubit/locale_cubit.dart';
 import 'package:blood_bank/feature/splash/presentation/views/splash_initializer.dart';
@@ -14,6 +17,9 @@ class BloodBank extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => LocaleCubit()..getSavedLanguage(),
+        ),
+        BlocProvider(
+          create: (context) => AuthBloc(authRepository: getIt<AuthRepository>()),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(

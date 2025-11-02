@@ -66,7 +66,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  // التحقق من حالة إذن الإشعارات
   Future<void> _checkNotificationPermission() async {
     final status = await Permission.notification.status;
     if (status.isPermanentlyDenied) {
@@ -76,7 +75,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
           action: SnackBarAction(
             label: 'Open Settings',
             onPressed: () {
-              openAppSettings(); // فتح إعدادات الجهاز
+              openAppSettings();
             },
           ),
         ),
@@ -87,7 +86,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     });
   }
 
-  // طلب إذن الإشعارات
   Future<void> _requestNotificationPermission() async {
     final status = await Permission.notification.request();
     if (status.isGranted) {
@@ -96,17 +94,14 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
         SnackBar(content: Text('Notification permission granted!')),
       );
     } else if (status.isDenied) {
-      // الإذن مرفوض
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Notification permission denied!')),
       );
     } else if (status.isPermanentlyDenied) {
-      // الإذن مرفوض بشكل دائم (يحتاج إلى فتح الإعدادات)
       openAppSettings();
     }
   }
 
-  // تفعيل/تعطيل الإشعارات
   Future<void> _toggleNotifications(bool value) async {
     final status = await Permission.notification.status;
 
@@ -136,16 +131,13 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
     if (value) {
-      // تفعيل الإشعارات
-      await _requestNotificationPermission(); // طلب إذن الإشعارات
+      await _requestNotificationPermission();
       await firebaseMessaging
-          .subscribeToTopic('all_users'); // اشترك في موضوع (Topic)
+          .subscribeToTopic('all_users');
     } else {
-      // تعطيل الإشعارات
       await firebaseMessaging
-          .unsubscribeFromTopic('all_users'); // ألغِ الاشتراك من الموضوع
+          .unsubscribeFromTopic('all_users');
 
-      // إعلام المستخدم بفتح إعدادات الجهاز لتعطيل الإذن بشكل كامل
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -286,7 +278,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                   final user = snapshot.data!;
 
                   return CustomProfileAppBar(
-                    name: user.name,
+                    name: user.name!,
                     photoUrl: user.photoUrl,
                     userState: user.userState.tr(context),
                   );

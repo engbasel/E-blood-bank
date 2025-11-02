@@ -15,7 +15,7 @@ void main() async {
   );
 
   await Prefs.init();
-  setupGetit();
+  setupGetIt();
   Bloc.observer = CustomBlockObserver();
   await SQlHelperHealthRequest().database;
 

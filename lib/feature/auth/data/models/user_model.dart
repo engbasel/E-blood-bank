@@ -1,5 +1,6 @@
-import 'package:blood_bank/feature/auth/domain/entites/user_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   final String patientName;
@@ -11,7 +12,7 @@ class UserModel extends UserEntity {
   final String? photoUrl;
   final String userState;
 
-  UserModel({
+  const UserModel({
     required super.name,
     // ignore: non_constant_identifier_names
     required super.email,

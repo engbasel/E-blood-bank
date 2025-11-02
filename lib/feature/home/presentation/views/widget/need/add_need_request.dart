@@ -6,10 +6,11 @@ import 'package:blood_bank/core/widget/custom_request_text_field.dart';
 import 'package:blood_bank/core/widget/donation_type_drop_down.dart';
 import 'package:blood_bank/core/widget/governorate_drop_down.dart';
 import 'package:blood_bank/feature/home/domain/entities/needer_request_entity.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_need_request_cubit/add_need_request_cubit.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_event.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_state.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,7 +24,6 @@ class NeedRequest extends StatefulWidget {
 class NeedRequestState extends State<NeedRequest> {
   final _formKey = GlobalKey<FormState>();
   final User? _user = FirebaseAuth.instance.currentUser;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // Controllers
   final TextEditingController patientNameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
@@ -87,21 +87,6 @@ class NeedRequestState extends State<NeedRequest> {
       'male'.tr(context),
       'female'.tr(context),
     ];
-  }
-
-  Future<bool> _canSubmitNewRequest(String userId) async {
-    final querySnapshot = await _firestore
-        .collection('neederRequest')
-        .where('uId', isEqualTo: userId)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      failureTopSnackBar(context, 'activeRequest'.tr(context));
-
-      return false;
-    }
-
-    return true;
   }
 
   Widget datePickerField({
@@ -172,10 +157,7 @@ class NeedRequestState extends State<NeedRequest> {
         failureTopSnackBar(context, 'User not authenticated');
         return;
       }
-      final canSubmit = await _canSubmitNewRequest(_user.uid);
-      if (!canSubmit) {
-        return;
-      }
+      // Bloc/usecase will check for existing active requests and emit failure if needed.
 
       NeederRequestEntity request = NeederRequestEntity(
         patientName: patientName,
@@ -193,10 +175,9 @@ class NeedRequestState extends State<NeedRequest> {
         status: 'pending',
       );
 
-      context.read<AddNeederRequestCubit>().addNeederRequest(request);
-
-      successTopSnackBar(context, 'Request submitted successfully!');
-      _clearFormFields();
+      context
+          .read<AddNeederRequestBloc>()
+          .add(SubmitNeederRequestEvent(request));
     } else {
       setState(() {
         autovalidateMode = AutovalidateMode.always;
@@ -206,109 +187,120 @@ class NeedRequestState extends State<NeedRequest> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            spacing: 10,
-            children: [
-              CustomRequestTextField(
-                controller: patientNameController,
-                hintText: 'patientName'.tr(context),
-                validator: (value) =>
-                    value!.isEmpty ? 'patientNameError'.tr(context) : null,
-                onSaved: (value) {
-                  patientName = value!;
-                },
-              ),
-              CustomRequestTextField(
-                controller: ageController,
-                textInputType: TextInputType.number,
-                validator: (value) =>
-                    value!.isEmpty ? 'ageError'.tr(context) : null,
-                hintText: 'age'.tr(context),
-                onSaved: (value) {
-                  age = num.parse(value!);
-                },
-              ),
-              BloodTypeDropdown(
-                selectedBloodType: bloodType,
-                onChanged: (selectedType) {
-                  setState(() {
-                    bloodType = selectedType;
-                  });
-                },
-              ),
-              DonationTypeDropdown(
-                initialType: donationType,
-                onTypeSelected: (selectedType) {
-                  setState(() {
-                    donationType = selectedType;
-                  });
-                },
-              ),
-              GenderDropdown(
-                initialGender: gender,
-                onGenderSelected: (value) {
-                  setState(() {
-                    gender = value;
-                  });
-                },
-              ),
-              CustomRequestTextField(
-                controller: idCardController,
-                hintText: 'nationalId'.tr(context),
-                textInputType: TextInputType.number,
-                validator: (value) =>
-                    value!.isEmpty ? 'idCardError'.tr(context) : null,
-                onSaved: (value) {
-                  idCard = num.parse(value!);
-                },
-              ),
-              CustomRequestTextField(
-                controller: medicalConditionsController,
-                hintText: 'medicalConditions'.tr(context),
-                maxLines: 3,
-                onSaved: (value) {
-                  medicalConditions = value!;
-                },
-              ),
-              CustomRequestTextField(
-                controller: contactController,
-                hintText: 'contactNumber'.tr(context),
-                textInputType: TextInputType.phone,
-                validator: (value) =>
-                    value!.isEmpty ? 'contactNumberError'.tr(context) : null,
-                onSaved: (value) {
-                  contact = num.parse(value!);
-                },
-              ),
-              GovernorateDropdown(
-                selectedKey: address,
-                onChanged: (value) {
-                  setState(() {
-                    address = value;
-                  });
-                },
-              ),
-              CustomRequestTextField(
-                controller: hospitalNameController,
-                hintText: 'hospitalName'.tr(context),
-                validator: (value) =>
-                    value!.isEmpty ? 'hospitalNameError'.tr(context) : null,
-                onSaved: (value) {
-                  hospitalName = value!;
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: 'addRequest'.tr(context),
-                onPressed: _submitRequest,
-              ),
-              const SizedBox(height: 16),
-            ],
+    return BlocListener<AddNeederRequestBloc, AddNeederRequestState>(
+      listener: (context, state) {
+        if (state is AddNeederRequestSuccess) {
+          successTopSnackBar(context, 'Request submitted successfully!');
+          _clearFormFields();
+        } else if (state is AddNeederRequestFailure) {
+          // state.message may be a localization key or a plain message
+          failureTopSnackBar(context, state.message.tr(context));
+        }
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              spacing: 10,
+              children: [
+                CustomRequestTextField(
+                  controller: patientNameController,
+                  hintText: 'patientName'.tr(context),
+                  validator: (value) =>
+                      value!.isEmpty ? 'patientNameError'.tr(context) : null,
+                  onSaved: (value) {
+                    patientName = value!;
+                  },
+                ),
+                CustomRequestTextField(
+                  controller: ageController,
+                  textInputType: TextInputType.number,
+                  validator: (value) =>
+                      value!.isEmpty ? 'ageError'.tr(context) : null,
+                  hintText: 'age'.tr(context),
+                  onSaved: (value) {
+                    age = num.parse(value!);
+                  },
+                ),
+                BloodTypeDropdown(
+                  selectedBloodType: bloodType,
+                  onChanged: (selectedType) {
+                    setState(() {
+                      bloodType = selectedType;
+                    });
+                  },
+                ),
+                DonationTypeDropdown(
+                  initialType: donationType,
+                  onTypeSelected: (selectedType) {
+                    setState(() {
+                      donationType = selectedType;
+                    });
+                  },
+                ),
+                GenderDropdown(
+                  initialGender: gender,
+                  onGenderSelected: (value) {
+                    setState(() {
+                      gender = value;
+                    });
+                  },
+                ),
+                CustomRequestTextField(
+                  controller: idCardController,
+                  hintText: 'nationalId'.tr(context),
+                  textInputType: TextInputType.number,
+                  validator: (value) =>
+                      value!.isEmpty ? 'idCardError'.tr(context) : null,
+                  onSaved: (value) {
+                    idCard = num.parse(value!);
+                  },
+                ),
+                CustomRequestTextField(
+                  controller: medicalConditionsController,
+                  hintText: 'medicalConditions'.tr(context),
+                  maxLines: 3,
+                  onSaved: (value) {
+                    medicalConditions = value!;
+                  },
+                ),
+                CustomRequestTextField(
+                  controller: contactController,
+                  hintText: 'contactNumber'.tr(context),
+                  textInputType: TextInputType.phone,
+                  validator: (value) =>
+                      value!.isEmpty ? 'contactNumberError'.tr(context) : null,
+                  onSaved: (value) {
+                    contact = num.parse(value!);
+                  },
+                ),
+                GovernorateDropdown(
+                  selectedKey: address,
+                  onChanged: (value) {
+                    setState(() {
+                      address = value;
+                    });
+                  },
+                ),
+                CustomRequestTextField(
+                  controller: hospitalNameController,
+                  hintText: 'hospitalName'.tr(context),
+                  validator: (value) =>
+                      value!.isEmpty ? 'hospitalNameError'.tr(context) : null,
+                  onSaved: (value) {
+                    hospitalName = value!;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomButton(
+                  text: 'addRequest'.tr(context),
+                  onPressed: _submitRequest,
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

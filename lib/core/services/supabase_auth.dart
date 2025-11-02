@@ -10,7 +10,7 @@ class SupabaseAuth {
     required String name,
   }) async {
     try {
-      // إنشاء مستخدم جديد باستخدام Supabase Auth
+
       final signUpResponse = await supabase.auth.signUp(
         email: email,
         password: password,

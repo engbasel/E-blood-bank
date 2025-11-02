@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:blood_bank/feature/home/presentation/views/widget/home/manager/models/health_model.dart';
+import 'package:blood_bank/feature/home/data/model/health_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';

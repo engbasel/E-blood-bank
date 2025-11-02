@@ -16,6 +16,24 @@ class AddNeederRequestCubit extends Cubit<AddNeedRequestState> {
   Future<void> addNeederRequest(
       NeederRequestEntity addNeederInputEntity) async {
     emit(AddNeedRequestLoading());
+
+    // Prevent user from creating more than one active request
+    try {
+      final querySnapshot = await _firestore
+          .collection('neederRequest')
+          .where('uId', isEqualTo: addNeederInputEntity.uId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // emit a failure with a localization key; UI will translate
+        emit(AddNeedRequestFailure('activeRequest'));
+        return;
+      }
+    } catch (e) {
+      log('Error checking existing needer requests: $e');
+      // continue to try adding the request; repository may still fail
+    }
+
     final result = await neederRepo.addNeederRequest(addNeederInputEntity);
     result.fold(
       (f) => emit(AddNeedRequestFailure(f.message)),

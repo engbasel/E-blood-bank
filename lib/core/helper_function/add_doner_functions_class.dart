@@ -1,7 +1,8 @@
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
 import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_cubit/add_doner_request_cubit.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_event.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -150,7 +151,7 @@ class AddDonerFunctions {
         lastRequestDate: DateTime.now(),
       );
 
-      context.read<AddDonerRequestCubit>().addRequest(request);
+      context.read<AddDonerRequestBloc>().add(SubmitDonerRequestEvent(request));
 
       successTopSnackBar(context, 'Request submitted successfully!');
       clearFormFields();

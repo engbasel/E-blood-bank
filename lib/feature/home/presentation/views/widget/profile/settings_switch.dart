@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
-import 'package:blood_bank/core/services/shared_preferences_sengleton.dart'; // استبدل بـ `Prefs`
+import 'package:blood_bank/core/services/shared_preferences_sengleton.dart';
 
 class SettingsSwitch extends StatefulWidget {
   final String title;
-  final String keyName; // Key for SharedPreferences
-  final bool value; // قيمة الـ Switch
-  final Function(bool) onChanged; // دالة التغيير
+  final String keyName;
+  final bool value;
+  final Function(bool) onChanged;
 
   const SettingsSwitch({
     super.key,
@@ -26,7 +26,7 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
   @override
   void initState() {
     super.initState();
-    _value = widget.value; // تعيين القيمة الأولية
+    _value = widget.value;
     _loadSwitchValue();
   }
 
