@@ -14,14 +14,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class VerfiedEmailView extends StatefulWidget {
-  const VerfiedEmailView({super.key});
+class VerifiedEmailView extends StatefulWidget {
+  const VerifiedEmailView({super.key});
 
   @override
-  VerfiedEmailViewState createState() => VerfiedEmailViewState();
+  VerifiedEmailViewState createState() => VerifiedEmailViewState();
 }
 
-class VerfiedEmailViewState extends State<VerfiedEmailView> {
+class VerifiedEmailViewState extends State<VerifiedEmailView> {
   late Timer _timer;
 
   @override

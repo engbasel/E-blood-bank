@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
-
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});
 
@@ -22,10 +21,16 @@ class CustomBottomNavBar extends StatefulWidget {
 
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   int selected = 0;
-  final controller = PageController();
   bool shouldAnimateLottie = false;
   Timer? animationTimer;
-  int animationCount = 0; // عداد الأنيميشن
+  int animationCount = 0;
+
+  final List<Widget> screens = [
+    const HomeView(),
+    NeedView(),
+    const DonorView(),
+    const ProfileView(),
+  ];
 
   @override
   void initState() {
@@ -34,34 +39,32 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   }
 
   void _startAnimationCycle() {
-    // تشغيل الأنيميشن ثلاث مرات، ثم التوقف
     _playAnimationTwice();
     animationTimer = Timer.periodic(const Duration(minutes: 3), (timer) {
       if (animationCount < 3) {
         _playAnimationTwice();
       } else {
-        animationTimer?.cancel(); // إيقاف التايمر بعد ثلاث مرات
+        animationTimer?.cancel();
       }
     });
   }
 
   void _playAnimationTwice() async {
-    if (animationCount >= 3) return; // إيقاف الأنيميشن بعد 3 مرات
+    if (animationCount >= 3) return;
     setState(() {
       shouldAnimateLottie = true;
-      animationCount++; // زيادة العداد
+      animationCount++;
     });
-    await Future.delayed(const Duration(seconds: 3)); // الأنيميشن الأول
-    await Future.delayed(const Duration(milliseconds: 500)); // فاصل قصير
+    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 500));
     setState(() => shouldAnimateLottie = true);
-    await Future.delayed(const Duration(seconds: 3)); // الأنيميشن الثاني
+    await Future.delayed(const Duration(seconds: 3));
     setState(() => shouldAnimateLottie = false);
   }
 
   @override
   void dispose() {
     animationTimer?.cancel();
-    controller.dispose();
     super.dispose();
   }
 
@@ -74,15 +77,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       floatingActionButton: _buildFloatingActionButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: SafeArea(
-        child: PageView(
-          controller: controller,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            HomeView(),
-            NeedView(),
-            DonerView(),
-            ProfileView(),
-          ],
+        child: IndexedStack(
+          index: selected,
+          children: screens,
         ),
       ),
     );
@@ -108,7 +105,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
         items: [
           _buildBottomBarItem(Assets.imagesHome, 'home'.tr(context)),
           _buildBottomBarItem(Assets.imagesNeed, 'need'.tr(context)),
-          _buildBottomBarItem(Assets.imagesDoner, 'doner'.tr(context)),
+          _buildBottomBarItem(Assets.imagesDoner, 'donor'.tr(context)),
           _buildBottomBarItem(Assets.imagesProfile, 'profile'.tr(context)),
         ],
         hasNotch: true,
@@ -120,7 +117,6 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             setState(() {
               selected = index;
             });
-            controller.jumpToPage(index);
           }
         },
       ),
@@ -133,9 +129,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       shape: const CircleBorder(),
       onPressed: () {
         Navigator.of(context).push(
-          buildPageRoute(
-            const ChatBotViewBody(),
-          ),
+          buildPageRoute(const ChatBotViewBody()),
         );
       },
       backgroundColor: AppColors.primaryColor,
@@ -166,3 +160,4 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     );
   }
 }
+

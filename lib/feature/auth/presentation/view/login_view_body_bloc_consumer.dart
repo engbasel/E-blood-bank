@@ -10,7 +10,7 @@ import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Main Login Screen with BlocConsumer to handle different states
+
 class LoginViewBodyBlocConsumer extends StatelessWidget {
   const LoginViewBodyBlocConsumer({super.key});
 

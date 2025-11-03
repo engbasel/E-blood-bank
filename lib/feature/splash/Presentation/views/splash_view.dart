@@ -24,8 +24,7 @@ class SplashView extends StatefulWidget {
 }
 
 class SplashViewState extends State<SplashView> with TickerProviderStateMixin {
-  // ------   ---   ---   ---   ---   ---   ---   ---   ---   ---
-  // Animations  for the drop animation
+
   late AnimationController _dropsController;
   late AnimationController _bigDropMoveController;
   late AnimationController _logoController;
@@ -77,10 +76,10 @@ class SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     );
 
     _startAnimations();
-    excuteNaviagtion(context);
+    executeNavigation(context);
   }
 
-  void excuteNaviagtion(BuildContext context) async {
+  void executeNavigation(BuildContext context) async {
     bool isOnBoardingViewSeen = Prefs.getBool(kIsOnBoardingViewSeen);
     bool isLoggedIn = FirebaseAuthService().isLoggedIn();
 
@@ -92,7 +91,6 @@ class SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       String? userId = FirebaseAuthService().currentUser?.uid;
 
       if (userId != null) {
-        // Fetch user status from Firestore
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
@@ -125,7 +123,7 @@ class SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       } else {
         Navigator.of(context).pushReplacement(
           buildPageRoute(
-            const ChooesToSignupOrLoginView(),
+            const ChooseToSignupOrLoginView(),
           ),
         );
       }
@@ -205,7 +203,7 @@ class SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     await Future.delayed(const Duration(seconds: 1));
     await _bigDropMoveController.forward();
     await _logoController.forward();
-    _fadeController.forward(); // Start loading indicator fade animation
+    _fadeController.forward();
   }
 
   @override

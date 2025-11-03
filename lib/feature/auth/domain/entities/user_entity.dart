@@ -4,18 +4,20 @@ class UserEntity extends Equatable {
   final String uId;
   final String? name;
   final String? email;
-  final String? photoURL;
+  final String? photoUrl;
   final bool emailVerified;
   final String userStat;
+  final String userState;
   final String? bloodType;
 
   const UserEntity({
     required this.uId,
     this.name,
     this.email,
-    this.photoURL,
+    this.photoUrl,
     this.emailVerified = false,
     this.userStat = 'allowed',
+    this.userState = 'donor',
     this.bloodType,
   });
 
@@ -24,9 +26,10 @@ class UserEntity extends Equatable {
       'uId': uId,
       'name': name,
       'email': email,
-      'photoURL': photoURL,
+      'photoUrl': photoUrl,
       'emailVerified': emailVerified,
       'userStat': userStat,
+      'userState': userState,
       'bloodType': bloodType,
     };
   }
@@ -36,9 +39,10 @@ class UserEntity extends Equatable {
       uId: map['uId'] ?? '',
       name: map['name'],
       email: map['email'],
-      photoURL: map['photoURL'],
+      photoUrl: map['photoUrl'],
       emailVerified: map['emailVerified'] ?? false,
       userStat: map['userStat'] ?? 'allowed',
+      userState: map['userState'] ?? 'donor',
       bloodType: map['bloodType'],
     );
   }
@@ -47,30 +51,35 @@ class UserEntity extends Equatable {
     String? uId,
     String? name,
     String? email,
-    String? photoURL,
+    String? photoUrl,
     bool? emailVerified,
     String? userStat,
+    String? userState,
     String? bloodType,
   }) {
     return UserEntity(
       uId: uId ?? this.uId,
       name: name ?? this.name,
       email: email ?? this.email,
-      photoURL: photoURL ?? this.photoURL,
+      photoUrl: photoUrl ?? this.photoUrl,
       emailVerified: emailVerified ?? this.emailVerified,
       userStat: userStat ?? this.userStat,
+      userState: userState ?? this.userState,
       bloodType: bloodType ?? this.bloodType,
     );
   }
 
   @override
   List<Object?> get props => [
-        uId,
-        name,
-        email,
-        photoURL,
-        emailVerified,
-        userStat,
-        bloodType,
-      ];
+    uId,
+    name,
+    email,
+    photoUrl,
+    emailVerified,
+    userStat,
+    userState,
+    bloodType,
+  ];
 }
+
+

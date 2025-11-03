@@ -221,7 +221,7 @@ class BigInfoCard extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CoustomCircularProgressIndicator());
+          return const Center(child: CustomCircularProgressIndicator());
         }
 
         if (snapshot.hasError) {

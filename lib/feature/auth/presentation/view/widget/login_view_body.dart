@@ -29,10 +29,10 @@ class LoginViewBody extends StatefulWidget {
 class _LoginViewBodyState extends State<LoginViewBody> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late String email, password;
-  bool isRemembermeClicked = false;
+  bool isRememberMeClicked = false;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
         padding: const EdgeInsets.symmetric(horizontal: kHorizintalPadding),
         child: Form(
           key: formKey,
-          autovalidateMode: autovalidateMode,
+          autovalidateMode: autoValidateMode,
           child: Column(
             children: [
               const SizedBox(
@@ -88,7 +88,7 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                   RememberMe(
                     onChange: (value) {
                       setState(() {
-                        isRemembermeClicked = value;
+                        isRememberMeClicked = value;
                       });
                     },
                   ),

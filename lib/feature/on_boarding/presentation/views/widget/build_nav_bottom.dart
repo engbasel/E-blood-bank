@@ -70,7 +70,7 @@ Widget buildNavigationBar(
 
                   Navigator.of(context).pushReplacement(
                     buildPageRoute(
-                      ChooesToSignupOrLoginView(),
+                      ChooseToSignupOrLoginView(),
                     ),
                   );
                 },

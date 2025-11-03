@@ -2,6 +2,7 @@ import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
+import 'package:blood_bank/feature/auth/presentation/view/donor_or_need.dart';
 import 'package:blood_bank/feature/auth/presentation/view/verfied_email_view.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/signup_view_body.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
@@ -17,27 +18,31 @@ class SignupViewBodyBlockConsumer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is Authenticated) {
-          successTopSnackBar(
-            context,
-            'account_created_successfully'.tr(context),
-          );
-        }
-        Navigator.of(context).pushReplacement(
-          buildPageRoute(
-            const VerfiedEmailView(),
-          ),
-        );
+        listener: (context, state) {
+          if (state is Authenticated) {
+            successTopSnackBar(
+              context,
+              'account_created_successfully'.tr(context),
+            );
+            Navigator.of(context).pushReplacement(
+              buildPageRoute(const DonorOrNeed()),
+            );
+          }
 
-        if (state is AuthError) {
-          failureTopSnackBar(
-            context,
-            state.message,
-          );
-        }
-      },
-      builder: (context, state) {
+          if (state is EmailNotVerified) {
+            Navigator.of(context).pushReplacement(
+              buildPageRoute(const VerifiedEmailView()),
+            );
+          }
+
+          if (state is AuthError) {
+            failureTopSnackBar(
+              context,
+              state.message,
+            );
+          }
+        },
+        builder: (context, state) {
         return ModalProgressHUD(
           inAsyncCall: state is AuthLoading ? true : false,
           child: const SignupViewBody(),

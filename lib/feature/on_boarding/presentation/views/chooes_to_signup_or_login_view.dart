@@ -9,8 +9,8 @@ import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/on_boarding/presentation/views/widget/page_view_item.dart';
 import 'package:flutter/material.dart';
 
-class ChooesToSignupOrLoginView extends StatelessWidget {
-  const ChooesToSignupOrLoginView({super.key});
+class ChooseToSignupOrLoginView extends StatelessWidget {
+  const ChooseToSignupOrLoginView({super.key});
 
   @override
   Widget build(BuildContext context) {

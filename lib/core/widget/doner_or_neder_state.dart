@@ -28,10 +28,8 @@ class StateDropdown extends StatelessWidget {
       },
     ];
 
-    // استخراج القيم المسموح بها
     final validKeys = states.map((e) => e['key'] as String).toList();
 
-    // التأكد من أن القيمة المختارة موجودة ضمن القائمة
     final safeSelectedKey = validKeys.contains(selectedKey) ? selectedKey : null;
 
     return DropdownButtonFormField<String>(

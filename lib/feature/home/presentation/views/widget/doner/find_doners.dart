@@ -135,7 +135,7 @@ class _FindDonorsState extends State<FindDonors> {
               ),
               const SizedBox(height: 16),
               if (isLoading)
-                const Center(child: CoustomCircularProgressIndicator())
+                const Center(child: CustomCircularProgressIndicator())
               else if (donors.isNotEmpty)
                 Column(
                   children: donors.map((donor) {

@@ -2,7 +2,6 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/auth/presentation/view/login_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/home_header.dart';
@@ -19,7 +18,7 @@ class UserHandler extends StatelessWidget {
       builder: (context, state) {
 
         if (state is AuthLoading) {
-          return const Center(child: CoustomCircularProgressIndicator());
+          return const Center(child: CustomCircularProgressIndicator());
         }
 
         if (state is AuthError) {
@@ -43,9 +42,9 @@ class UserHandler extends StatelessWidget {
             name: state.user.name ??
                 state.user.email?.split('@')[0] ??
                 'Anonymous',
-            photoUrl: state.user.photoURL,
-            userState: state.user.emailVerified ? 'verified' : 'unverified',
-            bloodType: state.user.bloodType ?? 'A+',
+            photoUrl: state.user.photoUrl,
+            userState: state.user.userState,
+
           );
         }
 

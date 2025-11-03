@@ -1,51 +1,37 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
+import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
+import 'package:blood_bank/feature/home/presentation/views/donor_details.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class SeeAll extends StatelessWidget {
-  const SeeAll({
+class SeeAllScreen extends StatelessWidget {
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>> requests;
+  final AsyncSnapshot<dynamic> snapshot;
+
+  const SeeAllScreen({
     super.key,
     required this.requests,
     required this.snapshot,
   });
 
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> requests;
-  final AsyncSnapshot<dynamic> snapshot;
-
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        showModalBottomSheet(
-          useSafeArea: true,
-          enableDrag: true,
-          backgroundColor: Colors.white,
-          context: context,
-          builder: (BuildContext context) {
-            // تأكد من توفير هيكل تخطيط مناسب
-            return SizedBox(
-              height:
-                  MediaQuery.of(context).size.height * 0.8, // قيود واضحة للطول
-              child: _buildContent(context),
-            );
-          },
-        );
-      },
-      child: Text(
-        'see_all'.tr(context),
-        style: TextStyles.semiBold14.copyWith(color: Colors.grey),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('All Requests', style: TextStyles.semiBold16),
+        backgroundColor: const Color(0xff800000),
+        foregroundColor: Colors.white,
       ),
+      body: _buildContent(context),
     );
   }
 
   Widget _buildContent(BuildContext context) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(
-        child: CoustomCircularProgressIndicator(),
-      );
+      return const Center(child: CustomCircularProgressIndicator());
     }
 
     if (snapshot.hasError) {
@@ -66,7 +52,16 @@ class SeeAll extends StatelessWidget {
           title: Text(request['name'] ?? 'No Name'),
           subtitle: _buildSubtitle(request, context),
           trailing: _buildTrailing(request, context),
+          onTap: () {
+            Navigator.of(context).push(
+              buildPageRoute(
+                  DonorProfileScreen(uId: request['uId'])
+              ),
+            );
+
+          },
         );
+
       },
     );
   }
@@ -79,22 +74,12 @@ class SeeAll extends StatelessWidget {
           return const SizedBox(
             width: 50,
             height: 50,
-            child: Center(
-              child: CoustomCircularProgressIndicator(),
-            ),
+            child: Center(child: CustomCircularProgressIndicator()),
           );
         }
 
-        if (snapshot.hasError) {
-          return CircleAvatar(
-            radius: 25,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.error, color: Colors.white),
-          );
-        }
-
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return CircleAvatar(
+        if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+          return const CircleAvatar(
             radius: 25,
             backgroundColor: Colors.grey,
             child: Icon(Icons.person, color: Colors.white),
@@ -111,7 +96,7 @@ class SeeAll extends StatelessWidget {
               : null,
           backgroundColor: Colors.grey,
           child: photoUrl == null || photoUrl.isEmpty
-              ? Icon(Icons.person, color: Colors.white)
+              ? const Icon(Icons.person, color: Colors.white)
               : null,
         );
       },
@@ -128,3 +113,4 @@ class SeeAll extends StatelessWidget {
     return Text('${request['distance'] ?? '0'} ${'km'.tr(context)}');
   }
 }
+

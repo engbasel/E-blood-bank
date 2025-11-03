@@ -1,28 +1,26 @@
 import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/doner/custom_donner_drawer.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/doner/add_doner_request_view_body_bloc_builder.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_doner_request_usecase.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DonerView extends StatelessWidget {
-  const DonerView({super.key});
+class DonorView extends StatelessWidget {
+  const DonorView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get the current user's ID
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-
-    // Create a GlobalKey to control the Scaffold's Drawer
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: scaffoldKey, // Assign the key to the Scaffold
+      key: scaffoldKey,
+      // Assign the key to the Scaffold
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
@@ -42,11 +40,21 @@ class DonerView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      drawer: CustomDonnerDrawer(userId: userId), // Pass userId to CustomDrawer
+      drawer: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is Authenticated) {
+            return CustomDonnerDrawer(userId: state.user.uId);
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
+
       body: BlocProvider(
-        create: (context) => AddDonerRequestBloc(
-          getIt.get<AddDonerRequestUseCase>(),
-        ),
+        create: (context) =>
+            AddDonerRequestBloc(
+              getIt.get<AddDonerRequestUseCase>(),
+            ),
         child: const AddDonerRequestViewBodyBlocBuilder(),
       ),
     );

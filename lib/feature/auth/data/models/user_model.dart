@@ -1,98 +1,100 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../domain/entities/user_entity.dart';
-
 class UserModel extends UserEntity {
   final String patientName;
-  final String bloodType;
   final String age;
   final String diseaseName;
   final String location;
   final String contactNumber;
-  final String? photoUrl;
-  final String userState;
 
   const UserModel({
-    required super.name,
-    // ignore: non_constant_identifier_names
-    required super.email,
     required super.uId,
+    required super.name,
+    required super.email,
+    required super.photoUrl,
+    required super.emailVerified,
+    required super.userStat,
+    required super.userState,
+    required super.bloodType,
     required this.patientName,
-    required this.bloodType,
     required this.age,
     required this.diseaseName,
     required this.location,
     required this.contactNumber,
-    required this.photoUrl,
-    required this.userState,
   });
 
-  /// مُعامل لتحويل بيانات FirebaseUser إلى UserModel
   factory UserModel.fromFirebaseUser(User user) {
     return UserModel(
+      uId: user.uid,
       name: user.displayName ?? '',
       email: user.email ?? '',
-      uId: user.uid,
-      patientName: '', // قد تحتاج معالجة إضافية هنا
+      photoUrl: user.photoURL ?? '',
+      emailVerified: user.emailVerified,
+      userStat: 'allowed',
+      userState: 'donor',
       bloodType: '',
+      patientName: '',
       age: '',
       diseaseName: '',
       location: '',
       contactNumber: '',
-      photoUrl: user.photoURL ?? '',
-      userState: '',
     );
   }
 
-  /// لتحويل بيانات JSON (مثلًا من قاعدة البيانات) إلى UserModel
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      uId: json['uId'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      uId: json['uId'] ?? '',
-      patientName: json['patientName'] ?? '',
+      photoUrl: json['photoUrl'] ?? '',
+      emailVerified: json['emailVerified'] ?? false,
+      userStat: json['userStat'] ?? 'allowed',
+      userState: json['userState'] ?? 'donor',
       bloodType: json['bloodType'] ?? '',
+      patientName: json['patientName'] ?? '',
       age: json['age'] ?? '',
       diseaseName: json['diseaseName'] ?? '',
       location: json['location'] ?? '',
       contactNumber: json['contactNumber'] ?? '',
-      photoUrl: json['photoUrl'] ?? '',
-      userState: json['userState'] ?? '',
     );
   }
 
-  /// لتحويل UserModel إلى Map لتخزينها كـ JSON
   @override
   Map<String, dynamic> toMap() {
     return {
+      'uId': uId,
       'name': name,
       'email': email,
-      'uId': uId,
-      'patientName': patientName,
+      'photoUrl': photoUrl,
+      'emailVerified': emailVerified,
+      'userStat': userStat,
+      'userState': userState,
       'bloodType': bloodType,
+      'patientName': patientName,
       'age': age,
       'diseaseName': diseaseName,
       'location': location,
       'contactNumber': contactNumber,
-      'photoUrl': photoUrl,
-      'userState': userState,
     };
   }
 
-  /// لتحويل Entity إلى UserModel
   factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
-      name: entity.name,
-      email: entity.email,
       uId: entity.uId,
+      name: entity.name ?? '',
+      email: entity.email ?? '',
+      photoUrl: entity.photoUrl ?? '',
+      emailVerified: entity.emailVerified,
+      userStat: entity.userStat,
+      userState: entity.userState,
+      bloodType: entity.bloodType ?? '',
       patientName: '',
-      bloodType: '',
       age: '',
       diseaseName: '',
       location: '',
       contactNumber: '',
-      photoUrl: '',
-      userState: '',
     );
   }
 }
+

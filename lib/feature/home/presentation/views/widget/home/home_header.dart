@@ -10,14 +10,12 @@ class HomeHeader extends StatelessWidget {
   final String name;
   final String? photoUrl;
   final String userState;
-  final String bloodType;
 
   const HomeHeader({
     super.key,
     required this.name,
     this.photoUrl,
     required this.userState,
-    required this.bloodType,
   });
 
   @override
@@ -70,39 +68,11 @@ class HomeHeader extends StatelessWidget {
                     '${'hello'.tr(context)} $name!',
                     style: TextStyles.semiBold16.copyWith(color: Colors.white),
                   ),
-                  // Row(
-                  //   children: [
-                  //     Container(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           horizontal: 8, vertical: 2),
-                  //       decoration: BoxDecoration(
-                  //         color: userState == 'verified'
-                  //             ? Colors.green
-                  //             : Colors.orange,
-                  //         borderRadius: BorderRadius.circular(12),
-                  //       ),
-                  //       child: Text(
-                  //         userState.tr(context),
-                  //         style: TextStyles.regular13
-                  //             .copyWith(color: Colors.white),
-                  //       ),
-                  //     ),
-                  //     const SizedBox(width: 8),
-                  //     Container(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           horizontal: 8, vertical: 2),
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.red,
-                  //         borderRadius: BorderRadius.circular(12),
-                  //       ),
-                  //       child: Text(
-                  //         bloodType,
-                  //         style: TextStyles.regular13
-                  //             .copyWith(color: Colors.white),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
+                  Text(
+                    '${'user_state'.tr(context)}: $userState.',
+                    style: TextStyles.regular13.copyWith(color: Colors.white),
+                  ),
+
                 ],
               ),
             ),

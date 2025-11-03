@@ -1,14 +1,14 @@
-import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
+import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
-import 'package:blood_bank/feature/home/presentation/views/widget/see_all.dart';
+import 'package:blood_bank/feature/home/presentation/views/donor_details.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/see_all_button.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
+
 
 class RequestsForDonation extends StatelessWidget {
   const RequestsForDonation({super.key});
@@ -19,7 +19,7 @@ class RequestsForDonation extends StatelessWidget {
       stream: FirebaseFirestore.instance.collection('donerRequest').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CoustomCircularProgressIndicator());
+          return const Center(child: CustomCircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
@@ -59,6 +59,7 @@ class RequestsForDonation extends StatelessWidget {
             SizedBox(
               height: 350,
               child: ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount:
                     reversedRequests.length >= 4 ? 4 : reversedRequests.length,
                 itemBuilder: (context, index) {
@@ -83,19 +84,25 @@ class RequestsForDonation extends StatelessWidget {
                       ),
                       child: GestureDetector(
                         onTap: () {
-                          showTopSnackBar(
-                            displayDuration: const Duration(seconds: 3),
-                            Overlay.of(context),
-                            CustomSnackBar.info(
-                              backgroundColor: AppColors.backgroundColor,
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                              ),
-                              maxLines: 3,
-                              textAlign: TextAlign.center,
-                              message: 'donationDetails'.trWithParams(context,
-                                  {'name': request['name'] ?? 'Unknown'}),
+                          // showTopSnackBar(
+                          //   displayDuration: const Duration(seconds: 3),
+                          //   Overlay.of(context),
+                          //   CustomSnackBar.info(
+                          //     backgroundColor: AppColors.backgroundColor,
+                          //     textStyle: const TextStyle(
+                          //       fontWeight: FontWeight.normal,
+                          //       color: Colors.white,
+                          //     ),
+                          //     maxLines: 3,
+                          //     textAlign: TextAlign.center,
+                          //     message: 'donationDetails'.trWithParams(context,
+                          //         {'name': request['name'] ?? 'Unknown'}),
+                          //   ),
+                          // );
+
+                          Navigator.of(context).push(
+                            buildPageRoute(
+                              DonorProfileScreen(uId: request['uId'] ,),
                             ),
                           );
                         },
@@ -113,7 +120,7 @@ class RequestsForDonation extends StatelessWidget {
                                     ConnectionState.waiting) {
                                   return const Center(
                                       child:
-                                          CoustomCircularProgressIndicator());
+                                          CustomCircularProgressIndicator());
                                 }
 
                                 if (snapshot.hasError) {

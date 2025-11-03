@@ -89,7 +89,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
   Future<void> _requestNotificationPermission() async {
     final status = await Permission.notification.request();
     if (status.isGranted) {
-      // الإذن مُمنَح
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Notification permission granted!')),
       );
@@ -106,20 +105,19 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     final status = await Permission.notification.status;
 
     if (value && (status.isDenied || status.isPermanentlyDenied)) {
-      // إذا كان الإذن معطلاً، اطلب من المستخدم تمكينه
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Please enable notifications in device settings.'),
           action: SnackBarAction(
             label: 'Open Settings',
             onPressed: () {
-              openAppSettings(); // فتح إعدادات الجهاز
+              openAppSettings();
             },
           ),
         ),
       );
       setState(() {
-        _notificationsEnabled = false; // إعادة تعيين القيمة إلى false
+        _notificationsEnabled = false;
       });
       return;
     }
@@ -142,10 +140,12 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
         SnackBar(
           content: Text(
               'To fully disable notifications, please disable them in device settings.'),
+
+
           action: SnackBarAction(
             label: 'Open Settings',
             onPressed: () {
-              openAppSettings(); // فتح إعدادات الجهاز
+              openAppSettings();
             },
           ),
         ),
@@ -153,7 +153,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     }
   }
 
-  // التحقق من التحديثات
   Future<void> _checkForUpdate() async {
     if (_isCheckingForUpdates) return;
 
@@ -186,13 +185,11 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     }
   }
 
-  // تنزيل التحديث
   Future<void> _downloadUpdate(ShorebirdUpdater updater) async {
     try {
       await updater.update(track: currentTrack);
       if (!mounted) return;
 
-      // عرض رسالة لإعادة التشغيل بعد تنزيل التحديث
       _showRestartSnackBar(context);
     } on UpdateException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -205,7 +202,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     }
   }
 
-  // عرض نافذة حوار للتحديث
+
   void _showUpdateDialog(BuildContext context, ShorebirdUpdater updater) {
     showDialog(
       context: context,
@@ -239,10 +236,10 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
         action: SnackBarAction(
           label: 'Restart',
           onPressed: () {
-            Restart.restartApp(); // إعادة تشغيل التطبيق
+            Restart.restartApp();
           },
         ),
-        duration: const Duration(seconds: 10), // مدة عرض الرسالة
+        duration: const Duration(seconds: 10),
       ),
     );
   }
@@ -260,7 +257,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                        child: CoustomCircularProgressIndicator());
+                        child: CustomCircularProgressIndicator());
                   }
 
                   if (snapshot.hasError) {
@@ -332,7 +329,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                      child: CoustomCircularProgressIndicator());
+                      child: CustomCircularProgressIndicator());
                 }
 
                 if (snapshot.hasError) {
@@ -351,7 +348,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                 return BigInfoCard(
                   savedLives: 'lives_saved'.tr(context),
                   bloodGroup:
-                      '${user.bloodType.tr(context)} ${'group'.tr(context)}',
+                      '${user.bloodType?.tr(context)} ${'group'.tr(context)}',
                   nextDonationDate: 'next_donation_date'.tr(context),
                 );
               },
@@ -361,8 +358,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
       ),
     );
   }
-
-  // عرض نافذة اختيار اللغة
   void _showLanguagePicker(BuildContext context) {
     showModalBottomSheet(
       context: context,

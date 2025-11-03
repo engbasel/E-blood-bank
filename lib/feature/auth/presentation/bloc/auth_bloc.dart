@@ -31,7 +31,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             add(VerifyEmailEvent());
           }
           else {
-            print(user);
             emit(Authenticated(user));
           }
         } else {
@@ -168,7 +167,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final currentUser = (state as Authenticated).user;
     final updatedUser = currentUser.copyWith(
       name: event.name,
-      photoURL: event.photoURL,
+      photoUrl: event.photoURL,
       bloodType: event.bloodType,
     );
 

@@ -20,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
         final firestoreUser = await _remoteDataSource.getUserData(user.uid);
         return firestoreUser.copyWith(
           emailVerified: user.emailVerified,
-          photoURL: user.photoURL,
+          photoUrl: user.photoURL,
         );
       } catch (_) {
         return _mapFirebaseUserToEntity(user);
@@ -37,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final firestoreUser = await _remoteDataSource.getUserData(user.uid);
       final merged = firestoreUser.copyWith(
         emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
+        photoUrl: user.photoURL,
       );
       return Right(merged);
     } catch (e) {
@@ -52,7 +52,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final firestoreUser = await _remoteDataSource.getUserData(user!.uid);
       final merged = firestoreUser.copyWith(
         emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
+        photoUrl: user.photoURL,
       );
       await _remoteDataSource.saveUserData(merged);
       return Right(merged);
@@ -69,9 +69,9 @@ class AuthRepositoryImpl implements AuthRepository {
         uId: user!.uid,
         name: name,
         email: user.email,
-        photoURL: user.photoURL,
+        photoUrl: user.photoURL,
         emailVerified: user.emailVerified,
-        userStat: 'allowed',
+        userState: 'allowed',
       );
       await _remoteDataSource.saveUserData(userEntity);
       return Right(userEntity);
@@ -87,7 +87,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final firestoreUser = await _remoteDataSource.getUserData(user!.uid);
       final merged = firestoreUser.copyWith(
         emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
+        photoUrl: user.photoURL,
       );
       await _remoteDataSource.saveUserData(merged);
       return Right(merged);
@@ -103,7 +103,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final firestoreUser = await _remoteDataSource.getUserData(user!.uid);
       final merged = firestoreUser.copyWith(
         emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
+        photoUrl: user.photoURL,
       );
       await _remoteDataSource.saveUserData(merged);
       return Right(merged);
@@ -161,8 +161,8 @@ class AuthRepositoryImpl implements AuthRepository {
       if (user.name != null) {
         await currentUser.updateDisplayName(user.name!);
       }
-      if (user.photoURL != null) {
-        await currentUser.updatePhotoURL(user.photoURL!);
+      if (user.photoUrl != null) {
+        await currentUser.updatePhotoURL(user.photoUrl!);
       }
 
       await _remoteDataSource.addUserData(user);
@@ -179,9 +179,9 @@ class AuthRepositoryImpl implements AuthRepository {
       uId: user.uid,
       name: user.displayName,
       email: user.email,
-      photoURL: user.photoURL,
+      photoUrl: user.photoURL,
       emailVerified: user.emailVerified,
-      userStat: 'allowed',
+      userState:   'allowed',
     );
   }
 }

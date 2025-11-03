@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+
+class InfoSection extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<Widget> children;
+  final Color primaryColor;
+
+  const InfoSection({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.children,
+    required this.primaryColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Icon(icon, color: primaryColor, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          ...children,
+        ],
+      ),
+    );
+  }
+}
