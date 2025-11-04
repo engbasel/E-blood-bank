@@ -25,7 +25,7 @@ class AddNeedRequestViewBodyBlocBuilder extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return CustomProgrssHud(
+        return CustomProgressHud(
             isLoading: state is AddNeederRequestLoading,
             child: const NeedRequest());
       },

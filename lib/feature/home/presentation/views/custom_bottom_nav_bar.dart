@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
-import 'package:blood_bank/feature/home/presentation/views/doner_view.dart';
+import 'package:blood_bank/feature/home/presentation/views/donor_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/home_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/need_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/profile_view.dart';

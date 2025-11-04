@@ -1,7 +1,7 @@
 import 'dart:developer';
-
 import 'package:blood_bank/core/helper_function/add_doner_functions_class.dart';
 import 'package:blood_bank/core/helper_function/validators_textform.dart';
+import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/widget/blood_type_drop_down.dart';
 import 'package:blood_bank/core/widget/custom_button.dart';
@@ -10,29 +10,29 @@ import 'package:blood_bank/core/widget/date_picker_field.dart';
 import 'package:blood_bank/core/widget/donation_type_drop_down.dart';
 import 'package:blood_bank/core/widget/gender_drop_down.dart';
 import 'package:blood_bank/core/widget/governorate_drop_down.dart';
+import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DonerRequest extends StatefulWidget {
-  const DonerRequest({super.key});
+class DonorRequest extends StatefulWidget {
+  const DonorRequest({super.key});
 
   @override
-  DonerRequestState createState() => DonerRequestState();
+  DonorRequestState createState() => DonorRequestState();
 }
 
-class DonerRequestState extends State<DonerRequest> {
+class DonorRequestState extends State<DonorRequest> {
   final _formKey = GlobalKey<FormState>();
   final User? _user = FirebaseAuth.instance.currentUser;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Controllers
   final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
-  final TextEditingController medicalConditionsController =
-      TextEditingController();
+  final TextEditingController medicalConditionsController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController unitsController = TextEditingController();
@@ -41,25 +41,22 @@ class DonerRequestState extends State<DonerRequest> {
   final TextEditingController distanceController = TextEditingController();
   final TextEditingController bloodTypeController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
-  final TextEditingController lastDonationDateController =
-      TextEditingController();
-  final TextEditingController nextDonationDateController =
-      TextEditingController();
+  final TextEditingController lastDonationDateController = TextEditingController();
+  final TextEditingController nextDonationDateController = TextEditingController();
   final TextEditingController donationTypeController = TextEditingController();
 
-  late AddDonerFunctions _addDonerFunction;
+  late AddDonorFunctions _addDonorFunction;
 
   @override
   void initState() {
     super.initState();
-    _addDonerFunction = AddDonerFunctions(
+    _addDonorFunction = AddDonorFunctions(
       context: context,
-      firestore: _firestore,
       user: _user,
       formKey: _formKey,
       nameController: nameController,
       ageController: ageController,
-      lastdonationdateController: lastDonationDateController,
+      lastDonationDateController: lastDonationDateController,
       idCardController: idCardController,
       medicalConditionsController: medicalConditionsController,
       contactController: contactController,
@@ -70,6 +67,11 @@ class DonerRequestState extends State<DonerRequest> {
       distanceController: distanceController,
       bloodTypeController: bloodTypeController,
       genderController: genderController,
+      nextDonationDateController: nextDonationDateController,
+      donationTypeController: donationTypeController,
+      donorRemoteDataSource: getIt<DonorRemoteDataSource>(),
+
+
     );
   }
 
@@ -152,7 +154,7 @@ class DonerRequestState extends State<DonerRequest> {
                 selectedDate: null,
                 onDateSelected: (date) {
                   lastDonationDateController.text =
-                      date.toString().split(' ')[0];
+                  date.toString().split(' ')[0];
                   log('Last Donation Date: ${lastDonationDateController.text}');
                 },
                 isNextDonationDate: false,
@@ -165,7 +167,7 @@ class DonerRequestState extends State<DonerRequest> {
                 selectedDate: null,
                 onDateSelected: (date) {
                   nextDonationDateController.text =
-                      date.toString().split(' ')[0];
+                  date.toString().split(' ')[0];
                   log('Next Donation Date: ${nextDonationDateController.text}');
                 },
                 isNextDonationDate: true,
@@ -220,6 +222,7 @@ class DonerRequestState extends State<DonerRequest> {
                   log('Hospital Name: ${hospitalNameController.text}');
                 },
               ),
+
               CustomRequestTextField(
                 hintStyle: TextStyle(color: AppColors.primaryColor),
                 controller: distanceController,
@@ -234,33 +237,15 @@ class DonerRequestState extends State<DonerRequest> {
               const SizedBox(height: 16),
               CustomButton(
                 text: 'Submit Request'.tr(context),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-
-                    _addDonerFunction.submitRequest(
-                      name: nameController.text,
-                      age: num.parse(ageController.text),
-                      bloodType: bloodTypeController.text,
-                      donationType: donationTypeController.text,
-                      gender: genderController.text,
-                      idCard: num.parse(idCardController.text),
-                      lastDonationDate:
-                          lastDonationDateController.text.isNotEmpty
-                              ? DateTime.parse(lastDonationDateController.text)
-                              : null,
-                      nextDonationDate:
-                          nextDonationDateController.text.isNotEmpty
-                              ? DateTime.parse(nextDonationDateController.text)
-                              : null,
-                      medicalConditions: medicalConditionsController.text,
-                      units: num.parse(unitsController.text),
-                      contact: num.parse(contactController.text),
-                      address: addressController.text,
-                      notes: notesController.text,
-                      hospitalName: hospitalNameController.text,
-                      distance: num.parse(distanceController.text),
-                    );
+                    final entity = await _addDonorFunction.toEntityWithCheck();
+                    if (entity != null) {
+                      context.read<AddDonorRequestBloc>().add(
+                        SubmitDonorRequestEvent(request: entity),
+                      );
+                    }
                   }
                 },
               ),
@@ -272,3 +257,4 @@ class DonerRequestState extends State<DonerRequest> {
     );
   }
 }
+

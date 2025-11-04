@@ -2,8 +2,8 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
-class CustomProgrssHud extends StatelessWidget {
-  const CustomProgrssHud({
+class CustomProgressHud extends StatelessWidget {
+  const CustomProgressHud({
     super.key,
     required this.isLoading,
     required this.child,
@@ -19,13 +19,13 @@ class CustomProgrssHud extends StatelessWidget {
         inAsyncCall: isLoading,
         progressIndicator: Center(
           child: CircularProgressIndicator(
-            strokeWidth: 6.0, // سماكة المؤشر
+            strokeWidth: 6.0,
             valueColor: AlwaysStoppedAnimation<Color>(
-              AppColors.primaryColor, // لون متحرك
+              AppColors.primaryColor,
             ),
             backgroundColor: AppColors.orangeColor.withValues(
               alpha: 0.5,
-            ), // لون الخلفية
+            )
           ),
         ),
         child: child,

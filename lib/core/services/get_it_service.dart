@@ -3,6 +3,7 @@ import 'package:blood_bank/core/services/fire_storage.dart';
 import 'package:blood_bank/core/services/firebase_auth_service.dart';
 import 'package:blood_bank/core/services/firestor_service.dart';
 import 'package:blood_bank/core/services/health_request.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_donor_use_case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:blood_bank/core/services/storage_service.dart';
@@ -12,13 +13,13 @@ import 'package:blood_bank/feature/home/data/repos/needer_repo_impl.dart';
 import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
 import 'package:blood_bank/feature/home/data/datasources/needer_remote_data_source.dart';
 import 'package:blood_bank/feature/home/domain/repos/health_repo.dart';
-import 'package:blood_bank/feature/home/domain/usecases/add_doner_request_usecase.dart';
+import 'package:blood_bank/feature/home/domain/usecases/add_donor_request_usecase.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
 import 'package:blood_bank/feature/home/domain/usecases/get_health_news_usecase.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_bloc.dart';
-import 'package:blood_bank/feature/home/domain/repos/doner_repo.dart';
+import 'package:blood_bank/feature/home/domain/repos/donor_repo.dart';
 import 'package:blood_bank/feature/home/domain/repos/needer_repo.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,25 +50,28 @@ void setupGetIt() {
   getIt.registerSingleton<Dio>(Dio());
   getIt.registerSingleton<HealthRequest>(HealthRequest(getIt<Dio>()));
 
-  getIt.registerFactory<DonerRemoteDataSource>(
-    () => DonerRemoteDataSourceImpl(getIt<DatabaseService>()),
+  getIt.registerFactory<DonorRemoteDataSource>(
+    () => DonorRemoteDataSourceImpl(getIt<DatabaseService>()),
   );
 
-  getIt.registerSingleton<DonerRepo>(
-    DonerRepoImpl(donerRemoteDataSource: getIt<DonerRemoteDataSource>()),
+  getIt.registerSingleton<DonorRepo>(
+    DonorRepoImpl(donorRemoteDataSource: getIt<DonorRemoteDataSource>()),
   );
 
-  getIt.registerFactory<AddDonerRequestUseCase>(
-    () => AddDonerRequestUseCase(getIt<DonerRepo>()),
+  getIt.registerFactory<AddDonorRequestUseCase>(
+    () => AddDonorRequestUseCase(getIt<DonorRepo>()),
+  );
+  getIt.registerFactory<GetDonorByIdUseCase>(
+    () => GetDonorByIdUseCase(getIt<DonorRepo>()),
   );
 
-  getIt.registerFactory<AddDonerRequestBloc>(
-    () => AddDonerRequestBloc(getIt<AddDonerRequestUseCase>()),
+  getIt.registerFactory<AddDonorRequestBloc>(
+    () => AddDonorRequestBloc(getIt<AddDonorRequestUseCase>(),getIt<GetDonorByIdUseCase>()),
   );
-  // Remote data source and usecase registration
   getIt.registerFactory<NeederRemoteDataSource>(
     () => NeederRemoteDataSourceImpl(getIt<DatabaseService>()),
   );
+
 
   getIt.registerSingleton<NeederRepo>(
     NeederRepoImpl(getIt<NeederRemoteDataSource>()),

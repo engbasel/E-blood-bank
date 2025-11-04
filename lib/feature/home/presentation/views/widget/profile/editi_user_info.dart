@@ -507,7 +507,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         title: 'Edit Profile',
         leadingIcon: Icons.arrow_back_ios_new_rounded,
       ),
-      body: CustomProgrssHud(
+      body: CustomProgressHud(
         isLoading: _isLoading,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: kHorizintalPadding),

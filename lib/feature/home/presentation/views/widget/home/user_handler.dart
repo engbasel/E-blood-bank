@@ -43,7 +43,7 @@ class UserHandler extends StatelessWidget {
                 state.user.email?.split('@')[0] ??
                 'Anonymous',
             photoUrl: state.user.photoUrl,
-            userState: state.user.userState,
+            userState: state.user.userState.tr(context),
 
           );
         }

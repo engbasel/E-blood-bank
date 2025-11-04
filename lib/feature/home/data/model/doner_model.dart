@@ -40,7 +40,7 @@ class DonerModel {
     // required this.photoUrl,
     this.lastRequestDate,
   });
-  factory DonerModel.fromEntity(DonerRequestEntity addRequestInputEntity) {
+  factory DonerModel.fromEntity(DonorRequestEntity addRequestInputEntity) {
     return DonerModel(
       name: addRequestInputEntity.name,
       age: addRequestInputEntity.age,

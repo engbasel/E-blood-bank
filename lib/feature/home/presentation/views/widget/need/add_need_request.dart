@@ -45,7 +45,7 @@ class NeedRequestState extends State<NeedRequest> {
   num idCard = 0;
   String hospitalName = '';
 
-  AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   void _clearFormFields() {
     patientNameController.clear();
     ageController.clear();
@@ -180,7 +180,7 @@ class NeedRequestState extends State<NeedRequest> {
           .add(SubmitNeederRequestEvent(request));
     } else {
       setState(() {
-        autovalidateMode = AutovalidateMode.always;
+        autoValidateMode = AutovalidateMode.always;
       });
     }
   }

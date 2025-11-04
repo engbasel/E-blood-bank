@@ -1,12 +1,9 @@
-import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/doner/custom_donner_drawer.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/doner/add_doner_request_view_body_bloc_builder.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
-import 'package:blood_bank/feature/home/domain/usecases/add_doner_request_usecase.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,13 +47,7 @@ class DonorView extends StatelessWidget {
         },
       ),
 
-      body: BlocProvider(
-        create: (context) =>
-            AddDonerRequestBloc(
-              getIt.get<AddDonerRequestUseCase>(),
-            ),
-        child: const AddDonerRequestViewBodyBlocBuilder(),
-      ),
+      body: const AddDonorRequestViewBodyBlocBuilder(),
     );
   }
 }

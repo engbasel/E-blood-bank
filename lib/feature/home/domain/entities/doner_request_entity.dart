@@ -1,4 +1,4 @@
-class DonerRequestEntity {
+class DonorRequestEntity {
   final String name;
   final num age;
   final String bloodType;
@@ -18,7 +18,7 @@ class DonerRequestEntity {
   final num distance;
   final String? photoUrl;
 
-  DonerRequestEntity({
+  DonorRequestEntity({
     required this.name,
     required this.uId,
     required this.age,

@@ -1,8 +1,6 @@
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
-import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/custom_progrss_hud.dart';
 import 'package:blood_bank/core/widget/custom_app_bar.dart';
-import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/forgot_password_view_body.dart';
@@ -49,7 +47,7 @@ class ForgotPasswordViewBodyBlocConsumer extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return CustomProgrssHud(
+        return CustomProgressHud(
             isLoading: state is AuthLoading,
             child: const ForgotPasswordViewBody());
       },

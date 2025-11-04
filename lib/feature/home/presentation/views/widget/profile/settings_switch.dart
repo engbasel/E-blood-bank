@@ -33,7 +33,7 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
   void _loadSwitchValue() {
     setState(() {
       _value = Prefs.getBool(widget.keyName) ??
-          widget.value; // استرجاع القيمة المحفوظة أو استخدام القيمة الافتراضية
+          widget.value;
     });
   }
 

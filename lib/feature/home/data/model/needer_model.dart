@@ -47,7 +47,7 @@ class NeederModel {
       status: addNeederInputEntity.status,
     );
   }
-  toJson() {
+  Map<String, Object?> toJson() {
     return {
       'patientName': patientName,
       'age': age,

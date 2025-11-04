@@ -28,7 +28,7 @@ class LoginViewBodyBlocConsumer extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
-          body: CustomProgrssHud(
+          body: CustomProgressHud(
             isLoading: state is AuthLoading,
             child: const LoginViewBody(),
           ),

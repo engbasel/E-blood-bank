@@ -3,21 +3,21 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/widget/custom_button.dart';
 import 'package:blood_bank/core/widget/custom_request_text_field.dart';
 import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_bloc.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_doner_request_event.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DonerRequestForm extends StatefulWidget {
-  const DonerRequestForm({super.key});
+class DonorRequestForm extends StatefulWidget {
+  const DonorRequestForm({super.key});
 
   @override
-  DonerRequestFormState createState() => DonerRequestFormState();
+  DonorRequestFormState createState() => DonorRequestFormState();
 }
 
-class DonerRequestFormState extends State<DonerRequestForm> {
+class DonorRequestFormState extends State<DonorRequestForm> {
   final _formKey = GlobalKey<FormState>();
   final User? _user = FirebaseAuth.instance.currentUser;
 
@@ -50,7 +50,7 @@ class DonerRequestFormState extends State<DonerRequestForm> {
         return;
       }
 
-      final request = DonerRequestEntity(
+      final request = DonorRequestEntity(
         uId: _user.uid,
         name: nameController.text,
         age: num.parse(ageController.text),
@@ -74,7 +74,7 @@ class DonerRequestFormState extends State<DonerRequestForm> {
         photoUrl: _user.photoURL ?? '',
       );
 
-      context.read<AddDonerRequestBloc>().add(SubmitDonerRequestEvent(request));
+      context.read<AddDonorRequestBloc>().add(SubmitDonorRequestEvent(request: request));
     }
   }
 
