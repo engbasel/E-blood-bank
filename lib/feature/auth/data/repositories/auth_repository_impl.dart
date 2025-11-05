@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:blood_bank/core/error/failures.dart';
 import 'package:blood_bank/feature/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/auth/domain/entities/user_entity.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
@@ -16,14 +17,19 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<UserEntity?> get authStateChanges {
     return _remoteDataSource.authStateChanges.asyncMap((user) async {
       if (user == null) return null;
+
+      await _remoteDataSource.reloadUser();
+      final refreshedUser = await _remoteDataSource.getCurrentUser();
+      if (refreshedUser == null) return null;
+
       try {
-        final firestoreUser = await _remoteDataSource.getUserData(user.uid);
+        final firestoreUser = await _remoteDataSource.getUserData(refreshedUser.uid);
         return firestoreUser.copyWith(
-          emailVerified: user.emailVerified,
-          photoUrl: user.photoURL,
+          emailVerified: refreshedUser.emailVerified,
+          photoUrl: refreshedUser.photoURL,
         );
       } catch (_) {
-        return _mapFirebaseUserToEntity(user);
+        return UserModel.fromFirebaseUser(refreshedUser);
       }
     });
   }
@@ -31,6 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
     try {
+      await _remoteDataSource.reloadUser();
       final user = await _remoteDataSource.getCurrentUser();
       if (user == null) return Left(AuthFailure('No user logged in'));
 
@@ -65,14 +72,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> signUpWithEmailAndPassword(String email, String password, String name) async {
     try {
       final user = await _remoteDataSource.signUpWithEmailAndPassword(email, password, name);
-      final userEntity = UserEntity(
-        uId: user!.uid,
-        name: name,
-        email: user.email,
-        photoUrl: user.photoURL,
-        emailVerified: user.emailVerified,
-        userState: 'allowed',
-      );
+      final userEntity = UserModel.fromFirebaseUser(user!).copyWith(name: name);
       await _remoteDataSource.saveUserData(userEntity);
       return Right(userEntity);
     } catch (e) {
@@ -174,15 +174,16 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  UserEntity _mapFirebaseUserToEntity(User user) {
-    return UserEntity(
-      uId: user.uid,
-      name: user.displayName,
-      email: user.email,
-      photoUrl: user.photoURL,
-      emailVerified: user.emailVerified,
-      userState:   'allowed',
-    );
-  }
+
+  // UserEntity _mapFirebaseUserToEntity(User user) {
+  //   return UserEntity(
+  //     uId: user.uid,
+  //     name: user.displayName,
+  //     email: user.email,
+  //     photoUrl: user.photoURL,
+  //     emailVerified: user.emailVerified,
+  //     userState:   'allowed',
+  //   );
+  // }
 }
 

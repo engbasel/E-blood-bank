@@ -25,19 +25,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserEvent>(_onUpdateUser);
 
     _authStateSubscription = _authRepository.authStateChanges.listen(
-      (user) {
-        if (user != null) {
-          if (!user.emailVerified) {
-            add(VerifyEmailEvent());
-          }
-          else {
-            emit(Authenticated(user));
-          }
-        } else {
+          (user) {
+        if (user == null) {
           emit(Unauthenticated());
+        } else if (!user.emailVerified) {
+          emit(EmailNotVerified(user));
+        } else {
+          emit(Authenticated(user));
         }
       },
     );
+
   }
 
   Future<void> _onCheckAuthStatus(
