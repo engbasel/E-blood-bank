@@ -1,7 +1,9 @@
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:blood_bank/constants.dart';
@@ -18,6 +20,7 @@ import 'package:blood_bank/feature/home/presentation/views/widget/profile/settin
 import 'package:blood_bank/feature/home/presentation/views/widget/profile/settings_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -28,6 +31,8 @@ class ProfileView extends StatefulWidget {
 
 class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
   final shorebirdUpdater = ShorebirdUpdater();
+
+
   bool _isCheckingForUpdates = false;
   UpdateTrack currentTrack = UpdateTrack.stable;
   bool _notificationsEnabled = true;
@@ -40,7 +45,11 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _checkNotificationPermission();
     _initializeNotifications();
+
   }
+
+
+
 
   @override
   void dispose() {
@@ -278,6 +287,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                     name: user.name!,
                     photoUrl: user.photoUrl,
                     userState: user.userState.tr(context),
+
                   );
                 },
               ),

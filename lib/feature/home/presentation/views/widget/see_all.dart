@@ -4,6 +4,7 @@ import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart'
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
 import 'package:blood_bank/feature/home/presentation/views/donor_details.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -66,15 +67,16 @@ class SeeAllScreen extends StatelessWidget {
     );
   }
 
+
   Widget _buildUserAvatar(BuildContext context, String userId) {
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            width: 50,
-            height: 50,
-            child: Center(child: CustomCircularProgressIndicator()),
+          return const CircleAvatar(
+            radius: 25,
+            backgroundColor: Colors.grey,
+            child: Icon(Icons.person, color: Colors.white),
           );
         }
 
@@ -89,15 +91,27 @@ class SeeAllScreen extends StatelessWidget {
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final photoUrl = userData['photoUrl'];
 
+        if (photoUrl == null || photoUrl.isEmpty) {
+          return const CircleAvatar(
+            radius: 25,
+            backgroundColor: Colors.grey,
+            child: Icon(Icons.person, color: Colors.white),
+          );
+        }
+
         return CircleAvatar(
           radius: 25,
-          backgroundImage: photoUrl != null && photoUrl.isNotEmpty
-              ? NetworkImage(photoUrl)
-              : null,
           backgroundColor: Colors.grey,
-          child: photoUrl == null || photoUrl.isEmpty
-              ? const Icon(Icons.person, color: Colors.white)
-              : null,
+          child: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: photoUrl,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const SizedBox(),
+              errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.white),
+            ),
+          ),
         );
       },
     );

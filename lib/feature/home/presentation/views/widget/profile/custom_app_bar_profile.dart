@@ -14,11 +14,13 @@ class CustomProfileAppBar extends StatefulWidget
   final String? photoUrl;
   final String userState;
 
+
   const CustomProfileAppBar({
     super.key,
     required this.name,
     this.photoUrl,
     required this.userState,
+
   });
 
   @override
@@ -35,7 +37,10 @@ class _CustomProfileAppBarState extends State<CustomProfileAppBar> {
   @override
   void initState() {
     super.initState();
-    _checkIfTutorialNeeded();
+    debugPrint("CustomProfileAppBar built");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfTutorialNeeded();
+    });
   }
 
   Future<void> _checkIfTutorialNeeded() async {
