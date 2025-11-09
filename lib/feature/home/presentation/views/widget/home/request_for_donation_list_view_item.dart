@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 
 class RequestForDonationListViewItem extends StatelessWidget {
   const RequestForDonationListViewItem({super.key, this.request});
-  final request;
+  final dynamic request;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -78,9 +78,14 @@ class RequestForDonationListViewItem extends StatelessWidget {
           subtitle: Row(
             children: [
               const Icon(Icons.location_on, size: 16, color: Colors.grey),
-              Text(
-                request['hospitalName'] ?? 'unknown_hospital'.tr(context),
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width * .3,
+                child: Text(
+                  request['hospitalName'] ?? 'unknown_hospital'.tr(context),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -113,7 +118,6 @@ class RequestForDonationListViewItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 10,
                     padding:
                         const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     decoration: BoxDecoration(
@@ -124,8 +128,6 @@ class RequestForDonationListViewItem extends StatelessWidget {
                       style: TextStyles.semiBold12.copyWith(
                         color: Colors.white,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
