@@ -1,6 +1,6 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
-import 'package:blood_bank/feature/home/presentation/views/widget/home/request_for_donation_list_view_item.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/request_for_donation_list_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/see_all_button.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -53,19 +53,9 @@ class RequestsForDonation extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 350,
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount:
-                    reversedRequests.length >= 4 ? 4 : reversedRequests.length,
-                itemBuilder: (context, index) {
-                  final request = reversedRequests[index].data();
-
-                  return RequestForDonationListViewItem(
-                    request: request,
-                  );
-                },
-              ),
+              height: MediaQuery.sizeOf(context).height * .5,
+              child: RequestForDonationListView(
+                  reversedRequests: reversedRequests),
             ),
           ],
         );
