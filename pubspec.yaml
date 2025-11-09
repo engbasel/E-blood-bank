@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bloc: ^9.1.0
   cached_network_image: ^3.4.1
   cloud_firestore: ^5.5.1
   connectivity_plus: ^6.1.1
@@ -44,7 +45,7 @@ dependencies:
   firebase_storage: null
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.6
+  flutter_bloc: null
   flutter_facebook_auth: ^7.1.1
   flutter_gemini: ^3.0.0
   flutter_launcher_icons: ^0.14.1
@@ -82,7 +83,7 @@ dependencies:
   tutorial_coach_mark: ^1.2.12
   url_launcher: ^6.3.1
 dev_dependencies:
-  flutter_lints:
+  flutter_lints: null
   flutter_test:
     sdk: flutter
 dependency_overrides:

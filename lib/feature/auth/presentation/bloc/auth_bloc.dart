@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bloc/bloc.dart';
 import 'package:blood_bank/feature/auth/domain/entities/user_entity.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
@@ -25,7 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserEvent>(_onUpdateUser);
 
     _authStateSubscription = _authRepository.authStateChanges.listen(
-          (user) {
+      (user) {
         if (user == null) {
           emit(Unauthenticated());
         } else if (!user.emailVerified) {
@@ -35,7 +36,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     );
-
   }
 
   Future<void> _onCheckAuthStatus(
@@ -75,10 +75,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthActionInProgress());
     final result = await _authRepository.signUpWithEmailAndPassword(
-      event.email,
-      event.password,
-      event.name
-    );
+        event.email, event.password, event.name);
     result.fold(
       (failure) => emit(AuthActionFailure(failure.toString())),
       (user) => emit(EmailNotVerified(user)),

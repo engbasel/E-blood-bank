@@ -32,13 +32,12 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
 
   void _loadSwitchValue() {
     setState(() {
-      _value = Prefs.getBool(widget.keyName) ??
-          widget.value;
+      _value = Prefs.getBool(widget.keyName) ?? widget.value;
     });
   }
 
   void _saveSwitchValue(bool value) {
-    Prefs.setBool(widget.keyName, value); // حفظ القيمة الجديدة
+    Prefs.setBool(widget.keyName, value);
   }
 
   @override
@@ -59,7 +58,7 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
             _saveSwitchValue(value); // حفظ القيمة الجديدة
             widget.onChanged(value); // استدعاء دالة التغيير
           },
-          activeColor: AppColors.primaryColor,
+          activeThumbColor: AppColors.primaryColor,
         ),
       ],
     );
