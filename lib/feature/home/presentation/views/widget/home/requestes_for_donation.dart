@@ -61,7 +61,7 @@ class RequestsForDonation extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final request = reversedRequests[index].data();
 
-                  return RequestListViewItem(
+                  return RequestForDonationListViewItem(
                     request: request,
                   );
                 },

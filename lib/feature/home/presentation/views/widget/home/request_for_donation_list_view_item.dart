@@ -8,8 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class RequestListViewItem extends StatelessWidget {
-  const RequestListViewItem({super.key, this.request});
+class RequestForDonationListViewItem extends StatelessWidget {
+  const RequestForDonationListViewItem({super.key, this.request});
   final request;
   @override
   Widget build(BuildContext context) {
