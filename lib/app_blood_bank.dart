@@ -1,4 +1,5 @@
 import 'package:blood_bank/core/services/get_it_service.dart';
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_donor_request_usecase.dart';
@@ -39,6 +40,16 @@ class BloodBank extends StatelessWidget {
               theme: ThemeData(
                 fontFamily: 'iwanzaza',
                 scaffoldBackgroundColor: Colors.white,
+                colorScheme: ColorScheme.light(
+                  primary: AppColors.primaryColor,
+                  onPrimary: Colors.white,
+                ),
+                datePickerTheme: DatePickerThemeData(
+                  headerBackgroundColor:AppColors.primaryColor,
+                  headerForegroundColor: Colors.white,
+                  todayBackgroundColor: WidgetStateProperty.all(AppColors.primaryColor),
+                  todayForegroundColor: WidgetStateProperty.all(Colors.white),
+                ),
               ),
               themeMode: ThemeMode.light,
               locale: state.locale,
@@ -61,6 +72,7 @@ class BloodBank extends StatelessWidget {
               },
               debugShowCheckedModeBanner: false,
               home: SplashInitializer(),
+
               builder: (context, child) {
                 return AnnotatedRegion<SystemUiOverlayStyle>(
                   value: const SystemUiOverlayStyle(

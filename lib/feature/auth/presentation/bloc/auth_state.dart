@@ -37,7 +37,7 @@ class AuthActionInProgress extends AuthState {}
 class AuthActionSuccess extends AuthState {
   final String? message;
 
-  const AuthActionSuccess([this.message]);
+  const AuthActionSuccess([this.message,]);
 
   @override
   List<Object?> get props => [message];

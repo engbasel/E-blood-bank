@@ -1,8 +1,10 @@
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/utils/custom_progrss_hud.dart';
+import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/core/widget/custom_app_bar.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
+import 'package:blood_bank/feature/auth/presentation/view/login_view.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/forgot_password_view_body.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -34,14 +36,15 @@ class ForgotPasswordViewBodyBlocConsumer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is Authenticated) {
-          // succesTopSnackBar(
-          //     context,
-          //     'password_reset_link_sent_to${state.userEntity.email}'
-          //         .tr(context));
+        if (state is AuthActionSuccess) {
+          successTopSnackBar(
+            context,
+            'password_reset_link_sent_to'.tr(context),
+          );
 
-          successTopSnackBar(context,
-              '${'password_reset_link_sent_to'.tr(context)} ${state.user.email}');
+          Navigator.of(context).pushReplacement(
+            buildPageRoute(const LoginView()),
+          );
         } else if (state is AuthError) {
           failureTopSnackBar(context, state.message);
         }

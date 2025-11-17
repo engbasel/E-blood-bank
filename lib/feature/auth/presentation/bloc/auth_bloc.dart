@@ -25,17 +25,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<DeleteAccountEvent>(_onDeleteAccount);
     on<UpdateUserEvent>(_onUpdateUser);
 
-    _authStateSubscription = _authRepository.authStateChanges.listen(
-      (user) {
-        if (user == null) {
-          emit(Unauthenticated());
-        } else if (!user.emailVerified) {
-          emit(EmailNotVerified(user));
-        } else {
-          emit(Authenticated(user));
-        }
-      },
-    );
+    // _authStateSubscription = _authRepository.authStateChanges.listen(
+    //   (user) {
+    //     if (user == null) {
+    //       emit(Unauthenticated());
+    //     } else if (!user.emailVerified) {
+    //       emit(EmailNotVerified(user));
+    //     } else {
+    //       emit(Authenticated(user));
+    //     }
+    //   },
+    // );
+    _authRepository.authStateChanges.listen((user) {
+      add(AuthStatusChanged(user));
+    });
+
+    on<AuthStatusChanged>((event, emit) {
+      if (event.user == null) {
+        emit(Unauthenticated());
+      } else if (!event.user!.emailVerified) {
+        emit(EmailNotVerified(event.user!));
+      } else {
+        emit(Authenticated(event.user!));
+      }
+    });
+
   }
 
   Future<void> _onCheckAuthStatus(
@@ -123,10 +137,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthActionInProgress());
+
     final result = await _authRepository.resetPassword(event.email);
     result.fold(
       (failure) => emit(AuthActionFailure(failure.toString())),
-      (_) => emit(const AuthActionSuccess('Password reset email sent')),
+      (_) => emit( AuthActionSuccess('Password reset email sent')),
     );
   }
 
@@ -135,10 +150,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthActionInProgress());
+
     final result = await _authRepository.verifyEmail();
     result.fold(
       (failure) => emit(AuthActionFailure(failure.toString())),
-      (_) => emit(const AuthActionSuccess('Verification email sent')),
+      (_) => emit(const AuthActionSuccess('Verification email sent',)),
     );
   }
 

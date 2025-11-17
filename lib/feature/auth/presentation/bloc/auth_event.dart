@@ -1,3 +1,4 @@
+import 'package:blood_bank/feature/auth/domain/entities/user_entity.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AuthEvent extends Equatable {
@@ -8,6 +9,12 @@ abstract class AuthEvent extends Equatable {
 }
 
 class CheckAuthStatusEvent extends AuthEvent {}
+
+class AuthStatusChanged extends AuthEvent {
+  final UserEntity? user;
+  const AuthStatusChanged(this.user);
+}
+
 
 class SignInWithEmailEvent extends AuthEvent {
   final String email;

@@ -22,36 +22,21 @@ class VerifiedEmailView extends StatefulWidget {
 }
 
 class VerifiedEmailViewState extends State<VerifiedEmailView> {
-  late Timer _timer;
-
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      User? user = FirebaseAuth.instance.currentUser;
+    FirebaseAuth.instance.userChanges().listen((user) async {
       if (user != null) {
         await user.reload();
-
         if (user.emailVerified) {
-          timer.cancel();
-
           if (!mounted) return;
           Navigator.of(context).pushReplacement(
-            buildPageRoute(
-              const DonorOrNeed(),
-            ),
+            buildPageRoute(const DonorOrNeed()),
           );
         }
       }
     });
   }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

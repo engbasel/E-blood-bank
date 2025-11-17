@@ -138,7 +138,7 @@
   "no_user_data_available": "لا توجد بيانات للمستخدم",
   "user_not": "User not found",
   "failed_to_update_user_state": "Failed to update user state",
-  "password_reset_link_sent_to": "Password reset link sent to",
+  "password_reset_link_sent_to": "Password reset link sent to your email",
   "forgot_password": "Forgot Password",
   "home": "Home",
   "blood_needed": "Blood Needed",

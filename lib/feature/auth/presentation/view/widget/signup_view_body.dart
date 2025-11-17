@@ -1,11 +1,13 @@
 import 'package:blood_bank/constants.dart';
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/widget/custom_button.dart';
 import 'package:blood_bank/core/widget/custom_name.dart';
 import 'package:blood_bank/core/widget/custom_text_field.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/have_an_account_widget.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/password_field.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/terms_and_condition.dart';
@@ -145,22 +147,54 @@ class _SignupViewBodyState extends State<SignupViewBody> {
                 },
               ),
               const SizedBox(height: 32),
-              CustomButton(
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      formKey.currentState!.save();
-                      if (!isTermsAccepted) {
-                        failureTopSnackBar(context,
-                            'Please accept terms and conditions'.tr(context));
-                      } else {
-                         context
-                            .read<AuthBloc>()
-                            .add(SignUpWithEmailEvent(email: emailController.text,
-                             password: passwordController.text, name: nameController.text));
+             // CustomButton(
+             //      onPressed: () async {
+             //        if (formKey.currentState!.validate()) {
+             //          formKey.currentState!.save();
+             //          if (!isTermsAccepted) {
+             //            failureTopSnackBar(context,
+             //                'Please accept terms and conditions'.tr(context));
+             //          } else {
+             //             context
+             //                .read<AuthBloc>()
+             //                .add(SignUpWithEmailEvent(email: emailController.text,
+             //                 password: passwordController.text, name: nameController.text));
+             //          }
+             //        }
+             //      },
+             //      text: "sign_up".tr(context)),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthLoading || state is AuthActionInProgress) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppColors.primaryColor,),
+                    );
+                  }
+                  return CustomButton(
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        if (!isTermsAccepted) {
+                          failureTopSnackBar(
+                            context,
+                            'Please accept terms and conditions'.tr(context),
+                          );
+                        } else {
+                          context.read<AuthBloc>().add(
+                            SignUpWithEmailEvent(
+                              email: emailController.text,
+                              password: passwordController.text,
+                              name: nameController.text,
+                            ),
+                          );
+                        }
                       }
-                    }
-                  },
-                  text: "sign_up".tr(context)),
+                    },
+                    text: "sign_up".tr(context),
+                  );
+                },
+              ),
+
               const SizedBox(height: 16),
               const HaveAnAccountWidget(),
               const SizedBox(height: 32),

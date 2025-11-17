@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:blood_bank/constants.dart';
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
@@ -9,6 +10,7 @@ import 'package:blood_bank/core/widget/custom_text_field.dart';
 import 'package:blood_bank/core/widget/under_line.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
+import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/auth/presentation/view/forgot_password_view.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/dont_have_an_account_widget.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/or_divider.dart';
@@ -109,16 +111,30 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                 ],
               ),
               const SizedBox(height: 32),
-              CustomButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      formKey.currentState!.save();
-                      context.read<AuthBloc>().add(SignInWithEmailEvent(
-                            email: email, password: password,
-                      ) );
-                    }
-                  },
-                  text: "login".tr(context)),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthLoading || state is AuthActionInProgress) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppColors.primaryColor,),
+                    );
+                  }
+                  return CustomButton(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        context.read<AuthBloc>().add(
+                          SignInWithEmailEvent(
+                            email: email,
+                            password: password,
+                          ),
+                        );
+                      }
+                    },
+                    text: "login".tr(context),
+                  );
+                },
+              ),
+
               const SizedBox(height: 16),
               const DontHaveAnAccountWidget(),
               const SizedBox(height: 12),

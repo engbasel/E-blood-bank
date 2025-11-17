@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:blood_bank/constants.dart';
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/services/shared_preferences_sengleton.dart';
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/custom_progrss_hud.dart';
 import 'package:blood_bank/core/widget/blood_type_drop_down.dart';
 import 'package:blood_bank/core/widget/custom_app_bar.dart';
@@ -191,17 +192,20 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 children: [
                   GestureDetector(
                     onTap: _pickImage,
-                    child: CircleAvatar(
+                    child:CircleAvatar(
                       radius: 50,
+                      backgroundColor: AppColors.lightColor,
                       backgroundImage: _selectedImage != null
                           ? FileImage(_selectedImage!)
-                          : (_uploadedImageUrl != null
-                              ? NetworkImage(_uploadedImageUrl!)
-                              : null) as ImageProvider?,
-                      child: _selectedImage == null && _uploadedImageUrl == null
-                          ? const Icon(Icons.camera_alt, size: 50)
+                          : (_uploadedImageUrl != null && _uploadedImageUrl!.isNotEmpty
+                          ? NetworkImage(_uploadedImageUrl!)
+                          : null),
+                      child: (_selectedImage == null && (_uploadedImageUrl == null || _uploadedImageUrl!.isEmpty))
+                          ? const Icon(Icons.camera_alt, size: 50, color: Colors.white)
                           : null,
                     ),
+
+
                   ),
                   const SizedBox(height: 16),
                   CustomTextFormField(
