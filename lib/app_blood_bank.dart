@@ -36,40 +36,39 @@ class BloodBank extends StatelessWidget {
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
         builder: (context, state) {
           return MaterialApp(
-            theme: ThemeData(
-                fontFamily: 'iwanzaza', scaffoldBackgroundColor: Colors.white,
-          ),
-            themeMode: ThemeMode.light,
-            locale: state.locale,
-            supportedLocales: const [Locale('en'), Locale('ar')],
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            localeResolutionCallback: (deviceLocale, supportedLocales) {
-              for (var locale in supportedLocales) {
-                if (deviceLocale != null &&
-                    deviceLocale.languageCode == locale.languageCode) {
-                  return deviceLocale;
+              theme: ThemeData(
+                fontFamily: 'iwanzaza',
+                scaffoldBackgroundColor: Colors.white,
+              ),
+              themeMode: ThemeMode.light,
+              locale: state.locale,
+              supportedLocales: const [Locale('en'), Locale('ar')],
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              localeResolutionCallback: (deviceLocale, supportedLocales) {
+                for (var locale in supportedLocales) {
+                  if (deviceLocale != null &&
+                      deviceLocale.languageCode == locale.languageCode) {
+                    return deviceLocale;
+                  }
                 }
-              }
 
-              return supportedLocales.first;
-            },
-            debugShowCheckedModeBanner: false,
-            home: SplashInitializer(),
-            builder: (context, child) {
-              return AnnotatedRegion<SystemUiOverlayStyle>(
-                value: const SystemUiOverlayStyle(
-                  statusBarIconBrightness: Brightness.light,
-                ),
-                child: child!,
-              );
-            }
-          );
-
+                return supportedLocales.first;
+              },
+              debugShowCheckedModeBanner: false,
+              home: SplashInitializer(),
+              builder: (context, child) {
+                return AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: const SystemUiOverlayStyle(
+                    statusBarIconBrightness: Brightness.light,
+                  ),
+                  child: child!,
+                );
+              });
         },
       ),
     );

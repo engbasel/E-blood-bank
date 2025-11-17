@@ -62,7 +62,7 @@ class DonerModel {
       lastRequestDate: addRequestInputEntity.lastRequestDate,
     );
   }
-  toJson() {
+  Map<String, Object?> toJson() {
     return {
       'name': name,
       'age': age,

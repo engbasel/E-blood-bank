@@ -45,7 +45,7 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
 
   void _initializeGemini() {
     Gemini.init(
-      apiKey: 'AIzaSyChNcCkS_ZV366LoPNKXR6rwtQfU0BIbXE',
+      apiKey: 'AIzaSyAlSOKclXfNacedo9955-MMEI1LfXsXTsw',
       enableDebugging: true,
     );
     gemini = Gemini.instance;
@@ -124,7 +124,8 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white, // White background
+        backgroundColor: Colors.white,
+        // White background
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15), // Rounded corners
         ),
@@ -161,7 +162,8 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
             ),
           ),
         ),
-        actionsAlignment: MainAxisAlignment.center, // Center-align buttons
+        actionsAlignment: MainAxisAlignment.center,
+        // Center-align buttons
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -266,6 +268,59 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
     }
   }
 
+  // void _sendMessage(String text) async {
+  //   if (text.trim().isEmpty || _currentUser == null) return;
+  //
+  //   final userMessage = ChatMessage(
+  //     user: _currentUser!,
+  //     createdAt: DateTime.now(),
+  //     text: text,
+  //   );
+  //
+  //   setState(() {
+  //     _messages.add(userMessage);
+  //     _messageController.clear();
+  //   });
+  //
+  //   await _saveMessage(userMessage);
+  //
+  //   _scrollToBottom();
+  //
+  //   try {
+  //     final response = await gemini?.chat([
+  //       Content(
+  //         parts: [Part.text(text)],
+  //         role: 'user',
+  //       ),
+  //     ]);
+  //
+  //     final chatGPTMessage = ChatMessage(
+  //       user: _chatGPTUser,
+  //       createdAt: DateTime.now(),
+  //       text: response?.output ?? "No response from Gemini",
+  //     );
+  //
+  //     setState(() {
+  //       _messages.add(chatGPTMessage);
+  //     });
+  //
+  //     await _saveMessage(chatGPTMessage);
+  //
+  //     _scrollToBottom();
+  //   } catch (e) {
+  //     debugPrint("Error communicating with Gemini: $e");
+  //     setState(() {
+  //       _messages.add(ChatMessage(
+  //         user: _chatGPTUser,
+  //         createdAt: DateTime.now(),
+  //         text: "Sorry, something went wrong. Please try again later."
+  //             .tr(context),
+  //       ));
+  //     });
+  //     _scrollToBottom();
+  //   }
+  // }
+
   void _sendMessage(String text) async {
     if (text.trim().isEmpty || _currentUser == null) return;
 
@@ -281,33 +336,46 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
     });
 
     await _saveMessage(userMessage);
-
     _scrollToBottom();
+
+    setState(() {
+      _messages.add(ChatMessage(
+        user: _chatGPTUser,
+        createdAt: DateTime.now(),
+        text: "",
+      ));
+    });
 
     try {
       final response = await gemini?.chat([
-        Content(
-          parts: [Part.text(text)],
-          role: 'user',
-        ),
+        Content(parts: [Part.text(text)], role: 'user'),
       ]);
 
-      final chatGPTMessage = ChatMessage(
-        user: _chatGPTUser,
-        createdAt: DateTime.now(),
-        text: response?.output ?? "No response from Gemini",
-      );
-
       setState(() {
-        _messages.add(chatGPTMessage);
+        if (_messages.isNotEmpty &&
+            _messages.last.user.id == _chatGPTUser.id &&
+            _messages.last.text.isEmpty) {
+          _messages.removeLast();
+        }
+
+        _messages.add(ChatMessage(
+          user: _chatGPTUser,
+          createdAt: DateTime.now(),
+          text: response?.output ?? "No response from Gemini",
+        ));
       });
 
-      await _saveMessage(chatGPTMessage);
-
+      await _saveMessage(_messages.last);
       _scrollToBottom();
     } catch (e) {
       debugPrint("Error communicating with Gemini: $e");
       setState(() {
+        if (_messages.isNotEmpty &&
+            _messages.last.user.id == _chatGPTUser.id &&
+            _messages.last.text.isEmpty) {
+          _messages.removeLast();
+        }
+
         _messages.add(ChatMessage(
           user: _chatGPTUser,
           createdAt: DateTime.now(),
@@ -480,10 +548,12 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
                           isCurrentUser ? Colors.blue[100] : Colors.grey[300],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(
-                      message.text,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    child: message.text.isEmpty && !isCurrentUser
+                        ? const TypingIndicator()
+                        : Text(
+                            message.text,
+                            style: const TextStyle(fontSize: 14),
+                          ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -606,7 +676,8 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10), // Rounded corners
           ),
-          elevation: 4, // Add shadow
+          elevation: 4,
+          // Add shadow
           color: Colors.white, // Background color of the menu
         )
       ],

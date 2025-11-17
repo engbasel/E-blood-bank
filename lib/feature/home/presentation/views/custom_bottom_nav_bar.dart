@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
+
+
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});
 
@@ -25,12 +27,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   Timer? animationTimer;
   int animationCount = 0;
 
-  final List<Widget> screens = [
-    const HomeView(),
-    NeedView(),
-    const DonorView(),
-    const ProfileView(),
-  ];
+
 
   @override
   void initState() {
@@ -70,6 +67,13 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      const HomeView(),
+      NeedView(),
+      const DonorView(),
+      ProfileView(selected: selected,),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xff800000),
       extendBody: true,

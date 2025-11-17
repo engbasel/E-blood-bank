@@ -169,7 +169,7 @@ class _DonorOrNeedState extends State<DonorOrNeed> {
                 ),
                 if (isSaving)
                   Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black54,
                     child: const Center(
                       child: CustomCircularProgressIndicator(),
                     ),

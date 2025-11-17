@@ -20,4 +20,5 @@ void main() async {
   await SQlHelperHealthRequest().database;
 
   runApp(const BloodBank());
+
 }

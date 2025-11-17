@@ -13,7 +13,10 @@ class _SplashInitializerState extends State<SplashInitializer> {
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeNotifications();
+    });
+
   }
 
   Future<void> _initializeNotifications() async {

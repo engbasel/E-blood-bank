@@ -31,7 +31,6 @@ class AddDonorRequestBloc extends Bloc<AddDonorRequestEvent, AddDonorRequestStat
     res.fold(
           (failure) => emit(AddDonorRequestFailure(failure.message)),
           (data) {
-            print(data);
             emit(DonorDataLoaded(data));
           },
     );

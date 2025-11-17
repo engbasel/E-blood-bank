@@ -20,13 +20,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
+  const ProfileView({super.key, required this.selected});
 
   @override
   ProfileViewState createState() => ProfileViewState();
+  final int selected;
 }
 
-class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
+class ProfileViewState extends State<ProfileView>
+    with WidgetsBindingObserver {
   final shorebirdUpdater = ShorebirdUpdater();
 
   bool _isCheckingForUpdates = false;
@@ -43,6 +45,8 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     _initializeNotifications();
   }
 
+
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -56,7 +60,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     }
   }
 
-  // تهيئة الإشعارات المحلية
   void _initializeNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -240,6 +243,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,7 +277,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                   return CustomProfileAppBar(
                     name: user.name!,
                     photoUrl: user.photoUrl,
-                    userState: user.userState.tr(context),
+                    userState: user.userState.tr(context), selected: widget.selected,
                   );
                 },
               ),
@@ -396,4 +400,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
       },
     );
   }
+
+
 }

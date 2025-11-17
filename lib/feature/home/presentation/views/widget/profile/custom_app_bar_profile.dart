@@ -13,14 +13,14 @@ class CustomProfileAppBar extends StatefulWidget
   final String name;
   final String? photoUrl;
   final String userState;
-
+  final int selected;
 
   const CustomProfileAppBar({
     super.key,
     required this.name,
     this.photoUrl,
     required this.userState,
-
+    required this.selected,
   });
 
   @override
@@ -47,9 +47,11 @@ class _CustomProfileAppBarState extends State<CustomProfileAppBar> {
     final prefs = await SharedPreferences.getInstance();
     final user = FirebaseAuth.instance.currentUser;
 
+    if (widget.selected != 3) return;
+
     if (user != null) {
       final tutorialKey = '${user.uid}_isFirstTimeCustomProfileAppBar';
-      bool isFirstTime = prefs.getBool(tutorialKey) ?? true;
+      bool isFirstTime = prefs.getBool(tutorialKey) ??true;
 
       if (isFirstTime) {
         _showTutorial();
@@ -117,14 +119,6 @@ class _CustomProfileAppBarState extends State<CustomProfileAppBar> {
           width: MediaQuery.of(context).size.width,
           height: widget.preferredSize.height,
         ),
-        // Positioned(
-        //   top: 30,
-        //   left: 10,
-        //   child: IconButton(
-        //     icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        //     onPressed: () {},
-        //   ),
-        // ),
         Positioned(
           top: 30,
           right: 10,

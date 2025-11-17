@@ -1,6 +1,8 @@
+import 'package:blood_bank/core/helper_function/get_user.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
+import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/auth/presentation/view/login_view.dart';
@@ -16,7 +18,6 @@ class UserHandler extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-
         if (state is AuthLoading) {
           return const Center(child: CustomCircularProgressIndicator());
         }
@@ -37,14 +38,39 @@ class UserHandler extends StatelessWidget {
         }
 
         if (state is Authenticated) {
-          return HomeHeader(
+          return StreamBuilder<UserModel>(
+            stream: getUserStream(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CustomCircularProgressIndicator());
+              }
 
-            name: state.user.name ??
-                state.user.email?.split('@')[0] ??
-                'Anonymous',
-            photoUrl: state.user.photoUrl,
-            userState: state.user.userState.tr(context),
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'error_occurred: ${snapshot.error}'.tr(context),
+                    style: TextStyles.semiBold16.copyWith(
+                      color: AppColors.backgroundColor,
+                    ),
+                  ),
+                );
+              }
 
+              if (!snapshot.hasData) {
+                return Center(
+                  child: Text('no_user_data_available'.tr(context)),
+                );
+              }
+
+              final user = snapshot.data!;
+              return HomeHeader(
+                name: user.name ??
+                    user.email?.split('@')[0] ??
+                    'Anonymous',
+                photoUrl: user.photoUrl,
+                userState: user.userState.tr(context),
+              );
+            },
           );
         }
 
@@ -61,3 +87,4 @@ class UserHandler extends StatelessWidget {
     );
   }
 }
+
