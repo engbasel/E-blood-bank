@@ -8,7 +8,9 @@ import 'package:flutter_svg/svg.dart';
 
 class RequestForDonationListViewItem extends StatelessWidget {
   const RequestForDonationListViewItem({super.key, this.request});
+
   final dynamic request;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,9 +24,10 @@ class RequestForDonationListViewItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 5,
-              offset: const Offset(0, 6),
+              color: Colors.grey.withValues(alpha: 0.3),
+              blurRadius: 8,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -39,7 +42,11 @@ class RequestForDonationListViewItem extends StatelessWidget {
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CustomCircularProgressIndicator());
+                  return const CircleAvatar(
+                    radius: 25,
+                    backgroundColor: Colors.grey,
+                    child: Icon(Icons.person, color: Colors.white),
+                  );
                 }
 
                 if (snapshot.hasError) {

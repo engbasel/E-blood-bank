@@ -10,8 +10,6 @@ import 'package:flutter/material.dart' as flutter;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-
-
 class DonorProfileScreen extends StatefulWidget {
   final String uId;
 
@@ -123,10 +121,15 @@ class _DonorProfileScreenState extends State<DonorProfileScreen> {
                         children: [
                           CircleAvatar(
                             radius: 50,
-                            backgroundImage: NetworkImage(donorData['photoUrl']),
-                            // backgroundColor: Colors.white,
-                            // child: Icon(Icons.person, size: 60, color: primaryColor),
+                            backgroundImage: donorData['photoUrl'] != null && donorData['photoUrl'].isNotEmpty
+                                ? NetworkImage(donorData['photoUrl'])
+                                : null,
+                            backgroundColor: Colors.white,
+                            child: (donorData['photoUrl'] == null || donorData['photoUrl'].isEmpty)
+                                ? Icon(Icons.person, size: 60, color: primaryColor)
+                                : null,
                           ),
+
                           const SizedBox(height: 16),
                           Text(
                             donorData['name'] ?? 'unknown'.tr(context),
