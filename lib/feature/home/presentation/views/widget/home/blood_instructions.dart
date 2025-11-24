@@ -28,7 +28,10 @@ class BloodInstructions extends StatelessWidget {
             Icons.arrow_back_ios_new_rounded,
             color: Colors.white,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            FocusScope.of(context).unfocus();
+            Navigator.pop(context);
+          },
         ),
       ),
       backgroundColor: Colors.white,

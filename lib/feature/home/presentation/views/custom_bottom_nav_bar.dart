@@ -13,7 +13,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
-
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});
 
@@ -26,8 +25,6 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   bool shouldAnimateLottie = false;
   Timer? animationTimer;
   int animationCount = 0;
-
-
 
   @override
   void initState() {
@@ -71,7 +68,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       const HomeView(),
       NeedView(),
       const DonorView(),
-      ProfileView(selected: selected,),
+      ProfileView(
+        selected: selected,
+      ),
     ];
 
     return Scaffold(
@@ -164,4 +163,3 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     );
   }
 }
-

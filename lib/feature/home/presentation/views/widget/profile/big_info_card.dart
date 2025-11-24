@@ -297,31 +297,121 @@ class BigInfoCard extends StatelessWidget {
       },
     );
   }
+  //
+  // void _promptUserToSetNewDate(BuildContext context, DocumentSnapshot request) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('Donation Day Passed'),
+  //       content: const Text(
+  //           'Your donation day has passed. Would you like to set a new donation date?'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             // Close the dialog without deleting the request
+  //             Navigator.pop(context);
+  //           },
+  //           child: const Text('Skip'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () async {
+  //             Navigator.pop(context); // Close the dialog
+  //             DateTime? pickedDate = await showDatePicker(
+  //               context: context,
+  //               initialDate: DateTime.now(),
+  //               firstDate: DateTime(2020),
+  //               lastDate: DateTime(2100),
+  //             );
+  //
+  //             if (pickedDate != null) {
+  //               _updateNextDonationDate(request, pickedDate);
+  //             }
+  //
+  //           },
+  //           child: const Text('Set New Date'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  //
+  // Future<void> _updateNextDonationDate(DocumentSnapshot<Object?> request, DateTime pickedDate) async {
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('donerRequest')
+  //         .doc(request.id)
+  //         .update({
+  //       'nextDonationDate': Timestamp.fromDate(pickedDate),
+  //     });
+  //
+  //     debugPrint("Next donation date updated to $pickedDate");
+  //
+  //
+  //      ScaffoldMessenger.of(context).showSnackBar(
+  //        const SnackBar(content: Text("تم تحديث ميعاد التبرع بنجاح")),
+  //     );
+  //
+  //   } catch (e) {
+  //     debugPrint("Error updating next donation date: $e");
+  //     rethrow;
+  //   }
+  // }
+  //
 
-  void _promptUserToSetNewDate(BuildContext context, DocumentSnapshot request) {
-    showDialog(
+  Future<void> _promptUserToSetNewDate(BuildContext context, DocumentSnapshot request) async {
+    final pickedDate = await showDialog<DateTime>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Donation Day Passed'),
-        content: const Text(
-            'Your donation day has passed. Would you like to set a new donation date?'),
+        content: const Text('Your donation day has passed. Would you like to set a new donation date?'),
         actions: [
           TextButton(
-            onPressed: () {
-              // Close the dialog without deleting the request
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             child: const Text('Skip'),
           ),
           TextButton(
-            onPressed: () {
-              // Add your navigation logic here
-              Navigator.pop(context); // Close the dialog
+            onPressed: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2020),
+                lastDate: DateTime(2100),
+              );
+              Navigator.pop(context, date);
             },
             child: const Text('Set New Date'),
           ),
         ],
       ),
     );
+
+    if (pickedDate != null) {
+      await _updateNextDonationDate(context, request, pickedDate);
+    }
   }
+
+
+  Future<void> _updateNextDonationDate(
+      BuildContext context, DocumentSnapshot<Object?> request, DateTime pickedDate) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('donerRequest')
+          .doc(request.id)
+          .update({
+        'nextDonationDate': Timestamp.fromDate(pickedDate),
+      });
+
+      debugPrint("Next donation date updated to $pickedDate");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("تم تحديث ميعاد التبرع بنجاح")),
+      );
+    } catch (e) {
+      debugPrint("Error updating next donation date: $e");
+      rethrow;
+    }
+  }
+
+
 }
+

@@ -1,5 +1,5 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
-import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/donation_request.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/request_for_donation_list_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/see_all_button.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
@@ -15,7 +15,7 @@ class RequestsForDonation extends StatelessWidget {
       stream: FirebaseFirestore.instance.collection('donerRequest').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CustomCircularProgressIndicator());
+          return const Center(child: RequestForDonationSkeletonListView());
         }
 
         if (snapshot.hasError) {
