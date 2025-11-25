@@ -252,6 +252,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  maxLength: 14,
                   hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: idCardController,
                   hintText: 'nationalId'.tr(context),
@@ -272,6 +273,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  maxLength: 12,
                   hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: contactController,
                   hintText: 'contactNumber'.tr(context),
