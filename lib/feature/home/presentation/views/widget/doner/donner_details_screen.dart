@@ -6,36 +6,34 @@ import 'package:intl/intl.dart';
 
 class DonnerDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> donationData;
-
   const DonnerDetailsScreen({super.key, required this.donationData});
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:AppColors.lightBackground,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           color: Colors.white,
         ),
-        title: Text('donation_details'.tr(context),
-            style: TextStyle(
-              color: Colors.white,
-            )), // Localized title
+        title: Text(
+          'donation_details'.tr(context),
+          style: const TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
-        backgroundColor: AppColors.primaryColor,
-        elevation: 0,
+        backgroundColor: AppColors.backgroundColor,
+        elevation: 2,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section
             _buildHeaderSection(context),
             const SizedBox(height: 20),
-            // Details Section
             _buildDetailsSection(context),
           ],
         ),
@@ -43,36 +41,40 @@ class DonnerDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Build the header section
+  // Header Section
   Widget _buildHeaderSection(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: AppColors.backgroundColor,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              donationData['name'] ??
-                  'no_name'.tr(context), // Localized fallback
+              donationData['name'] ?? 'no_name'.tr(context),
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              donationData['hospitalName'] ??
-                  'no_hospital'.tr(context), // Localized fallback
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
+            Row(
+              children: [
+                const Icon(Icons.local_hospital, color: AppColors.backgroundColor),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    donationData['hospitalName'] ?? 'no_hospital'.tr(context),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -80,74 +82,62 @@ class DonnerDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Build the details section
+  // Details Section
   Widget _buildDetailsSection(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: AppColors.backgroundColor,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDetailItem(context, 'address', donationData['address']),
-            _buildDetailItem(context, 'age', donationData['age'].toString()),
-            _buildDetailItem(context, 'blood_type', donationData['bloodType']),
-            _buildDetailItem(
-                context, 'contact', donationData['contact'].toString()),
-            _buildDetailItem(
-                context, 'distance', donationData['distance'].toString()),
-            _buildDetailItem(
-                context, 'donation_type', donationData['donationType']),
-            _buildDetailItem(context, 'gender', donationData['gender']),
-            _buildDetailItem(
-                context, 'id_card', donationData['idCard'].toString()),
-            // _buildDetailItem(context, 'last_donation_date',
-            //     donationData['lastRequestDate'].toString()),
-            _buildDetailItem(
-                context, 'last_donation_date', donationData['lastRequestDate']),
-
-            _buildDetailItem(context, 'medical_conditions',
-                donationData['medicalConditions']),
-            _buildDetailItem(context, 'notes', donationData['notes']),
-            _buildDetailItem(
-                context, 'units', donationData['units'].toString()),
+            _buildDetailItem(context, Icons.location_on, 'address', donationData['address']),
+            _buildDetailItem(context, Icons.cake, 'age', donationData['age'].toString()),
+            _buildDetailItem(context, Icons.bloodtype, 'blood_type', donationData['bloodType']),
+            _buildDetailItem(context, Icons.phone, 'contact', donationData['contact']),
+            _buildDetailItem(context, Icons.map, 'distance', donationData['distance'].toString()),
+            _buildDetailItem(context, Icons.volunteer_activism, 'donation_type', donationData['donationType']),
+            _buildDetailItem(context, Icons.person, 'gender', donationData['gender']),
+            _buildDetailItem(context, Icons.credit_card, 'id_card', donationData['idCard'].toString()),
+            _buildDetailItem(context, Icons.calendar_today, 'last_donation_date', donationData['lastRequestDate']),
+            _buildDetailItem(context, Icons.health_and_safety, 'medical_conditions', donationData['medicalConditions']),
+            _buildDetailItem(context, Icons.note, 'notes', donationData['notes']),
+            _buildDetailItem(context, Icons.water_drop, 'units', donationData['units'].toString()),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailItem(
-      BuildContext context, String labelKey, dynamic value) {
-    String formattedValue = _formatDate(value); // Format the value
-
+  // Detail Item with Icon
+  Widget _buildDetailItem(BuildContext context, IconData icon, String labelKey, dynamic value) {
+    String formattedValue = _formatDate(value);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(icon, color: AppColors.backgroundColor),
+          const SizedBox(width: 8),
           Expanded(
             flex: 2,
             child: Text(
-              '${labelKey.tr(context)}:', // Localized label
-              style: TextStyle(
+              '${labelKey.tr(context)}:',
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black87,
               ),
             ),
           ),
+          const SizedBox(width: 8),
           Expanded(
             flex: 3,
             child: Text(
               formattedValue,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
+              style: const TextStyle(
+                fontSize: 17,
+                color: Colors.black54,
               ),
             ),
           ),
@@ -159,20 +149,15 @@ class DonnerDetailsScreen extends StatelessWidget {
   String _formatDate(dynamic value) {
     try {
       DateTime date;
-
-      // Check if the value is a Timestamp
       if (value is Timestamp) {
         date = value.toDate();
       } else if (value is String) {
         date = DateTime.parse(value);
       } else {
-        return value.toString(); // Fallback for unsupported types
+        return value.toString();
       }
-
-      // Format the date as "day - month - year"
       return DateFormat('dd - MM - yyyy').format(date);
     } catch (e) {
-      // Return the raw value in case of an error
       return value.toString();
     }
   }
