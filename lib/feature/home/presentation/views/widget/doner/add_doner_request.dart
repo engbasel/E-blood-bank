@@ -12,6 +12,7 @@ import 'package:blood_bank/core/widget/governorate_drop_down.dart';
 import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_state.dart'; // تأكد من استيراد حالة الـ Bloc
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -76,153 +77,213 @@ class DonorRequestState extends State<DonorRequest> {
   }
 
   @override
+  void dispose() {
+    nameController.dispose();
+    addressController.dispose();
+    notesController.dispose();
+    medicalConditionsController.dispose();
+    ageController.dispose();
+    contactController.dispose();
+    unitsController.dispose();
+    idCardController.dispose();
+    hospitalNameController.dispose();
+    distanceController.dispose();
+    bloodTypeController.dispose();
+    genderController.dispose();
+    lastDonationDateController.dispose();
+    nextDonationDateController.dispose();
+    donationTypeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.disabled,
-          child: Column(
-            spacing: 12,
-            children: [
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: nameController,
-                hintText: 'Name'.tr(context),
-                validator: (value) => Validators.validateName(value, context),
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: ageController,
-                textInputType: TextInputType.number,
-                validator: (value) => Validators.validateAge(value, context),
-                hintText: 'age'.tr(context),
-              ),
-              BloodTypeDropdown(
-                selectedBloodType: bloodTypeController.text.isNotEmpty
-                    ? bloodTypeController.text
-                    : null,
-                onChanged: (selectedBloodType) {
-                  bloodTypeController.text = selectedBloodType ?? '';
-                },
-              ),
-              DonationTypeDropdown(
-                initialType: null,
-                onTypeSelected: (selectedType) {
-                  donationTypeController.text = selectedType;
-                },
-              ),
-              GovernorateDropdown(
-                selectedKey: addressController.text.isNotEmpty
-                    ? addressController.text
-                    : null,
-                onChanged: (value) {
-                  addressController.text = value ?? '';
-                },
-              ),
-              GenderDropdown(
-                onGenderSelected: (gender) {
-                  genderController.text = gender;
-                },
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: idCardController,
-                hintText: '302090********* only 14'.tr(context),
-                textInputType: TextInputType.number,
-                validator: (value) => Validators.validateIdCard(value, context),
-                maxLength: 14,
-              ),
-              DatePickerField(
-                controller: lastDonationDateController,
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                context: context,
-                label: 'last_donation_date'.tr(context),
-                selectedDate: null,
-                onDateSelected: (date) {
-                  lastDonationDateController.text =
-                      date.toString().split(' ')[0];
-                },
-                isNextDonationDate: false,
-              ),
-              DatePickerField(
-                controller: nextDonationDateController,
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                context: context,
-                label: 'next_donation_date'.tr(context),
-                selectedDate: null,
-                onDateSelected: (date) {
-                  nextDonationDateController.text =
-                      date.toString().split(' ')[0];
-                },
-                isNextDonationDate: true,
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: medicalConditionsController,
-                hintText: 'medicalConditions'.tr(context),
-                maxLines: 3,
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: unitsController,
-                hintText: 'UnitsRequired'.tr(context),
-                textInputType: TextInputType.number,
-                validator: (value) =>
-                    Validators.validateUnitsRequired(value, context),
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: contactController,
-                hintText: 'contactNumber'.tr(context),
-                textInputType: TextInputType.phone,
-                validator: (value) =>
-                    Validators.validateContactNumber(value, context),
-                maxLength: 11,
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: notesController,
-                hintText: 'Notes'.tr(context),
-                maxLines: 3,
-                onSaved: (value) {},
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: hospitalNameController,
-                hintText: 'hospitalName'.tr(context),
-                validator: (value) =>
-                    Validators.validateHospitalName(value, context),
-              ),
-              CustomRequestTextField(
-                hintStyle: TextStyle(color: AppColors.primaryColor),
-                controller: distanceController,
-                textInputType: TextInputType.number,
-                hintText: 'Distance'.tr(context),
-                validator: (value) =>
-                    Validators.validateDistance(value, context),
-              ),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: 'Submit Request'.tr(context),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    final entity = await _addDonorFunction.toEntityWithCheck();
-                    if (entity != null) {
-                      context.read<AddDonorRequestBloc>().add(
-                            SubmitDonorRequestEvent(request: entity),
-                          );
+    return BlocListener<AddDonorRequestBloc, AddDonorRequestState>(
+      listener: (context, state) {
+        if (state is AddDonorRequestSuccess) {
+          _clearAllFields();
+        }
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.disabled,
+            child: Column(
+              children: [
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: nameController,
+                  hintText: 'Name'.tr(context),
+                  validator: (value) => Validators.validateName(value, context),
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: ageController,
+                  textInputType: TextInputType.number,
+                  validator: (value) => Validators.validateAge(value, context),
+                  hintText: 'age'.tr(context),
+                ),
+                const SizedBox(height: 12),
+                BloodTypeDropdown(
+                  selectedBloodType: bloodTypeController.text.isNotEmpty
+                      ? bloodTypeController.text
+                      : null,
+                  onChanged: (selectedBloodType) {
+                    bloodTypeController.text = selectedBloodType ?? '';
+                  },
+                ),
+                const SizedBox(height: 12),
+                DonationTypeDropdown(
+                  initialType: null,
+                  onTypeSelected: (selectedType) {
+                    donationTypeController.text = selectedType;
+                  },
+                ),
+                const SizedBox(height: 12),
+                GovernorateDropdown(
+                  selectedKey: addressController.text.isNotEmpty
+                      ? addressController.text
+                      : null,
+                  onChanged: (value) {
+                    addressController.text = value ?? '';
+                  },
+                ),
+                const SizedBox(height: 12),
+                GenderDropdown(
+                  onGenderSelected: (gender) {
+                    genderController.text = gender;
+                  },
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: idCardController,
+                  hintText: '302090********* only 14'.tr(context),
+                  textInputType: TextInputType.number,
+                  validator: (value) =>
+                      Validators.validateIdCard(value, context),
+                  maxLength: 14,
+                ),
+                const SizedBox(height: 12),
+                DatePickerField(
+                  controller: lastDonationDateController,
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  context: context,
+                  label: 'last_donation_date'.tr(context),
+                  selectedDate: null,
+                  onDateSelected: (date) {
+                    lastDonationDateController.text =
+                        date.toString().split(' ')[0];
+                  },
+                  isNextDonationDate: false,
+                ),
+                const SizedBox(height: 12),
+                DatePickerField(
+                  controller: nextDonationDateController,
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  context: context,
+                  label: 'next_donation_date'.tr(context),
+                  selectedDate: null,
+                  onDateSelected: (date) {
+                    nextDonationDateController.text =
+                        date.toString().split(' ')[0];
+                  },
+                  isNextDonationDate: true,
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: medicalConditionsController,
+                  hintText: 'medicalConditions'.tr(context),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: unitsController,
+                  hintText: 'UnitsRequired'.tr(context),
+                  textInputType: TextInputType.number,
+                  validator: (value) =>
+                      Validators.validateUnitsRequired(value, context),
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: contactController,
+                  hintText: 'contactNumber'.tr(context),
+                  textInputType: TextInputType.phone,
+                  validator: (value) =>
+                      Validators.validateContactNumber(value, context),
+                  maxLength: 11,
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: notesController,
+                  hintText: 'Notes'.tr(context),
+                  maxLines: 3,
+                  onSaved: (value) {},
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: hospitalNameController,
+                  hintText: 'hospitalName'.tr(context),
+                  validator: (value) =>
+                      Validators.validateHospitalName(value, context),
+                ),
+                const SizedBox(height: 12),
+                CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
+                  controller: distanceController,
+                  textInputType: TextInputType.number,
+                  hintText: 'Distance'.tr(context),
+                  validator: (value) =>
+                      Validators.validateDistance(value, context),
+                ),
+                const SizedBox(height: 16),
+                CustomButton(
+                  text: 'Submit Request'.tr(context),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      final entity =
+                          await _addDonorFunction.toEntityWithCheck();
+                      if (entity != null) {
+                        context.read<AddDonorRequestBloc>().add(
+                              SubmitDonorRequestEvent(request: entity),
+                            );
+                      }
                     }
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _clearAllFields() {
+    nameController.clear();
+    ageController.clear();
+    idCardController.clear();
+    unitsController.clear();
+    contactController.clear();
+    hospitalNameController.clear();
+    distanceController.clear();
+    notesController.clear();
+    medicalConditionsController.clear();
+    bloodTypeController.clear();
+    genderController.clear();
+    donationTypeController.clear();
+    addressController.clear();
+    lastDonationDateController.clear();
+    nextDonationDateController.clear();
   }
 }
