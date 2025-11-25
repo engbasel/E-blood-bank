@@ -1,4 +1,5 @@
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/widget/blood_type_drop_down.dart';
 import 'package:blood_bank/core/widget/gender_drop_down.dart';
 import 'package:blood_bank/core/widget/custom_button.dart';
@@ -206,6 +207,7 @@ class NeedRequestState extends State<NeedRequest> {
               spacing: 10,
               children: [
                 CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: patientNameController,
                   hintText: 'patientName'.tr(context),
                   validator: (value) =>
@@ -215,6 +217,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: ageController,
                   textInputType: TextInputType.number,
                   validator: (value) =>
@@ -249,6 +252,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: idCardController,
                   hintText: 'nationalId'.tr(context),
                   textInputType: TextInputType.number,
@@ -259,6 +263,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: medicalConditionsController,
                   hintText: 'medicalConditions'.tr(context),
                   maxLines: 3,
@@ -267,6 +272,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: contactController,
                   hintText: 'contactNumber'.tr(context),
                   textInputType: TextInputType.phone,
@@ -285,6 +291,7 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 CustomRequestTextField(
+                  hintStyle: TextStyle(color: AppColors.primaryColor),
                   controller: hospitalNameController,
                   hintText: 'hospitalName'.tr(context),
                   validator: (value) =>

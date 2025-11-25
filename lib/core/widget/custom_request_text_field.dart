@@ -46,7 +46,10 @@ class CustomRequestTextField extends StatelessWidget {
         if (textInputType == TextInputType.number)
           FilteringTextInputFormatter.digitsOnly,
       ],
-      style: TextStyles.semiBold14,
+      style: TextStyles.semiBold14.copyWith(
+        color: AppColors.primaryColor,
+      ),
+      cursorColor: AppColors.primaryColor,
       controller: controller,
       obscureText: obobscureText,
       onSaved: onSaved,
