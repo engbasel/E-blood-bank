@@ -78,19 +78,6 @@ class HomeHeader extends StatelessWidget {
             ),
             Positioned(
               top: 35,
-              left: isArabic ? 50 : null,
-              right: isArabic ? null : 50,
-              child: IconButton(
-                icon: SvgPicture.asset(
-                  Assets.imagesChat,
-                  width: 24,
-                  height: 24,
-                ),
-                onPressed: () {},
-              ),
-            ),
-            Positioned(
-              top: 35,
               left: isArabic ? 12 : null,
               right: isArabic ? null : 12,
               child: IconButton(

@@ -1,7 +1,6 @@
 import 'package:blood_bank/core/helper_function/get_user.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
-import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
@@ -19,7 +18,7 @@ class UserHandler extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthLoading) {
-          return const Center(child: CustomCircularProgressIndicator());
+          return const Center(child: SizedBox());
         }
 
         if (state is AuthError) {
@@ -42,7 +41,7 @@ class UserHandler extends StatelessWidget {
             stream: getUserStream(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CustomCircularProgressIndicator());
+                return const Center(child: SizedBox());
               }
 
               if (snapshot.hasError) {
