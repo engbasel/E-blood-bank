@@ -96,7 +96,7 @@ class DonnerDetailsScreen extends StatelessWidget {
             _buildDetailItem(context, Icons.cake, 'age', donationData['age'].toString()),
             _buildDetailItem(context, Icons.bloodtype, 'blood_type', donationData['bloodType']),
             _buildDetailItem(context, Icons.phone, 'contact', donationData['contact']),
-            _buildDetailItem(context, Icons.map, 'distance', donationData['distance'].toString()),
+            _buildDetailItem(context, Icons.map, 'distance', '${donationData['distance']} km'),
             _buildDetailItem(context, Icons.volunteer_activism, 'donation_type', donationData['donationType']),
             _buildDetailItem(context, Icons.person, 'gender', donationData['gender']),
             _buildDetailItem(context, Icons.credit_card, 'id_card', donationData['idCard'].toString()),
