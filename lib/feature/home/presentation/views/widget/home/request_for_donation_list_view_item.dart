@@ -1,5 +1,6 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
+import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,7 @@ import 'package:flutter_svg/svg.dart';
 
 class RequestForDonationListViewItem extends StatelessWidget {
   const RequestForDonationListViewItem({super.key, this.request});
-
   final dynamic request;
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -23,10 +22,9 @@ class RequestForDonationListViewItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.3),
-              blurRadius: 8,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 5,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -41,11 +39,7 @@ class RequestForDonationListViewItem extends StatelessWidget {
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircleAvatar(
-                    radius: 25,
-                    backgroundColor: Colors.grey,
-                    child: Icon(Icons.person, color: Colors.white),
-                  );
+                  return const Center(child: CustomCircularProgressIndicator());
                 }
 
                 if (snapshot.hasError) {
@@ -85,7 +79,7 @@ class RequestForDonationListViewItem extends StatelessWidget {
             children: [
               const Icon(Icons.location_on, size: 16, color: Colors.grey),
               SizedBox(
-                width: MediaQuery.sizeOf(context).width * .3,
+                width: MediaQuery.sizeOf(context).width * .2,
                 child: Text(
                   request['hospitalName'] ?? 'unknown_hospital'.tr(context),
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
