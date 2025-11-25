@@ -3,6 +3,7 @@ import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/widget/coustom_aleart_diloage.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
+import 'package:blood_bank/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,7 +46,7 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
 
   void _initializeGemini() {
     Gemini.init(
-      apiKey: 'AIzaSyAlSOKclXfNacedo9955-MMEI1LfXsXTsw',
+      apiKey: apiKeyGPT,
       enableDebugging: true,
     );
     gemini = Gemini.instance;
