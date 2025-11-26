@@ -3,8 +3,12 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_donor_request_usecase.dart';
+import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_use_case.dart';
 import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_use_case.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_event.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/localization/cubit/locale_cubit.dart';
 import 'package:blood_bank/feature/splash/presentation/views/splash_initializer.dart';
@@ -27,6 +31,11 @@ class BloodBank extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               AuthBloc(authRepository: getIt<AuthRepository>()),
+        ),
+        BlocProvider(
+          create: (context) => AddNeederRequestBloc(
+              getIt<AddNeederRequestUseCase>(),
+              getIt<GetAcceptedNeederRequestsUseCase>())..add(GetAcceptedNeederRequestsEvent()),
         ),
         BlocProvider(
           create: (context) => DonorRequestsBloc(

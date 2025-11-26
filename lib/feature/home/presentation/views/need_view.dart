@@ -1,9 +1,7 @@
-import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/doner/custom_donner_drawer.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/need/add_need_request_view_body_bloc_builder.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
@@ -49,10 +47,7 @@ class NeedView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: BlocProvider(
-        create: (context) => getIt<AddNeederRequestBloc>(),
-        child: const AddNeedRequestViewBodyBlocBuilder(),
-      ),
+      body: const AddNeedRequestViewBodyBlocBuilder(),
     );
   }
 }

@@ -1,12 +1,15 @@
 import 'package:blood_bank/feature/home/data/model/needer_model.dart';
 import 'package:blood_bank/core/services/data_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class NeederRemoteDataSource {
   Future<void> addNeederRequest(NeederModel model);
+
   Future<bool> hasActiveRequest(String userId);
+
   Future<Map<String, dynamic>?> getUserById(String userId);
 
-  Future<List<NeederModel>> getAcceptedRequests();
+  Stream<List<NeederModel>> getAcceptedRequests();
 }
 
 class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
@@ -40,7 +43,7 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
   Future<Map<String, dynamic>?> getUserById(String userId) async {
     try {
       final data =
-      await databaseService.getData(path: 'users', docuementId: userId);
+          await databaseService.getData(path: 'users', docuementId: userId);
       if (data is Map<String, dynamic>) return data;
       return null;
     } catch (_) {
@@ -49,17 +52,13 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
   }
 
   @override
-  Future<List<NeederModel>> getAcceptedRequests() async {
-    try {
-      final data = await databaseService.getData(path: 'neederRequest');
-      if (data is List) {
-        final accepted = data.where((e) => e['status'] == 'accepted').toList();
-        return accepted.map((e) => NeederModel.fromEntity(e)).toList();
-      }
-      return [];
-    } catch (_) {
-      return [];
-    }
+  Stream<List<NeederModel>> getAcceptedRequests()  {
+    return FirebaseFirestore.instance
+        .collection('neederRequest')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => NeederModel.fromJson(doc.data()))
+        .where((model) => model.status.toLowerCase() == 'accepted')
+        .toList());
   }
 }
-

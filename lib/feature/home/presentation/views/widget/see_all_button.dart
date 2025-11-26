@@ -1,18 +1,16 @@
-
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
-import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/see_all.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-class SeeAll extends StatelessWidget {
+class SeeAll<T> extends StatelessWidget {
   const SeeAll({
     super.key,
     required this.requests,
   });
 
-  final List<DonorRequestEntity> requests;
+  final List<T> requests;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,7 @@ class SeeAll extends StatelessWidget {
       onPressed: () {
         Navigator.of(context).push(
           buildPageRoute(
-            SeeAllScreen(
+            SeeAllScreen<T>(
               requests: requests,
             ),
           ),

@@ -1,13 +1,18 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
+import 'package:blood_bank/feature/home/domain/entities/needer_request_entity.dart';
 import 'package:blood_bank/feature/home/presentation/views/donor_details.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/request_for_blood_list_view.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/request_for_donation_list_view_item.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/needer_profile_screen.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-class SeeAllScreen extends StatelessWidget {
-  final List<DonorRequestEntity> requests;
+
+
+class SeeAllScreen<T> extends StatelessWidget {
+  final List<T> requests;
 
   const SeeAllScreen({
     super.key,
@@ -29,7 +34,7 @@ class SeeAllScreen extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     if (requests.isEmpty) {
       return Center(
-        child: Text('no_donation_requests_available'.tr(context)),
+        child: Text('no_requests_available'.tr(context)),
       );
     }
 
@@ -37,18 +42,33 @@ class SeeAllScreen extends StatelessWidget {
       itemCount: requests.length,
       itemBuilder: (context, index) {
         final request = requests[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              buildPageRoute(
-                DonorProfileScreen(uId: request.uId),
-              ),
-            );
-          },
-          child: RequestForDonationListViewItem(request: request),
-        );
+
+        if (request is DonorRequestEntity) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                buildPageRoute(
+                  DonorProfileScreen(uId: request.uId),
+                ),
+              );
+            },
+            child: RequestForDonationListViewItem(request: request),
+          );
+        } else if (request is NeederRequestEntity) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                buildPageRoute(
+                  NeederProfileScreen(needer: request),
+                ),
+              );
+            },
+            child: RequestForNeederListViewItem(request: request),
+          );
+        }
+
+        return const SizedBox.shrink();
       },
     );
   }
 }
-

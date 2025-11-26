@@ -1,3 +1,4 @@
+import 'package:blood_bank/feature/home/domain/entities/needer_request_entity.dart';
 import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
@@ -17,7 +18,7 @@ class AddNeederRequestBloc
   Future<void> _onSubmit(
       SubmitNeederRequestEvent event, Emitter<AddNeederRequestState> emit) async {
     emit(AddNeederRequestLoading());
-    final result = await addUseCase(event.request);
+    final result = await addUseCase.call(event.request);
     result.fold(
           (failure) => emit(AddNeederRequestFailure(failure.message)),
           (_) => emit(AddNeederRequestSuccess()),
@@ -25,12 +26,16 @@ class AddNeederRequestBloc
   }
 
   Future<void> _onGetAccepted(
-      GetAcceptedNeederRequestsEvent event, Emitter<AddNeederRequestState> emit) async {
+      GetAcceptedNeederRequestsEvent event,
+      Emitter<AddNeederRequestState> emit,
+      ) async {
     emit(AcceptedNeederRequestsLoading());
-    final result = await getAcceptedUseCase();
-    result.fold(
-          (failure) => emit(AcceptedNeederRequestsFailure(failure.message)),
-          (requests) => emit(AcceptedNeederRequestsLoaded(requests)),
+
+    await emit.forEach<List<NeederRequestEntity>>(
+      getAcceptedUseCase(),
+      onData: (requests) => AcceptedNeederRequestsLoaded(requests),
+      onError: (error, _) => AcceptedNeederRequestsFailure(error.toString()),
     );
   }
+
 }

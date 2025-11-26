@@ -319,7 +319,8 @@
   "medical_info": "Medical Information",
   "full_name": "Full Name",
   "contact_number": "Contact Number",
-  "additional_notes": "Additional Notes"
+  "additional_notes": "Additional Notes",
+  "accepted_requests" : "Accepted Requests"
 
 }
    

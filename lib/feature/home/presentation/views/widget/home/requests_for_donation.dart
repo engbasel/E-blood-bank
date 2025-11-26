@@ -50,11 +50,8 @@ class RequestsForDonation extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.sizeOf(context).height * .5,
-                child: RequestForDonationListView(
-                  reversedRequests: reversedRequests,
-                ),
+              RequestForDonationListView(
+                reversedRequests: reversedRequests,
               ),
             ],
           );

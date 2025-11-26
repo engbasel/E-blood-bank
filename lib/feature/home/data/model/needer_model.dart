@@ -1,4 +1,5 @@
 import 'package:blood_bank/feature/home/domain/entities/needer_request_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NeederModel {
   final String patientName;
@@ -30,6 +31,7 @@ class NeederModel {
     this.dateTime,
     required this.status,
   });
+
   factory NeederModel.fromEntity(NeederRequestEntity addNeederInputEntity) {
     return NeederModel(
       patientName: addNeederInputEntity.patientName,
@@ -47,6 +49,28 @@ class NeederModel {
       status: addNeederInputEntity.status,
     );
   }
+
+  /// ✅ هنا الإضافة
+  factory NeederModel.fromJson(Map<String, dynamic> json) {
+    return NeederModel(
+      patientName: json['patientName'] ?? '',
+      age: json['age'] ?? 0,
+      bloodType: json['bloodType'] ?? '',
+      donationType: json['donationType'] ?? '',
+      idCard: json['idCard'] ?? 0,
+      medicalConditions: json['medicalConditions'] ?? '',
+      contact: json['contact'] ?? 0,
+      address: json['address'] ?? '',
+      gender: json['gender'] ?? '',
+      uId: json['uId'] ?? '',
+      hospitalName: json['hospitalName'] ?? '',
+      dateTime: json['dateTime'] != null
+          ? (json['dateTime'] as Timestamp).toDate()
+          : null,
+      status: json['status'] ?? '',
+    );
+  }
+
   Map<String, Object?> toJson() {
     return {
       'patientName': patientName,
@@ -60,7 +84,7 @@ class NeederModel {
       'gender': gender,
       'uId': uId,
       'hospitalName': hospitalName,
-      'dateTime': dateTime,
+      'dateTime': dateTime != null ? Timestamp.fromDate(dateTime!) : null,
       'status': status,
     };
   }

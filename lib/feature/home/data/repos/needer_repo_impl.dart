@@ -59,14 +59,10 @@ class NeederRepoImpl implements NeederRepo {
   }
 
   @override
-  Future<Either<Failures, List<NeederRequestEntity>>> getAcceptedRequests() async {
-    try {
-      final models = await remoteDataSource.getAcceptedRequests();
-      final entities = models.map(NeederMapper.toEntity).toList();
-      return Right(entities);
-    } catch (e) {
-      return Left(ServerFailure('Failed to fetch accepted requests'));
-    }
+  Stream<List<NeederRequestEntity>> getAcceptedRequests() {
+      return remoteDataSource.getAcceptedRequests()
+          .map((models) => models.map(NeederMapper.toEntity).toList());
+
   }
 }
 

@@ -14,6 +14,7 @@ class RequestForDonationListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: reversedRequests.length >= 4 ? 4 : reversedRequests.length,
       itemBuilder: (context, index) {
