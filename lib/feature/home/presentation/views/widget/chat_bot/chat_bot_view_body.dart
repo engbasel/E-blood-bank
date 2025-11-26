@@ -2,6 +2,7 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/widget/coustom_aleart_diloage.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/chat_bot/reponse_range.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/keys.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
   ChatUser? _currentUser;
   String? _currentSessionId;
   Gemini? gemini;
+
+  final List<String> _medicalKeywords = responseWordRange;
 
   final ChatUser _chatGPTUser = ChatUser(
     id: "Dono-r",
@@ -269,67 +272,74 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
     }
   }
 
-  // void _sendMessage(String text) async {
-  //   if (text.trim().isEmpty || _currentUser == null) return;
-  //
-  //   final userMessage = ChatMessage(
-  //     user: _currentUser!,
-  //     createdAt: DateTime.now(),
-  //     text: text,
-  //   );
-  //
-  //   setState(() {
-  //     _messages.add(userMessage);
-  //     _messageController.clear();
-  //   });
-  //
-  //   await _saveMessage(userMessage);
-  //
-  //   _scrollToBottom();
-  //
-  //   try {
-  //     final response = await gemini?.chat([
-  //       Content(
-  //         parts: [Part.text(text)],
-  //         role: 'user',
-  //       ),
-  //     ]);
-  //
-  //     final chatGPTMessage = ChatMessage(
-  //       user: _chatGPTUser,
-  //       createdAt: DateTime.now(),
-  //       text: response?.output ?? "No response from Gemini",
-  //     );
-  //
-  //     setState(() {
-  //       _messages.add(chatGPTMessage);
-  //     });
-  //
-  //     await _saveMessage(chatGPTMessage);
-  //
-  //     _scrollToBottom();
-  //   } catch (e) {
-  //     debugPrint("Error communicating with Gemini: $e");
-  //     setState(() {
-  //       _messages.add(ChatMessage(
-  //         user: _chatGPTUser,
-  //         createdAt: DateTime.now(),
-  //         text: "Sorry, something went wrong. Please try again later."
-  //             .tr(context),
-  //       ));
-  //     });
-  //     _scrollToBottom();
-  //   }
-  // }
+  // Helper function to check if the text is predominantly Arabic.
+  bool _isArabic(String text) {
+    // Simple check for common Arabic characters
+    final arabicRegex = RegExp(r'[\u0600-\u06FF]');
+    // Count Arabic characters
+    final arabicCount = arabicRegex.allMatches(text).length;
+
+    // If more than 50% of the non-whitespace characters are Arabic, assume Arabic.
+    final nonWhitespaceLength = text.replaceAll(RegExp(r'\s+'), '').length;
+
+    if (nonWhitespaceLength == 0) return false;
+
+    return arabicCount / nonWhitespaceLength > 0.5;
+  }
+
+  bool _isMedicalRelated(String text) {
+    final lowerText = text.toLowerCase();
+    return _medicalKeywords.any((keyword) => lowerText.contains(keyword));
+  }
 
   void _sendMessage(String text) async {
     if (text.trim().isEmpty || _currentUser == null) return;
+
+    // --- Language Detection and Instruction Setup ---
+    final isArabic = _isArabic(text);
+    final responseLanguageInstruction = isArabic
+        ? "Respond strictly and concisely in Arabic."
+        : "Respond strictly and concisely in English.";
+
+    if (!_isMedicalRelated(text)) {
+      final arabicRefusal =
+          "أنا Dono-r، مساعد طبي متخصص. يجب أن تحتوي استفساراتك على كلمات طبية أو صحية واضحة لأتمكن من الإجابة. يرجى التركيز على المواضيع المتعلقة بالصحة أو الطب أو التبرع بالدم.";
+      final englishRefusal =
+          "I am Dono-r, a specialized medical assistant. Your inquiries must contain clear medical or health keywords for me to respond. Please focus on topics related to health, medicine, or blood donation.";
+
+      final refusalMessageText = isArabic ? arabicRefusal : englishRefusal;
+
+      final refusalMessage = ChatMessage(
+        user: _chatGPTUser,
+        createdAt: DateTime.now(),
+        // رسالة الرفض باللغة المناسبة
+        text: refusalMessageText,
+      );
+
+      setState(() {
+        _messages.add(
+          ChatMessage(
+            user: _currentUser!,
+            createdAt: DateTime.now(),
+            text: text,
+          ),
+        );
+        _messages.add(refusalMessage);
+        _messageController.clear();
+      });
+      await _saveMessage(_messages[_messages.length - 2]);
+      await _saveMessage(refusalMessage);
+      _scrollToBottom();
+      return;
+    }
 
     final userMessage = ChatMessage(
       user: _currentUser!,
       createdAt: DateTime.now(),
       text: text,
     );
+
+    final combinedPrompt = "$responseLanguageInstruction\n\nUser Query: $text";
 
     setState(() {
       _messages.add(userMessage);
@@ -349,7 +359,7 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
 
     try {
       final response = await gemini?.chat([
-        Content(parts: [Part.text(text)], role: 'user'),
+        Content(parts: [Part.text(combinedPrompt)], role: 'user'),
       ]);
 
       setState(() {
@@ -581,6 +591,14 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       margin: const EdgeInsets.all(10),
@@ -738,6 +756,91 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class TypingIndicator extends StatelessWidget {
+  const TypingIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 20,
+      width: 40,
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _Dot(delay: 0),
+            _Dot(delay: 150),
+            _Dot(delay: 300),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Dot extends StatefulWidget {
+  final int delay;
+  const _Dot({required this.delay});
+
+  @override
+  _DotState createState() => _DotState();
+}
+
+class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 900),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(widget.delay / 900, (widget.delay + 300) / 900,
+            curve: Curves.easeInOut),
+      ),
+    );
+
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.forward(from: 0.0);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 2.0),
+          height: 8.0,
+          width: 8.0,
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor
+                .withOpacity(_animation.value * 0.5 + 0.5),
+            shape: BoxShape.circle,
+          ),
+          transform:
+              Matrix4.translationValues(0.0, -_animation.value * 5.0, 0.0),
+        );
+      },
     );
   }
 }
