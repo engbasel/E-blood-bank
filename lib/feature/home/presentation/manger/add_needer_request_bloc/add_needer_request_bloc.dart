@@ -1,23 +1,36 @@
+import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_event.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_state.dart';
-
 class AddNeederRequestBloc
     extends Bloc<AddNeederRequestEvent, AddNeederRequestState> {
-  final AddNeederRequestUseCase useCase;
+  final AddNeederRequestUseCase addUseCase;
+  final GetAcceptedNeederRequestsUseCase getAcceptedUseCase;
 
-  AddNeederRequestBloc(this.useCase) : super(AddNeederRequestInitial()) {
+  AddNeederRequestBloc(this.addUseCase, this.getAcceptedUseCase)
+      : super(AddNeederRequestInitial()) {
     on<SubmitNeederRequestEvent>(_onSubmit);
+    on<GetAcceptedNeederRequestsEvent>(_onGetAccepted);
   }
 
   Future<void> _onSubmit(
-      SubmitNeederRequestEvent event, Emitter emitter) async {
-    emitter(AddNeederRequestLoading());
-    final result = await useCase(event.request);
+      SubmitNeederRequestEvent event, Emitter<AddNeederRequestState> emit) async {
+    emit(AddNeederRequestLoading());
+    final result = await addUseCase(event.request);
     result.fold(
-      (failure) => emitter(AddNeederRequestFailure(failure.message)),
-      (_) => emitter(AddNeederRequestSuccess()),
+          (failure) => emit(AddNeederRequestFailure(failure.message)),
+          (_) => emit(AddNeederRequestSuccess()),
+    );
+  }
+
+  Future<void> _onGetAccepted(
+      GetAcceptedNeederRequestsEvent event, Emitter<AddNeederRequestState> emit) async {
+    emit(AcceptedNeederRequestsLoading());
+    final result = await getAcceptedUseCase();
+    result.fold(
+          (failure) => emit(AcceptedNeederRequestsFailure(failure.message)),
+          (requests) => emit(AcceptedNeederRequestsLoaded(requests)),
     );
   }
 }

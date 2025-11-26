@@ -98,9 +98,9 @@ class DonorRequestState extends State<DonorRequest> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AddDonorRequestBloc, AddDonorRequestState>(
+    return BlocListener<DonorRequestsBloc, DonorRequestsState>(
       listener: (context, state) {
-        if (state is AddDonorRequestSuccess) {
+        if (state is DonorRequestsSuccess) {
           _clearAllFields();
         }
       },
@@ -253,7 +253,7 @@ class DonorRequestState extends State<DonorRequest> {
                       final entity =
                           await _addDonorFunction.toEntityWithCheck();
                       if (entity != null) {
-                        context.read<AddDonorRequestBloc>().add(
+                        context.read<DonorRequestsBloc>().add(
                               SubmitDonorRequestEvent(request: entity),
                             );
                       }

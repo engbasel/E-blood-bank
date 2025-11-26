@@ -3,9 +3,10 @@ import 'package:blood_bank/feature/home/data/model/doner_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class DonorRemoteDataSource {
-  Future<void> addDonorRequest(DonerModel model);
+  Future<void> addDonorRequest(DonorModel model);
   Future<bool> hasActiveRequest(String userId);
-  Future<Map?> getFullDonorData(String userId);
+
+  Stream<List<DonorModel>> getAllDonorRequests();
 }
 
 class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
@@ -14,7 +15,7 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
   DonorRemoteDataSourceImpl(this.databaseService);
 
   @override
-  Future<void> addDonorRequest(DonerModel model) async {
+  Future<void> addDonorRequest(DonorModel model) async {
     await databaseService.addData(
       path: 'donerRequest',
       data: model.toJson(),
@@ -34,27 +35,13 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
       return false;
     }
   }
-
   @override
-  Future<Map?> getFullDonorData(String userId) async {
-    try {
-      final userData = await databaseService.getData(path: 'users', docuementId: userId);
-
-      final requestSnapshot = await FirebaseFirestore.instance
-          .collection('donerRequest')
-          .where('uId', isEqualTo: userId)
-          .get();
-
-      final requestData = requestSnapshot.docs.isNotEmpty ? requestSnapshot.docs.first.data() : {};
-
-      if (userData is Map<String, dynamic>) {
-        return {...userData, ...requestData};
-      } else {
-        return requestData.isNotEmpty ? requestData : null;
-      }
-    } catch (_) {
-      return null;
-    }
+  Stream<List<DonorModel>> getAllDonorRequests() {
+    return FirebaseFirestore.instance
+        .collection('donerRequest')
+        .snapshots()
+        .map((snapshot) =>
+        snapshot.docs.map((doc) => DonorModel.fromJson(doc.data())).toList());
   }
 
 }

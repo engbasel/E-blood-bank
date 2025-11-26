@@ -1,17 +1,19 @@
-abstract class AddDonorRequestState {}
+import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
 
-class AddDonorRequestInitial extends AddDonorRequestState {}
+abstract class DonorRequestsState {}
 
-class AddDonorRequestLoading extends AddDonorRequestState {}
+class DonorRequestsInitial extends DonorRequestsState {}
 
-class AddDonorRequestSuccess extends AddDonorRequestState {}
+class DonorRequestsLoading extends DonorRequestsState {}
 
-class AddDonorRequestFailure extends AddDonorRequestState {
+class DonorRequestsSuccess extends DonorRequestsState {}
+
+class DonorRequestsFailure extends DonorRequestsState {
   final String message;
-  AddDonorRequestFailure(this.message);
+  DonorRequestsFailure(this.message);
 }
 
-class DonorDataLoaded extends AddDonorRequestState {
-  final Map<dynamic, dynamic> donorData;
-  DonorDataLoaded(this.donorData);
+class DonorRequestsLoaded extends DonorRequestsState {
+  final List<DonorRequestEntity> requests;
+  DonorRequestsLoaded(this.requests);
 }

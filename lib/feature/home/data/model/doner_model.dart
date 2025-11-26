@@ -1,6 +1,7 @@
 import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DonerModel {
+class DonorModel {
   final String name;
   final num age;
   final String bloodType;
@@ -18,9 +19,8 @@ class DonerModel {
   final String uId;
   final String hospitalName;
   final num distance;
-  // final String photoUrl;
-
-  DonerModel({
+  final String photoUrl;
+  DonorModel({
     required this.name,
     required this.age,
     required this.uId,
@@ -37,11 +37,40 @@ class DonerModel {
     required this.gender,
     required this.hospitalName,
     required this.distance,
-    // required this.photoUrl,
+    required this.photoUrl,
     this.lastRequestDate,
   });
-  factory DonerModel.fromEntity(DonorRequestEntity addRequestInputEntity) {
-    return DonerModel(
+  factory DonorModel.fromJson(Map<String, dynamic> json) {
+    return DonorModel(
+      name: json['name'] ?? '',
+      age: json['age'] ?? 0,
+      bloodType: json['bloodType'] ?? '',
+      donationType: json['donationType'] ?? '',
+      idCard: json['idCard'] ?? 0,
+      lastDonationDate: (json['lastDonationDate'] != null)
+          ? (json['lastDonationDate'] as Timestamp).toDate()
+          : null,
+      nextDonationDate: (json['nextDonationDate'] != null)
+          ? (json['nextDonationDate'] as Timestamp).toDate()
+          : null,
+      lastRequestDate: (json['lastRequestDate'] != null)
+          ? (json['lastRequestDate'] as Timestamp).toDate()
+          : null,
+      medicalConditions: json['medicalConditions'] ?? '',
+      contact: json['contact'] ?? 0,
+      address: json['address'] ?? '',
+      notes: json['notes'] ?? '',
+      units: json['units'] ?? 0,
+      gender: json['gender'] ?? '',
+      uId: json['uId'] ?? '',
+      hospitalName: json['hospitalName'] ?? '',
+      distance: json['distance'] ?? 0,
+      photoUrl: json['photoUrl'] ?? '',
+    );
+  }
+
+  factory DonorModel.fromEntity(DonorRequestEntity addRequestInputEntity) {
+    return DonorModel(
       name: addRequestInputEntity.name,
       age: addRequestInputEntity.age,
       bloodType: addRequestInputEntity.bloodType,
@@ -58,7 +87,7 @@ class DonerModel {
       uId: addRequestInputEntity.uId,
       hospitalName: addRequestInputEntity.hospitalName,
       distance: addRequestInputEntity.distance,
-      // photoUrl: addRequestInputEntity.photoUrl ?? '',
+      photoUrl: addRequestInputEntity.photoUrl ?? '',
       lastRequestDate: addRequestInputEntity.lastRequestDate,
     );
   }
@@ -69,8 +98,8 @@ class DonerModel {
       'bloodType': bloodType,
       'donationType': donationType,
       'idCard': idCard,
-      'lastDonationDate': lastDonationDate,
-      'nextDonationDate': nextDonationDate,
+      'lastDonationDate': lastDonationDate != null ? Timestamp.fromDate(lastDonationDate!) : null,
+      'nextDonationDate': nextDonationDate != null ? Timestamp.fromDate(nextDonationDate!) : null,
       'medicalConditions': medicalConditions,
       'contact': contact,
       'address': address,
@@ -80,8 +109,9 @@ class DonerModel {
       'uId': uId,
       'hospitalName': hospitalName,
       'distance': distance,
-      // 'photoUrl': photoUrl,
-      'lastRequestDate': lastRequestDate
+      'lastRequestDate': lastRequestDate != null ? Timestamp.fromDate(lastRequestDate!) : null,
+      'photoUrl': photoUrl,
     };
   }
+
 }

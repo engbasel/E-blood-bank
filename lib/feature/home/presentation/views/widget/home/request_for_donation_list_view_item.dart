@@ -1,14 +1,17 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
+import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class RequestForDonationListViewItem extends StatelessWidget {
-  const RequestForDonationListViewItem({super.key, this.request});
-  final dynamic request;
+  const RequestForDonationListViewItem({super.key, required this.request});
+
+  final DonorRequestEntity request;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -35,7 +38,7 @@ class RequestForDonationListViewItem extends StatelessWidget {
             child: FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('users')
-                  .doc(request['uId'])
+                  .doc(request.uId)
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,7 +51,7 @@ class RequestForDonationListViewItem extends StatelessWidget {
                 }
 
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return CircleAvatar(
+                  return const CircleAvatar(
                     radius: 25,
                     backgroundColor: Colors.grey,
                     child: Icon(Icons.person, color: Colors.white),
@@ -65,14 +68,14 @@ class RequestForDonationListViewItem extends StatelessWidget {
                       : null,
                   backgroundColor: Colors.grey,
                   child: photoUrl == null || photoUrl.isEmpty
-                      ? Icon(Icons.person, color: Colors.white)
+                      ? const Icon(Icons.person, color: Colors.white)
                       : null,
                 );
               },
             ),
           ),
           title: Text(
-            request['name'] ?? 'no_name'.tr(context),
+            request.name.isNotEmpty ? request.name : 'no_name'.tr(context),
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           subtitle: Row(
@@ -81,7 +84,9 @@ class RequestForDonationListViewItem extends StatelessWidget {
               SizedBox(
                 width: MediaQuery.sizeOf(context).width * .2,
                 child: Text(
-                  request['hospitalName'] ?? 'unknown_hospital'.tr(context),
+                  request.hospitalName.isNotEmpty
+                      ? request.hospitalName
+                      : 'unknown_hospital'.tr(context),
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -103,7 +108,7 @@ class RequestForDonationListViewItem extends StatelessWidget {
                         height: 35,
                       ),
                       Text(
-                        request['bloodType'].toString().tr(context),
+                        request.bloodType.tr(context),
                         style: TextStyles.semiBold11.copyWith(
                           color: Colors.white,
                         ),
@@ -119,12 +124,13 @@ class RequestForDonationListViewItem extends StatelessWidget {
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                    const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                     decoration: BoxDecoration(
-                        color: const Color(0xff598158),
-                        borderRadius: BorderRadius.circular(8)),
+                      color: const Color(0xff598158),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     child: Text(
-                      '${request['distance'] ?? '0'} ${'km'.tr(context)}',
+                      '${request.distance} ${'km'.tr(context)}',
                       style: TextStyles.semiBold12.copyWith(
                         color: Colors.white,
                       ),
@@ -139,3 +145,4 @@ class RequestForDonationListViewItem extends StatelessWidget {
     );
   }
 }
+

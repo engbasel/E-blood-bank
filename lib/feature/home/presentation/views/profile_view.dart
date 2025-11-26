@@ -20,11 +20,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key, required this.selected});
+  const ProfileView({super.key,});
 
   @override
   ProfileViewState createState() => ProfileViewState();
-  final int selected;
+
 }
 
 class ProfileViewState extends State<ProfileView>
@@ -277,7 +277,7 @@ class ProfileViewState extends State<ProfileView>
                   return CustomProfileAppBar(
                     name: user.name!,
                     photoUrl: user.photoUrl,
-                    userState: user.userState.tr(context), selected: widget.selected,
+                    userState: user.userState.tr(context),
                   );
                 },
               ),

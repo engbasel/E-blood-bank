@@ -74,7 +74,7 @@ class DonorRequestFormState extends State<DonorRequestForm> {
         photoUrl: _user.photoURL ?? '',
       );
 
-      context.read<AddDonorRequestBloc>().add(SubmitDonorRequestEvent(request: request));
+      context.read<DonorRequestsBloc>().add(SubmitDonorRequestEvent(request: request));
     }
   }
 

@@ -5,4 +5,6 @@ import 'package:dartz/dartz.dart';
 abstract class NeederRepo {
   Future<Either<Failures, void>> addNeederRequest(
       NeederRequestEntity addNeederInputEntity);
+
+  Future<Either<Failures, List<NeederRequestEntity>>> getAcceptedRequests();
 }

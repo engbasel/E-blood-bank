@@ -14,18 +14,18 @@ class AddDonorRequestViewBodyBlocBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddDonorRequestBloc, AddDonorRequestState>(
+    return BlocConsumer<DonorRequestsBloc, DonorRequestsState>(
       listener: (context, state) {
-        if (state is AddDonorRequestSuccess) {
+        if (state is DonorRequestsSuccess) {
           successTopSnackBar(context, 'product_added_successfully'.tr(context));
         }
-        if (state is AddDonorRequestFailure) {
+        if (state is DonorRequestsFailure) {
           failureTopSnackBar(context, 'something_went_wrong'.tr(context));
         }
       },
       builder: (context, state) {
         return CustomProgressHud(
-            isLoading: state is AddDonorRequestLoading,
+            isLoading: state is DonorRequestsLoading,
             child: const DonorRequest());
       },
     );

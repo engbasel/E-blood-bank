@@ -68,9 +68,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       const HomeView(),
       NeedView(),
       const DonorView(),
-      ProfileView(
-        selected: selected,
-      ),
+      const ProfileView(),
     ];
 
     return Scaffold(

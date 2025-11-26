@@ -5,6 +5,8 @@ abstract class NeederRemoteDataSource {
   Future<void> addNeederRequest(NeederModel model);
   Future<bool> hasActiveRequest(String userId);
   Future<Map<String, dynamic>?> getUserById(String userId);
+
+  Future<List<NeederModel>> getAcceptedRequests();
 }
 
 class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
@@ -38,11 +40,26 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
   Future<Map<String, dynamic>?> getUserById(String userId) async {
     try {
       final data =
-          await databaseService.getData(path: 'users', docuementId: userId);
+      await databaseService.getData(path: 'users', docuementId: userId);
       if (data is Map<String, dynamic>) return data;
       return null;
     } catch (_) {
       return null;
     }
   }
+
+  @override
+  Future<List<NeederModel>> getAcceptedRequests() async {
+    try {
+      final data = await databaseService.getData(path: 'neederRequest');
+      if (data is List) {
+        final accepted = data.where((e) => e['status'] == 'accepted').toList();
+        return accepted.map((e) => NeederModel.fromEntity(e)).toList();
+      }
+      return [];
+    } catch (_) {
+      return [];
+    }
+  }
 }
+

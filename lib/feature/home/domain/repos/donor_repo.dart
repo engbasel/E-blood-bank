@@ -5,6 +5,8 @@ import 'package:dartz/dartz.dart';
 abstract class DonorRepo {
   Future<Either<Failures, void>> addRequest(
       DonorRequestEntity addRequestInputEntity);
-  Future<Either<Failures, Map<dynamic, dynamic>>> getDonorById(String userId);
+
+  Stream<List<DonorRequestEntity>> getAllDonorRequests();
+
 
 }

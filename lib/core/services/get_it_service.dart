@@ -3,7 +3,8 @@ import 'package:blood_bank/core/services/fire_storage.dart';
 import 'package:blood_bank/core/services/firebase_auth_service.dart';
 import 'package:blood_bank/core/services/firestor_service.dart';
 import 'package:blood_bank/core/services/health_request.dart';
-import 'package:blood_bank/feature/home/domain/usecases/get_donor_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_use_case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:blood_bank/core/services/storage_service.dart';
@@ -40,8 +41,8 @@ import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart
 final getIt = GetIt.instance;
 
 void setupGetIt() {
-
-  getIt.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  getIt.registerLazySingleton<FirebaseFirestore>(
+      () => FirebaseFirestore.instance);
 
   // Core services registration
   getIt.registerSingleton<FirebaseAuthService>(FirebaseAuthService());
@@ -61,17 +62,18 @@ void setupGetIt() {
   getIt.registerFactory<AddDonorRequestUseCase>(
     () => AddDonorRequestUseCase(getIt<DonorRepo>()),
   );
-  getIt.registerFactory<GetDonorByIdUseCase>(
-    () => GetDonorByIdUseCase(getIt<DonorRepo>()),
+
+  getIt.registerFactory<GetAllDonorRequestsUseCase>(
+    () => GetAllDonorRequestsUseCase(getIt<DonorRepo>()),
   );
 
-  getIt.registerFactory<AddDonorRequestBloc>(
-    () => AddDonorRequestBloc(getIt<AddDonorRequestUseCase>(),getIt<GetDonorByIdUseCase>()),
+  getIt.registerFactory<DonorRequestsBloc>(
+    () => DonorRequestsBloc(getIt<AddDonorRequestUseCase>(),
+      getIt<GetAllDonorRequestsUseCase>()),
   );
   getIt.registerFactory<NeederRemoteDataSource>(
     () => NeederRemoteDataSourceImpl(getIt<DatabaseService>()),
   );
-
 
   getIt.registerSingleton<NeederRepo>(
     NeederRepoImpl(getIt<NeederRemoteDataSource>()),
@@ -93,17 +95,21 @@ void setupGetIt() {
   getIt.registerFactory<AddNeederRequestUseCase>(
     () => AddNeederRequestUseCase(getIt<NeederRepo>()),
   );
+  getIt.registerFactory<GetAcceptedNeederRequestsUseCase>(
+    () => GetAcceptedNeederRequestsUseCase(getIt<NeederRepo>()),
+  );
 
   // Register bloc as factory to ensure fresh state
   getIt.registerFactory<AddNeederRequestBloc>(
-    () => AddNeederRequestBloc(getIt<AddNeederRequestUseCase>()),
+    () => AddNeederRequestBloc(getIt<AddNeederRequestUseCase>(),
+        getIt<GetAcceptedNeederRequestsUseCase>()),
   );
-
 
   getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
 
   getIt.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(firebaseAuth: getIt<FirebaseAuth>(), firestore: getIt()),
+    () => AuthRemoteDataSourceImpl(
+        firebaseAuth: getIt<FirebaseAuth>(), firestore: getIt()),
   );
 
   // Repository
@@ -122,6 +128,4 @@ void setupGetIt() {
   getIt.registerFactory(() => DeleteAccount(getIt<AuthRepository>()));
   getIt.registerFactory(() => UpdateUserProfile(getIt<AuthRepository>()));
   getIt.registerFactory(() => GetCurrentUser(getIt<AuthRepository>()));
-
-
 }

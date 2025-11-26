@@ -3,7 +3,8 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_donor_request_usecase.dart';
-import 'package:blood_bank/feature/home/domain/usecases/get_donor_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_use_case.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/localization/cubit/locale_cubit.dart';
 import 'package:blood_bank/feature/splash/presentation/views/splash_initializer.dart';
@@ -28,10 +29,10 @@ class BloodBank extends StatelessWidget {
               AuthBloc(authRepository: getIt<AuthRepository>()),
         ),
         BlocProvider(
-          create: (context) => AddDonorRequestBloc(
+          create: (context) => DonorRequestsBloc(
             getIt.get<AddDonorRequestUseCase>(),
-            getIt.get<GetDonorByIdUseCase>(),
-          ),
+            getIt.get<GetAllDonorRequestsUseCase>(),
+          )..add(ListenToDonorRequestsEvent()),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
@@ -45,9 +46,10 @@ class BloodBank extends StatelessWidget {
                   onPrimary: Colors.white,
                 ),
                 datePickerTheme: DatePickerThemeData(
-                  headerBackgroundColor:AppColors.primaryColor,
+                  headerBackgroundColor: AppColors.primaryColor,
                   headerForegroundColor: Colors.white,
-                  todayBackgroundColor: WidgetStateProperty.all(AppColors.primaryColor),
+                  todayBackgroundColor:
+                      WidgetStateProperty.all(AppColors.primaryColor),
                   todayForegroundColor: WidgetStateProperty.all(Colors.white),
                 ),
               ),
@@ -72,7 +74,6 @@ class BloodBank extends StatelessWidget {
               },
               debugShowCheckedModeBanner: false,
               home: SplashInitializer(),
-
               builder: (context, child) {
                 return AnnotatedRegion<SystemUiOverlayStyle>(
                   value: const SystemUiOverlayStyle(

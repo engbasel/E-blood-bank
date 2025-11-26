@@ -7,3 +7,5 @@ class SubmitNeederRequestEvent extends AddNeederRequestEvent {
 
   SubmitNeederRequestEvent(this.request);
 }
+
+class GetAcceptedNeederRequestsEvent extends AddNeederRequestEvent {}

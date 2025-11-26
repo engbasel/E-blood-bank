@@ -5,22 +5,19 @@ import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/profile/editi_user_info.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 
 class CustomProfileAppBar extends StatefulWidget
     implements PreferredSizeWidget {
   final String name;
   final String? photoUrl;
   final String userState;
-  final int selected;
 
   const CustomProfileAppBar({
     super.key,
     required this.name,
     this.photoUrl,
     required this.userState,
-    required this.selected,
   });
 
   @override
@@ -34,80 +31,78 @@ class _CustomProfileAppBarState extends State<CustomProfileAppBar> {
   final GlobalKey _editButtonKey = GlobalKey();
   late TutorialCoachMark tutorialCoachMark;
 
-  @override
-  void initState() {
-    super.initState();
-    debugPrint("CustomProfileAppBar built");
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkIfTutorialNeeded();
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   debugPrint("CustomProfileAppBar built");
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     _checkIfTutorialNeeded();
+  //   });
+  // }
 
-  Future<void> _checkIfTutorialNeeded() async {
-    final prefs = await SharedPreferences.getInstance();
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (widget.selected != 3) return;
-
-    if (user != null) {
-      final tutorialKey = '${user.uid}_isFirstTimeCustomProfileAppBar';
-      bool isFirstTime = prefs.getBool(tutorialKey) ??true;
-
-      if (isFirstTime) {
-        _showTutorial();
-        await prefs.setBool(tutorialKey, false);
-      }
-    }
-  }
-
-  void _showTutorial() {
-    tutorialCoachMark = TutorialCoachMark(
-      targets: _createTargets(),
-      textSkip: "Skip".tr(context),
-      hideSkip: false,
-      onFinish: () {
-        debugPrint("Tutorial finished");
-      },
-      onClickTarget: (target) {
-        debugPrint("Clicked on target: ${target.keyTarget}");
-      },
-    )..show(context: context);
-  }
-
-  List<TargetFocus> _createTargets() {
-    return [
-      TargetFocus(
-        keyTarget: _editButtonKey,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "edit_user_info".tr(context),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "tap_here_to_update_your_profile_information".tr(context),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-        shape: ShapeLightFocus.Circle, // شكل التركيز دائري
-      ),
-    ];
-  }
+  // Future<void> _checkIfTutorialNeeded() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final user = FirebaseAuth.instance.currentUser;
+  //
+  //   if (user != null) {
+  //     final tutorialKey = '${user.uid}_isFirstTimeCustomProfileAppBar';
+  //     bool isFirstTime = prefs.getBool(tutorialKey) ??true;
+  //
+  //     if (isFirstTime) {
+  //       _showTutorial();
+  //       await prefs.setBool(tutorialKey, false);
+  //     }
+  //   }
+  // }
+  //
+  // void _showTutorial() {
+  //   tutorialCoachMark = TutorialCoachMark(
+  //     targets: _createTargets(),
+  //     textSkip: "Skip".tr(context),
+  //     hideSkip: false,
+  //     onFinish: () {
+  //       debugPrint("Tutorial finished");
+  //     },
+  //     onClickTarget: (target) {
+  //       debugPrint("Clicked on target: ${target.keyTarget}");
+  //     },
+  //   )..show(context: context);
+  // }
+  //
+  // List<TargetFocus> _createTargets() {
+  //   return [
+  //     TargetFocus(
+  //       keyTarget: _editButtonKey,
+  //       contents: [
+  //         TargetContent(
+  //           align: ContentAlign.bottom,
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(
+  //                 "edit_user_info".tr(context),
+  //                 style: TextStyle(
+  //                   fontSize: 20,
+  //                   fontWeight: FontWeight.bold,
+  //                   color: Colors.white,
+  //                 ),
+  //               ),
+  //               SizedBox(height: 10),
+  //               Text(
+  //                 "tap_here_to_update_your_profile_information".tr(context),
+  //                 style: TextStyle(
+  //                   fontSize: 16,
+  //                   color: Colors.white70,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //       shape: ShapeLightFocus.Circle, // شكل التركيز دائري
+  //     ),
+  //   ];
+  // }
 
   @override
   Widget build(BuildContext context) {
