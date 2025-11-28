@@ -37,6 +37,19 @@ class HomeHeader extends StatelessWidget {
               ),
             ),
             Positioned(
+              top: 35,
+              left: isArabic ? 50 : null,
+              right: isArabic ? null : 50,
+              child: IconButton(
+                icon: SvgPicture.asset(
+                  Assets.imagesChat,
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {},
+              ),
+            ),
+            Positioned(
               top: 30,
               right: isArabic ? 16 : null,
               left: isArabic ? null : 16,
@@ -72,7 +85,6 @@ class HomeHeader extends StatelessWidget {
                     '${'user_state'.tr(context)}: $userState.',
                     style: TextStyles.regular13.copyWith(color: Colors.white),
                   ),
-
                 ],
               ),
             ),
