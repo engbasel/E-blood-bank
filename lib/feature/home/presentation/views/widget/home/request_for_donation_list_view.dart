@@ -1,6 +1,7 @@
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_state.dart';
 import 'package:blood_bank/feature/home/presentation/views/donor_details.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/request_for_donation_list_view_item.dart';
 import 'package:flutter/material.dart';
@@ -21,18 +22,22 @@ class RequestForDonationListView extends StatelessWidget {
         final request = reversedRequests[index];
 
         return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              buildPageRoute(
+            onTap: () {
+              final bloc = context.read<DonorRequestsBloc>();
+              final state = bloc.state;
+              if (state is DonorRequestsLoaded) {
+                Navigator.of(context).push(
+                  buildPageRoute(
+                    BlocProvider.value(
+                      value: bloc,
+                      child: DonorProfileScreen(uId: request.uId),
+                    ),
+                  ),
+                );
+              }
+            },
 
-                BlocProvider.value(
-                  value: context.read<DonorRequestsBloc>(),
-                  child: DonorProfileScreen(uId: request.uId),
-                ),
-              ),
-            );
-          },
-          child: RequestForDonationListViewItem(request: request),
+            child: RequestForDonationListViewItem(request: request),
         );
       },
     );

@@ -1,6 +1,7 @@
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
 import 'package:blood_bank/feature/home/domain/entities/doner_request_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,7 @@ class AddDonorFunctions {
   final TextEditingController donationTypeController;
 
   final DonorRemoteDataSource donorRemoteDataSource;
+
 
   AddDonorFunctions({
     required this.context,
@@ -57,6 +59,12 @@ class AddDonorFunctions {
       failureTopSnackBar(context, 'You already have an active request');
       return null;
     }
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
+
+    final photoUrl = userDoc.data()?['photoUrl'];
 
     return DonorRequestEntity(
       name: nameController.text,
@@ -79,7 +87,7 @@ class AddDonorFunctions {
       hospitalName: hospitalNameController.text,
       distance: num.parse(distanceController.text),
       uId: userId,
-      photoUrl: user?.photoURL,
+      photoUrl: photoUrl,
       lastRequestDate: DateTime.now(),
     );
   }
