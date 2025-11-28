@@ -297,7 +297,6 @@
   "units": "وحدات",
   "accepted_requests": "طلبات المحتاجين",
 
-
   "donor_profile": "ملف المتبرع",
   "retry": "إعادة المحاولة",
   "none": "لا يوجد",
@@ -306,5 +305,6 @@
   "contact_info": "معلومات التواصل",
   "medical_info": "المعلومات الطبية",
   "full_name": "الاسم الكامل",
-  "contact_number": "رقم"
-  }
+  "contact_number": "رقم",
+  "chat_title": "الدردشات والمستخدمون"
+}
