@@ -25,7 +25,7 @@ class RequestForDonationListView extends StatelessWidget {
             onTap: () {
               final bloc = context.read<DonorRequestsBloc>();
               final state = bloc.state;
-              if (state is DonorRequestsLoaded) {
+              if (state is DonorRequestsLoaded || state is DonorRequestsSuccess) {
                 Navigator.of(context).push(
                   buildPageRoute(
                     BlocProvider.value(
@@ -35,6 +35,7 @@ class RequestForDonationListView extends StatelessWidget {
                   ),
                 );
               }
+
             },
 
             child: RequestForDonationListViewItem(request: request),
