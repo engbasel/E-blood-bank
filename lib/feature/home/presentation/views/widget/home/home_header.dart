@@ -1,5 +1,6 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
+import 'package:blood_bank/feature/chat/presentation/views/chat_view.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/notification/notifications_page.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,14 @@ class HomeHeader extends StatelessWidget {
                   width: 24,
                   height: 24,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatView(),
+                    ),
+                  );
+                },
               ),
             ),
             Positioned(

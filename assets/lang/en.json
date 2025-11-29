@@ -1,5 +1,4 @@
 {
-
   "loading": "loading",
   "Skip": "Skip",
   "title_on_boarding_one": "Easy Donor Search",
@@ -323,13 +322,7 @@
   "accepted_requests" : "Accepted Requests",
   "status": "status",
   "date_time": "date Time",
-  "need_details": "Need Details"
+  "need_details": "Need Details",
+  "chat_title": "Chats and Users"
+
 }
-   
-   
-
-
-
-
-
-  
