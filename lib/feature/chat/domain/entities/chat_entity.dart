@@ -1,8 +1,8 @@
-import 'package:blood_bank/feature/auth/domain/entities/user_entity.dart';
+import 'package:blood_bank/feature/chat/domain/entities/chat_user_entity.dart';
 
 class ChatEntity {
   // بيانات الطرف الآخر في المحادثة
-  final UserEntity otherUser;
+  final ChatUserEntity otherUser;
 
   // مُعرّف المحادثة المشترك (للوصول إلى مجموعة الرسائل chats/{chatId})
   final String? chatId;
