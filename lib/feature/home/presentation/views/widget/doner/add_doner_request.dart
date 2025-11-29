@@ -29,6 +29,7 @@ class DonorRequestState extends State<DonorRequest> {
   final _formKey = GlobalKey<FormState>();
   final User? _user = FirebaseAuth.instance.currentUser;
 
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
@@ -102,6 +103,9 @@ class DonorRequestState extends State<DonorRequest> {
       listener: (context, state) {
         if (state is DonorRequestsSuccess) {
           _clearAllFields();
+          FocusScope.of(context).requestFocus(FocusNode());
+          setState(() {});
+
         }
       },
       child: SingleChildScrollView(

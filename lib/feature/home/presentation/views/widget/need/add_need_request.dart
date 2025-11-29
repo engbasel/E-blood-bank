@@ -62,6 +62,7 @@ class NeedRequestState extends State<NeedRequest> {
     });
   }
 
+
   List<String> get bloodTypes {
     return [
       'A+'.tr(context),
@@ -158,7 +159,6 @@ class NeedRequestState extends State<NeedRequest> {
         failureTopSnackBar(context, 'User not authenticated');
         return;
       }
-      // Bloc/usecase will check for existing active requests and emit failure if needed.
 
       NeederRequestEntity request = NeederRequestEntity(
         patientName: patientName,
@@ -193,6 +193,8 @@ class NeedRequestState extends State<NeedRequest> {
         if (state is AddNeederRequestSuccess) {
           successTopSnackBar(context, 'Request submitted successfully!');
           _clearFormFields();
+          FocusScope.of(context).requestFocus(FocusNode());
+          setState(() {});
         } else if (state is AddNeederRequestFailure) {
           // state.message may be a localization key or a plain message
           failureTopSnackBar(context, state.message.tr(context));

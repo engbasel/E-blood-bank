@@ -40,8 +40,14 @@ class DonorProfileScreen extends StatelessWidget {
         ),
         body: BlocBuilder<DonorRequestsBloc, DonorRequestsState>(
           builder: (context, state) {
-            if (state is DonorRequestsLoaded) {
-              final donor = state.requests.firstWhere((r) => r.uId == uId);
+            if (state is DonorRequestsLoaded || state is DonorRequestsSuccess) {
+              final requests = state is DonorRequestsLoaded
+                  ? state.requests
+                  : (state as DonorRequestsSuccess).requests;
+
+              final donorList = requests.where((r) => r.uId == uId).toList();
+              final donor =  donorList.first;
+
 
               return SingleChildScrollView(
                 child: Column(

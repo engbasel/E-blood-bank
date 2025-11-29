@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'dart:developer';
 import 'package:blood_bank/core/services/data_service.dart';
 import 'package:blood_bank/feature/home/data/model/doner_model.dart';
+import 'package:blood_bank/feature/notification/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class DonorRemoteDataSource {
@@ -16,12 +19,38 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
 
   @override
   Future<void> addDonorRequest(DonorModel model) async {
-    await databaseService.addData(
-      path: 'donerRequest',
-      data: model.toJson(),
-      docuementId: null,
+    try {
+      await databaseService.addData(
+        path: 'donerRequest',
+        data: model.toJson(),
+        docuementId: null,
+      );
+
+
+      unawaited(_sendNotification(model));
+    } catch (e, st) {
+      log("Error in addDonorRequest: $e\n$st");
+      rethrow;
+    }
+  }
+
+  Future<void> _sendNotification(DonorModel model) async {
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(model.uId).get();
+    final userEmail = userDoc.data()?['email'] ?? '';
+
+    await NotificationService.instance.sendNotificationToAllUsers(
+      title: "New Blood Request",
+      body: "${model.name} Wants to donate blood!",
+      data: {
+        "user_name": model.name,
+        "user_email": userEmail,
+        "photoUrl": model.photoUrl,
+        "request_id": model.uId,
+        "type": "new_request",
+      },
     );
   }
+
 
   @override
   Future<bool> hasActiveRequest(String userId) async {

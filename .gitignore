@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+assets/service_account_file.json
 lib/keys.dart
 # IntelliJ related
 *.iml

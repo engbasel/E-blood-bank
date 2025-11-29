@@ -6,7 +6,11 @@ class DonorRequestsInitial extends DonorRequestsState {}
 
 class DonorRequestsLoading extends DonorRequestsState {}
 
-class DonorRequestsSuccess extends DonorRequestsState {}
+class DonorRequestsSuccess extends DonorRequestsState {
+  final List<DonorRequestEntity> requests;
+  DonorRequestsSuccess(this.requests);
+}
+
 
 class DonorRequestsFailure extends DonorRequestsState {
   final String message;

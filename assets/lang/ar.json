@@ -296,6 +296,8 @@
   "Restart": "إعادة التشغيل الان",
   "units": "وحدات",
   "accepted_requests": "طلبات المحتاجين",
+  "status": "الحالة",
+  "date_time": "التوقيت",
 
   "donor_profile": "ملف المتبرع",
   "retry": "إعادة المحاولة",

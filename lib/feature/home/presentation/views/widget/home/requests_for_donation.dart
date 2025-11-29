@@ -23,8 +23,12 @@ class RequestsForDonation extends StatelessWidget {
           return Center(child: Text('error: ${state.message}'));
         }
 
-        if (state is DonorRequestsLoaded) {
-          final reversedRequests = state.requests.reversed.toList();
+        if (state is DonorRequestsLoaded || state is DonorRequestsSuccess) {
+          final requests = state is DonorRequestsLoaded
+              ? state.requests
+              : (state as DonorRequestsSuccess).requests;
+
+          final reversedRequests = requests.reversed.toList();
 
           if (reversedRequests.isEmpty) {
             return Center(

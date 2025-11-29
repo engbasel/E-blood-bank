@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:blood_bank/core/helper_function/validators_textform.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
@@ -10,22 +9,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class NeedTile extends StatelessWidget {
-  final String donationId;
+  final String neederId;
   final Map<String, dynamic> data;
 
   const NeedTile({
     super.key,
-    required this.donationId,
+    required this.neederId,
     required this.data,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(
-          data['patientName'] ?? 'no_name'.tr(context)), // Localized fallback
+      title: Text(data['patientName'] ?? 'no_name'.tr(context)),
       subtitle: Text(
-        '${'hospital'.tr(context)}: ${data['hospitalName'] ?? 'no_hospital'.tr(context)}', // Localized strings
+        '${'hospital'.tr(context)}: ${data['hospitalName'] ?? 'no_hospital'.tr(context)}\n'
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -36,7 +34,7 @@ class NeedTile extends StatelessWidget {
               Icons.edit,
               color: AppColors.primaryColorB,
             ),
-            onPressed: () => _editDonation(context, donationId, data),
+            onPressed: () => _editNeeder(context, neederId, data),
           ),
           // Delete button
           IconButton(
@@ -44,50 +42,46 @@ class NeedTile extends StatelessWidget {
               Icons.delete,
               color: AppColors.backgroundColor,
             ),
-            onPressed: () => _deleteDonation(context, donationId),
+            onPressed: () => _deleteNeeder(context, neederId),
           ),
         ],
       ),
       onTap: () {
-        _handleDonationTap(
-            context, donationId, data); // Pass data to handle tap
+        _handleNeederTap(context, neederId, data);
       },
     );
   }
 
-  // Handle donation tap
-  void _handleDonationTap(
-      BuildContext context, String donationId, Map<String, dynamic> data) {
-    // Navigate to the DonationDetailsScreen
+  void _handleNeederTap(
+      BuildContext context, String neederId, Map<String, dynamic> data) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NeedDetailsScreen(
-          needData: data,
-        ),
+        builder: (context) => NeedDetailsScreen(needData: data),
       ),
     );
   }
 
-  // Edit donation
-  void _editDonation(
-      BuildContext context, String donationId, Map<String, dynamic> data) {
-    // Open a dialog to edit the donation
+  void _editNeeder(
+      BuildContext context, String neederId, Map<String, dynamic> data) {
     showDialog(
       context: context,
       builder: (context) {
-        final nameController = TextEditingController(text: data['name']);
+        final patientController =
+        TextEditingController(text: data['patientName']);
         final hospitalController =
-            TextEditingController(text: data['hospitalName']);
-        final formKey = GlobalKey<FormState>(); // Form key for validation
-        bool isLoading = false; // Loading state
+        TextEditingController(text: data['hospitalName']);
+        final bloodTypeController =
+        TextEditingController(text: data['bloodType']);
+        final formKey = GlobalKey<FormState>();
+        bool isLoading = false;
 
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
               backgroundColor: Colors.white,
               title: Text(
-                'edit_donation'.tr(context), // Localized title
+                'edit_request'.tr(context),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -98,106 +92,71 @@ class NeedTile extends StatelessWidget {
                 child: Form(
                   key: formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    spacing: 8,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'edit_donation_data'.tr(context),
+                        'edit_request_data'.tr(context),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Name Field
                       CustomRequestTextField(
-                        hintStyle: TextStyle(
-                          color: AppColors.primaryColor,
-                        ),
-                        controller: nameController,
-                        hintText: 'Name'.tr(context),
+                        controller: patientController,
+                        hintText: 'patientName'.tr(context),
                         validator: (value) =>
                             Validators.validateName(value, context),
-                        onSaved: (value) {
-                          log('Name: ${nameController.text} ${data['name']}');
-                        },
                       ),
-                      const SizedBox(height: 20), // Spacing between fields
-                      // Hospital Field
+                      const SizedBox(height: 20),
                       CustomRequestTextField(
-                        hintStyle: TextStyle(
-                          color: AppColors.primaryColor,
-                        ),
                         controller: hospitalController,
                         hintText: 'hospitalName'.tr(context),
                         validator: (value) =>
                             Validators.validateHospitalName(value, context),
-                        onSaved: (value) {
-                          log('Hospital Name: ${hospitalController.text}      ${data['hospitalName']}');
-                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomRequestTextField(
+                        controller: bloodTypeController,
+                        hintText: 'bloodType'.tr(context),
+
                       ),
                     ],
                   ),
                 ),
               ),
               actions: [
-                // Cancel Button
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-                  },
-                  child: Text(
-                    'cancel'.tr(context), // Localized cancel button
-                    style: const TextStyle(
-                      color: Colors.black, // Dark text for contrast
-                      fontSize: 16,
-                    ),
-                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('cancel'.tr(context),
+                      style: const TextStyle(color: Colors.black)),
                 ),
-                // Save Button
                 TextButton(
                   onPressed: isLoading
-                      ? null // Disable button while loading
+                      ? null
                       : () async {
-                          if (formKey.currentState!.validate()) {
-                            setState(() {
-                              isLoading = true; // Show loading state
-                            });
+                    if (formKey.currentState!.validate()) {
+                      setState(() => isLoading = true);
 
-                            // Update the donation in Firestore
-                            await FirebaseFirestore.instance
-                                .collection('neederRequest')
-                                .doc(donationId)
-                                .update({
-                              'name': nameController.text,
-                              'hospitalName': hospitalController.text,
-                            });
+                      await FirebaseFirestore.instance
+                          .collection('neederRequest')
+                          .doc(neederId)
+                          .update({
+                        'patientName': patientController.text,
+                        'hospitalName': hospitalController.text,
+                        'bloodType': bloodTypeController.text,
+                      });
 
-                            setState(() {
-                              isLoading = false; // Hide loading state
-                            });
-
-                            Navigator.pop(context); // Close the dialog
-                          }
-                        },
+                      setState(() => isLoading = false);
+                      Navigator.pop(context);
+                    }
+                  },
                   child: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors
-                                .primaryColor, // Loading indicator color
-                          ),
-                        )
-                      : Text(
-                          'Save'.tr(context), // Localized save button
-                          style: const TextStyle(
-                            color: AppColors
-                                .primaryColor, // Primary color for text
-                            fontSize: 16,
-                          ),
-                        ),
+                      ? const CircularProgressIndicator(strokeWidth: 2)
+                      : Text('Save'.tr(context),
+                      style: const TextStyle(
+                          color: AppColors.primaryColor, fontSize: 16)),
                 ),
               ],
             );
@@ -207,33 +166,29 @@ class NeedTile extends StatelessWidget {
     );
   }
 
-  // Delete donation
-  void _deleteDonation(BuildContext context, String donationId) async {
-    // Show a confirmation dialog
+  // Delete needer request
+  Future<void> _deleteNeeder(
+      BuildContext context, String neederId) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
         return CustomAlertDialog(
-          title: 'delete_donation'.tr(context),
-          content: 'confirm_delete_donation'.tr(context),
+          title: 'delete_request'.tr(context),
+          content: 'confirm_delete_request'.tr(context),
           confirmText: 'delete'.tr(context),
           cancelText: 'cancel'.tr(context),
-          onConfirm: () {
-            Navigator.pop(context, true); // Confirm deletion
-          },
-          onCancel: () {
-            Navigator.pop(context, false); // Cancel deletion
-          },
+          onConfirm: () => Navigator.pop(context, true),
+          onCancel: () => Navigator.pop(context, false),
         );
       },
     );
 
     if (confirmed == true) {
-      // Delete the donation from Firestore
       await FirebaseFirestore.instance
           .collection('neederRequest')
-          .doc(donationId)
+          .doc(neederId)
           .delete();
     }
   }
 }
+
