@@ -1,49 +1,76 @@
-import 'package:blood_bank/core/utils/app_text_style.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UserListViewItem extends StatelessWidget {
+  final String imageUrl;
+  final String name;
+  final String lastMessage;
+  final DateTime? lastMessageTime;
+  final bool lastMessageSeen;
+
   const UserListViewItem({
     super.key,
-    required this.userImageUrl,
-    required this.userName,
-    required this.userEmail,
+    required this.imageUrl,
+    required this.name,
+    required this.lastMessage,
+    required this.lastMessageTime,
+    required this.lastMessageSeen,
   });
-
-  final String userImageUrl, userName, userEmail;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      // padding: const EdgeInsets.only(top: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            spreadRadius: 2,
-            offset: const Offset(0, 4), // الظل تحت الكارد
+    String formattedTime = "";
+
+    if (lastMessageTime != null) {
+      formattedTime = DateFormat('hh:mm a').format(lastMessageTime!);
+    }
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      leading: CircleAvatar(
+        radius: 25,
+        backgroundImage: NetworkImage(imageUrl),
+      ),
+      title: Text(
+        name,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      ),
+      subtitle: Row(
+        children: [
+          // Seen icon
+          Icon(
+            Icons.done_all,
+            size: 18,
+            color: lastMessageSeen ? Colors.blue : Colors.grey,
+          ),
+          const SizedBox(width: 5),
+
+          // Last message text
+          Expanded(
+            child: Text(
+              lastMessage.isEmpty ? "No messages yet" : lastMessage,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
-      child: ListTile(
-        leading: CircleAvatar(
-          radius: 26,
-          backgroundImage: CachedNetworkImageProvider(userImageUrl),
+
+      // Time of last message
+      trailing: Text(
+        lastMessageTime == null ? "" : formattedTime,
+        style: const TextStyle(
+          fontSize: 12,
+          color: Colors.grey,
         ),
-        title: Text(userName, style: TextStyles.semiBold19),
-        subtitle: Text(
-          userEmail,
-          style: TextStyles.regular13,
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-        onTap: () {
-          // open profile details
-        },
       ),
+
+      onTap: () {
+        // open chat screen
+      },
     );
   }
 }
