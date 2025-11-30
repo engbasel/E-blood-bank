@@ -1,7 +1,8 @@
+import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/chat/data/models/message_model.dart';
-import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // مهم عشان نجيب uid
 
 class ChatScreen extends StatelessWidget {
   final String userName;
@@ -10,48 +11,53 @@ class ChatScreen extends StatelessWidget {
   /// Messages from Firestore or Cubit
   final List<MessageModel>? messages;
 
-  const ChatScreen({
+  ChatScreen({
     super.key,
     required this.userName,
     required this.userImage,
     this.messages,
   });
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
+    final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
     final List<MessageModel> chatMessages = messages ??
         [
           MessageModel(
-            senderId: "me123",
+            senderId: currentUserId,
             receiverId: "user456",
             text: "Hey! 👋",
             timestamp: DateTime.now().subtract(const Duration(minutes: 10)),
           ),
           MessageModel(
             senderId: "user456",
-            receiverId: "me123",
+            receiverId: currentUserId,
             text: "Hello! How are you?",
             timestamp: DateTime.now().subtract(const Duration(minutes: 9)),
           ),
           MessageModel(
-            senderId: "me123",
+            senderId: currentUserId,
             receiverId: "user456",
             text: "I'm good! Working on the chat UI now 😊",
             timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
           ),
           MessageModel(
             senderId: "user456",
-            receiverId: "me123",
+            receiverId: currentUserId,
             text: "Nice! The UI is looking great 🔥",
             timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
           ),
           MessageModel(
-            senderId: "me123",
+            senderId: currentUserId,
             receiverId: "user456",
             text: "Thanks bro 💪",
             timestamp: DateTime.now().subtract(const Duration(minutes: 2)),
           ),
         ];
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
 
@@ -84,14 +90,15 @@ class ChatScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(12),
               reverse: true,
               itemCount: chatMessages.length,
               itemBuilder: (context, index) {
+                // important: reverse the list manually
                 final message = chatMessages[chatMessages.length - 1 - index];
 
-                final isMe = message.senderId ==
-                    "CURRENT_USER_ID"; // TODO: Replace with `FirebaseAuth.instance.currentUser!.uid`
+                final isMe = message.senderId == currentUserId;
 
                 return MessageBubble(
                   message: message,
@@ -102,13 +109,13 @@ class ChatScreen extends StatelessWidget {
           ),
 
           // ---------------- INPUT FIELD ----------------
-          _buildInputField(context),
+          _buildInputField(context, currentUserId),
         ],
       ),
     );
   }
 
-  Widget _buildInputField(BuildContext context) {
+  Widget _buildInputField(BuildContext context, String currentUserId) {
     final TextEditingController controller = TextEditingController();
 
     return Container(
@@ -135,7 +142,8 @@ class ChatScreen extends StatelessWidget {
           const SizedBox(width: 10),
           GestureDetector(
             onTap: () {
-              // TODO: Send Message
+              // TODO: send msg to Firestore
+              print("Send: ${controller.text}");
             },
             child: CircleAvatar(
               radius: 22,
@@ -150,62 +158,3 @@ class ChatScreen extends StatelessWidget {
 }
 
 //--------------------------------------------------------------------
-
-class MessageBubble extends StatelessWidget {
-  final MessageModel message;
-  final bool isMe;
-
-  const MessageBubble({
-    super.key,
-    required this.message,
-    required this.isMe,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final time = DateFormat("hh:mm a").format(message.timestamp);
-
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          color: isMe ? AppColors.primaryColor : Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(12),
-            topRight: const Radius.circular(12),
-            bottomLeft:
-                isMe ? const Radius.circular(12) : const Radius.circular(0),
-            bottomRight:
-                isMe ? const Radius.circular(0) : const Radius.circular(12),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(
-              message.text,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black,
-                height: 1.3,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              time,
-              style: TextStyle(
-                fontSize: 10,
-                color: isMe ? Colors.white70 : Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
