@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
@@ -21,6 +23,7 @@ class UsersListView extends StatelessWidget {
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
+              log("User: ${user.name}, ImageUrl: ${user.imageUrl}");
               return UserListViewItem(
                 imageUrl: user.imageUrl,
                 name: user.name,

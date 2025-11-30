@@ -25,7 +25,7 @@ class UserChatModel {
     return UserChatModel(
       userId: userData["uid"],
       name: userData["name"] ?? "",
-      imageUrl: userData["imageUrl"] ?? "",
+      imageUrl: userData["photoUrl"] ?? "",
       lastMessage: chatData?["lastMessage"] ?? "",
       lastMessageTime: chatData?["lastMessageTime"]?.toDate(),
       lastMessageSeen: chatData?["lastMessageSeen"] ?? true,

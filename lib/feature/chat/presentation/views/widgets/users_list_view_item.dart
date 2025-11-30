@@ -57,11 +57,12 @@ class UserListViewItem extends StatelessWidget {
       subtitle: Row(
         children: [
           // Seen icon
-          Icon(
-            Icons.done_all,
-            size: 18,
-            color: lastMessageSeen ? Colors.blue : Colors.grey,
-          ),
+          if (lastMessage != "Say hi 👋")
+            Icon(
+              Icons.done_all,
+              size: 18,
+              color: lastMessageSeen ? Colors.blue : Colors.grey,
+            ),
           const SizedBox(width: 5),
 
           // Last message text
