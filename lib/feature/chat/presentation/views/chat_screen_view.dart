@@ -50,6 +50,7 @@ class ChatScreen extends StatelessWidget {
           ),
           title: Row(
             children: [
+              const SizedBox(width: 10),
               CircleAvatar(backgroundImage: NetworkImage(userImage)),
               const SizedBox(width: 10),
               Text(userName, style: const TextStyle(color: Colors.black)),
@@ -120,8 +121,8 @@ class ChatScreen extends StatelessWidget {
             listener: (context, state) {
               if (state is SendMessageSuccess) {
                 controller.clear();
-                // بعد إرسال الرسالة، نعيد جلب الرسائل
                 context.read<ChatMessagesCubit>().fetchMessages(chatId);
+
                 _scrollController.animateTo(
                   0,
                   duration: const Duration(milliseconds: 300),

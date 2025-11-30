@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:blood_bank/core/error/failures.dart';
 import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/chat/data/models/message_model.dart';
@@ -94,19 +92,22 @@ class ChatRepositoryImpl implements ChatRepository {
 
   // ======================= Get All Users With Last Message =======================
   @override
-  Future<Either<Failure, List<UserChatModel>>> getAllUsersWithLastMessage(
-      String currentUserId) async {
-    try {
-      final usersSnapshot = await firestore.collection("users").get();
+  Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
+      String currentUserId) {
+    // نسمع جميع المستخدمين
+    return firestore
+        .collection('users')
+        .snapshots()
+        .asyncMap((usersSnapshot) async {
       List<UserChatModel> userChats = [];
-      log("List of chat uers =>$usersSnapshot");
+
       for (var doc in usersSnapshot.docs) {
         if (doc.id == currentUserId) continue;
 
         final userData = doc.data();
-
         final chatId = generateChatId(currentUserId, doc.id);
-        final chatDoc = await firestore.collection("chats").doc(chatId).get();
+
+        final chatDoc = await firestore.collection('chats').doc(chatId).get();
         final chatData = chatDoc.exists ? chatDoc.data() : null;
 
         final userChat = UserChatModel.fromData(
@@ -117,12 +118,17 @@ class ChatRepositoryImpl implements ChatRepository {
         userChats.add(userChat);
       }
 
-      return Right(userChats);
-    } on FirebaseException catch (e) {
-      return Left(NetworkFailure(e.message ?? "Network error"));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
+      // نرتب حسب آخر رسالة
+      userChats.sort((a, b) {
+        final aTime =
+            a.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime =
+            b.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bTime.compareTo(aTime);
+      });
+
+      return userChats;
+    });
   }
 
   // ======================= Generate Chat ID =======================

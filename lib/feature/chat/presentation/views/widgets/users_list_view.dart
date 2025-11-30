@@ -1,16 +1,13 @@
-import 'dart:developer';
-
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UsersListView extends StatelessWidget {
-  const UsersListView({super.key});
-
+  const UsersListView({super.key, required this.currentUserId});
+  final String currentUserId;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatUsersCubit, ChatUsersState>(
@@ -25,7 +22,6 @@ class UsersListView extends StatelessWidget {
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
-              log("User: ${user.name}, ImageUrl: ${user.imageUrl}");
               return UserListViewItem(
                 imageUrl: user.imageUrl,
                 name: user.name,
@@ -34,13 +30,14 @@ class UsersListView extends StatelessWidget {
                 lastMessageTime: user.lastMessageTime,
                 lastMessageSeen: user.lastMessageSeen,
                 onTap: () {
-                  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-                  final chatId = generateChatId(currentUserId, user.userId);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChatScreen(
-                        chatId: chatId,
+                        chatId: context
+                            .read<ChatUsersCubit>()
+                            .chatRepository
+                            .generateChatId(currentUserId, user.userId),
                         userName: user.name,
                         userImage: user.imageUrl,
                       ),
@@ -51,15 +48,15 @@ class UsersListView extends StatelessWidget {
             },
           );
         } else {
-          return const Text("else case");
+          return const SizedBox();
         }
       },
     );
   }
 
-  String generateChatId(String currentUserId, String otherUserId) {
-    return currentUserId.compareTo(otherUserId) < 0
-        ? '${currentUserId}_$otherUserId'
-        : '${otherUserId}_$currentUserId';
+  String generateChatId(String user1Id, String user2Id) {
+    final ids = [user1Id, user2Id];
+    ids.sort(); // sort ascending
+    return '${ids[0]}_${ids[1]}';
   }
 }

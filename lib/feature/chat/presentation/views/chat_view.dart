@@ -30,7 +30,9 @@ class ChatView extends StatelessWidget {
           elevation: 4,
           automaticallyImplyLeading: false,
         ),
-        body: ChatViewBody(),
+        body: ChatViewBody(
+          currentUserId: currentUserId,
+        ),
       ),
     );
   }

@@ -2,10 +2,12 @@ import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_vi
 import 'package:flutter/material.dart';
 
 class ChatViewBody extends StatelessWidget {
-  const ChatViewBody({super.key});
-
+  const ChatViewBody({super.key, required this.currentUserId});
+  final String currentUserId;
   @override
   Widget build(BuildContext context) {
-    return UsersListView();
+    return UsersListView(
+      currentUserId: currentUserId,
+    );
   }
 }

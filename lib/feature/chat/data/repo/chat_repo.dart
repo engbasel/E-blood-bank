@@ -16,7 +16,7 @@ abstract class ChatRepository {
   Future<Either<Failure, MessageModel?>> getChatData(String chatId);
   Future<Either<Failure, void>> markMessageAsSeen(String chatId);
 
-  Future<Either<Failure, List<UserChatModel>>> getAllUsersWithLastMessage(
+  Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
       String currentUserId);
 
   String generateChatId(String user1Id, String user2Id);
