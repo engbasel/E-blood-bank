@@ -8,7 +8,7 @@ class UserListViewItem extends StatelessWidget {
   final String lastMessage;
   final DateTime? lastMessageTime;
   final bool lastMessageSeen;
-
+  final VoidCallback? onTap;
   const UserListViewItem({
     super.key,
     required this.imageUrl,
@@ -16,6 +16,7 @@ class UserListViewItem extends StatelessWidget {
     required this.lastMessage,
     required this.lastMessageTime,
     required this.lastMessageSeen,
+    this.onTap,
   });
 
   @override
@@ -32,6 +33,7 @@ class UserListViewItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
+        onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         leading: CircleAvatar(
           radius: 25,
@@ -83,7 +85,6 @@ class UserListViewItem extends StatelessWidget {
             color: Colors.grey,
           ),
         ),
-        onTap: () {},
       ),
     );
   }

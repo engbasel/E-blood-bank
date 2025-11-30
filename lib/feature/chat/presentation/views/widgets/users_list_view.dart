@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
+import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,18 @@ class UsersListView extends StatelessWidget {
                     user.lastMessage.isEmpty ? "Say hi 👋" : user.lastMessage,
                 lastMessageTime: user.lastMessageTime,
                 lastMessageSeen: user.lastMessageSeen,
+                onTap: () {
+                  log("clicked clicked ");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatScreen(
+                        userName: user.name,
+                        userImage: user.imageUrl,
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
