@@ -3,6 +3,7 @@ import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_view.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/notification/notifications_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
@@ -51,7 +52,9 @@ class HomeHeader extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatView(),
+                      builder: (context) => ChatView(
+                        currentUserId: FirebaseAuth.instance.currentUser!.uid,
+                      ),
                     ),
                   );
                 },

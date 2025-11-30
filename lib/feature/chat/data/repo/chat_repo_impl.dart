@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:blood_bank/core/error/failures.dart';
 import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/chat/data/models/user_chat_model.dart';
@@ -96,7 +98,7 @@ class ChatRepositoryImpl implements ChatRepository {
     try {
       final usersSnapshot = await firestore.collection("users").get();
       List<UserChatModel> userChats = [];
-
+      log("List of chat uers =>$usersSnapshot");
       for (var doc in usersSnapshot.docs) {
         if (doc.id == currentUserId) continue;
 

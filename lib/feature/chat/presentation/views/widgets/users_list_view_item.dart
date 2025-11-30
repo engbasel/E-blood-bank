@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UserListViewItem extends StatelessWidget {
   final String imageUrl;
@@ -29,7 +30,22 @@ class UserListViewItem extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       leading: CircleAvatar(
         radius: 25,
-        backgroundImage: NetworkImage(imageUrl),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: imageUrl,
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+                const CircularProgressIndicator(strokeWidth: 2),
+            errorWidget: (context, url, error) => Image.network(
+              "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?size=338&ext=jpg",
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ),
       title: Text(
         name,

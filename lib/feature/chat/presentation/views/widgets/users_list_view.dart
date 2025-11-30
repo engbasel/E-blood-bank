@@ -1,24 +1,40 @@
+import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UsersListView extends StatelessWidget {
   const UsersListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return UserListViewItem(
-            imageUrl:
-                "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740&q=80",
-            name: 'Mohamed Hussien',
-            lastMessage: "i finished chat item fjhjfhds hfjhfhfdhjh",
-            lastMessageTime: DateTime(
-              DateTime.now().hour,
-            ),
-            lastMessageSeen: true,
+    return BlocBuilder<ChatUsersCubit, ChatUsersState>(
+      builder: (context, state) {
+        if (state is ChatUsersLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ChatUsersError) {
+          return Center(child: Text(state.message));
+        } else if (state is ChatUsersLoaded) {
+          final users = state.users;
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return UserListViewItem(
+                imageUrl: user.imageUrl,
+                name: user.name,
+                lastMessage:
+                    user.lastMessage.isEmpty ? "Say hi 👋" : user.lastMessage,
+                lastMessageTime: user.lastMessageTime,
+                lastMessageSeen: user.lastMessageSeen,
+              );
+            },
           );
-        });
+        } else {
+          return const Text("else case");
+        }
+      },
+    );
   }
 }
