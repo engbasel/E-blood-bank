@@ -1,11 +1,12 @@
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/chat_messages_cubit/chat_messages_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/send_message_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:blood_bank/feature/chat/presentation/manager/chat_messages_cubit/chat_messages_cubit.dart';
-import 'package:blood_bank/core/utils/app_colors.dart';
-import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userName;
@@ -24,12 +25,18 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    final chatRepo = ChatRepositoryImpl(firestore: FirebaseFirestore.instance);
 
-    return BlocProvider(
-      create: (_) => ChatMessagesCubit(
-          chatRepository:
-              ChatRepositoryImpl(firestore: FirebaseFirestore.instance))
-        ..fetchMessages(chatId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ChatMessagesCubit(chatRepository: chatRepo)
+            ..fetchMessages(chatId),
+        ),
+        BlocProvider(
+          create: (_) => SendMessageCubit(chatRepository: chatRepo),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
@@ -109,42 +116,49 @@ class ChatScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          GestureDetector(
-            onTap: () async {
-              // final text = controller.text.trim();
-              // if (text.isEmpty) return;
-
-              // // إرسال الرسالة عبر Cubit
-              // final message = MessageModel(
-              //   senderId: currentUserId,
-              //   receiverId:
-              //       chatId.split("_").firstWhere((id) => id != currentUserId),
-              //   text: text,
-              //   timestamp: DateTime.now(),
-              // );
-
-              // cubit.addMessage(message); // إضافة مؤقتة للـ UI
-              // controller.clear();
-
-              // await cubit.chatRepository.sendMessage(
-              //   chatId: chatId,
-              //   senderId: message.senderId,
-              //   receiverId: message.receiverId,
-              //   messageText: message.text,
-              // );
-
-              // // تمرير الـ scroll لأحدث رسالة
-              // _scrollController.animateTo(
-              //   0,
-              //   duration: const Duration(milliseconds: 300),
-              //   curve: Curves.easeOut,
-              // );
+          BlocConsumer<SendMessageCubit, SendMessageState>(
+            listener: (context, state) {
+              if (state is SendMessageSuccess) {
+                controller.clear();
+                // بعد إرسال الرسالة، نعيد جلب الرسائل
+                context.read<ChatMessagesCubit>().fetchMessages(chatId);
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              } else if (state is SendMessageError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
+              }
             },
-            child: CircleAvatar(
-              radius: 22,
-              backgroundColor: AppColors.primaryColor,
-              child: const Icon(Icons.send, color: Colors.white),
-            ),
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  final text = controller.text.trim();
+                  if (text.isEmpty) return;
+
+                  final receiverId =
+                      chatId.split("_").firstWhere((id) => id != currentUserId);
+
+                  context.read<SendMessageCubit>().sendMessage(
+                        chatId: chatId,
+                        senderId: currentUserId,
+                        receiverId: receiverId,
+                        messageText: text,
+                      );
+                },
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundColor: AppColors.primaryColor,
+                  child: state is SendMessageLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white, strokeWidth: 2)
+                      : const Icon(Icons.send, color: Colors.white),
+                ),
+              );
+            },
           ),
         ],
       ),
