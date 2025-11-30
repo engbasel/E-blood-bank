@@ -1,5 +1,6 @@
 import 'package:blood_bank/core/error/failures.dart';
 import 'package:blood_bank/feature/auth/data/models/user_model.dart';
+import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/models/user_chat_model.dart';
 import 'package:dartz/dartz.dart';
 
@@ -12,7 +13,7 @@ abstract class ChatRepository {
     required String receiverId,
     required String messageText,
   });
-
+  Future<Either<Failure, MessageModel?>> getChatData(String chatId);
   Future<Either<Failure, void>> markMessageAsSeen(String chatId);
 
   Future<Either<Failure, List<UserChatModel>>> getAllUsersWithLastMessage(

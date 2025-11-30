@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:blood_bank/core/error/failures.dart';
 import 'package:blood_bank/feature/auth/data/models/user_model.dart';
+import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/models/user_chat_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -130,5 +131,31 @@ class ChatRepositoryImpl implements ChatRepository {
     return user1Id.compareTo(user2Id) < 0
         ? '${user1Id}_$user2Id'
         : '${user2Id}_$user1Id';
+  }
+
+  @override
+  Future<Either<Failure, MessageModel?>> getChatData(String chatId) async {
+    try {
+      final messagesSnapshot = await firestore
+          .collection("chats")
+          .doc(chatId)
+          .collection("messages")
+          .orderBy("timestamp", descending: true)
+          .limit(1)
+          .get();
+
+      if (messagesSnapshot.docs.isEmpty) {
+        return const Right(null);
+      }
+
+      final lastMessageDoc = messagesSnapshot.docs.first;
+      final lastMessage = MessageModel.fromMap(lastMessageDoc.data());
+
+      return Right(lastMessage);
+    } on FirebaseException catch (e) {
+      return Left(NetworkFailure(e.message ?? "Network error"));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
   }
 }
