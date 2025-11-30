@@ -4,6 +4,7 @@ import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/ch
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,11 +34,13 @@ class UsersListView extends StatelessWidget {
                 lastMessageTime: user.lastMessageTime,
                 lastMessageSeen: user.lastMessageSeen,
                 onTap: () {
-                  log("clicked clicked ");
+                  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+                  final chatId = generateChatId(currentUserId, user.userId);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChatScreen(
+                        chatId: chatId,
                         userName: user.name,
                         userImage: user.imageUrl,
                       ),
@@ -52,5 +55,11 @@ class UsersListView extends StatelessWidget {
         }
       },
     );
+  }
+
+  String generateChatId(String currentUserId, String otherUserId) {
+    return currentUserId.compareTo(otherUserId) < 0
+        ? '${currentUserId}_$otherUserId'
+        : '${otherUserId}_$currentUserId';
   }
 }

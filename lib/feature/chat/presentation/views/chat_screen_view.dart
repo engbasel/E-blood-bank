@@ -1,116 +1,85 @@
-import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
+import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/chat_messages_cubit/chat_messages_cubit.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
-import 'package:blood_bank/feature/chat/data/models/message_model.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // مهم عشان نجيب uid
+import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userName;
   final String userImage;
-
-  /// Messages from Firestore or Cubit
-  final List<MessageModel>? messages;
+  final String chatId;
 
   ChatScreen({
     super.key,
     required this.userName,
     required this.userImage,
-    this.messages,
+    required this.chatId,
   });
 
   final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-    final List<MessageModel> chatMessages = messages ??
-        [
-          MessageModel(
-            senderId: currentUserId,
-            receiverId: "user456",
-            text: "Hey! 👋",
-            timestamp: DateTime.now().subtract(const Duration(minutes: 10)),
+    return BlocProvider(
+      create: (_) => ChatMessagesCubit(
+          chatRepository:
+              ChatRepositoryImpl(firestore: FirebaseFirestore.instance))
+        ..fetchMessages(chatId),
+      child: Scaffold(
+        backgroundColor: Colors.grey[200],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 1,
+          titleSpacing: -10,
+          leadingWidth: 35,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
           ),
-          MessageModel(
-            senderId: "user456",
-            receiverId: currentUserId,
-            text: "Hello! How are you?",
-            timestamp: DateTime.now().subtract(const Duration(minutes: 9)),
+          title: Row(
+            children: [
+              CircleAvatar(backgroundImage: NetworkImage(userImage)),
+              const SizedBox(width: 10),
+              Text(userName, style: const TextStyle(color: Colors.black)),
+            ],
           ),
-          MessageModel(
-            senderId: currentUserId,
-            receiverId: "user456",
-            text: "I'm good! Working on the chat UI now 😊",
-            timestamp: DateTime.now().subtract(const Duration(minutes: 7)),
-          ),
-          MessageModel(
-            senderId: "user456",
-            receiverId: currentUserId,
-            text: "Nice! The UI is looking great 🔥",
-            timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-          ),
-          MessageModel(
-            senderId: currentUserId,
-            receiverId: "user456",
-            text: "Thanks bro 💪",
-            timestamp: DateTime.now().subtract(const Duration(minutes: 2)),
-          ),
-        ];
-
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-
-      // ---------------- APP BAR ----------------
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        titleSpacing: -10,
-        leadingWidth: 35,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
+        body: Column(
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(userImage),
+            Expanded(
+              child: BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
+                builder: (context, state) {
+                  if (state is ChatMessagesLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is ChatMessagesError) {
+                    return Center(child: Text(state.message));
+                  } else if (state is ChatMessagesLoaded) {
+                    final messages = state.messages.reversed.toList();
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(12),
+                      reverse: true,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        final isMe = message.senderId == currentUserId;
+                        return MessageBubble(message: message, isMe: isMe);
+                      },
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
             ),
-            const SizedBox(width: 10),
-            Text(
-              userName,
-              style: const TextStyle(color: Colors.black),
-            ),
+            _buildInputField(context, currentUserId),
           ],
         ),
-      ),
-
-      // ---------------- MESSAGES LIST ----------------
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(12),
-              reverse: true,
-              itemCount: chatMessages.length,
-              itemBuilder: (context, index) {
-                // important: reverse the list manually
-                final message = chatMessages[chatMessages.length - 1 - index];
-
-                final isMe = message.senderId == currentUserId;
-
-                return MessageBubble(
-                  message: message,
-                  isMe: isMe,
-                );
-              },
-            ),
-          ),
-
-          // ---------------- INPUT FIELD ----------------
-          _buildInputField(context, currentUserId),
-        ],
       ),
     );
   }
@@ -141,9 +110,35 @@ class ChatScreen extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           GestureDetector(
-            onTap: () {
-              // TODO: send msg to Firestore
-              print("Send: ${controller.text}");
+            onTap: () async {
+              // final text = controller.text.trim();
+              // if (text.isEmpty) return;
+
+              // // إرسال الرسالة عبر Cubit
+              // final message = MessageModel(
+              //   senderId: currentUserId,
+              //   receiverId:
+              //       chatId.split("_").firstWhere((id) => id != currentUserId),
+              //   text: text,
+              //   timestamp: DateTime.now(),
+              // );
+
+              // cubit.addMessage(message); // إضافة مؤقتة للـ UI
+              // controller.clear();
+
+              // await cubit.chatRepository.sendMessage(
+              //   chatId: chatId,
+              //   senderId: message.senderId,
+              //   receiverId: message.receiverId,
+              //   messageText: message.text,
+              // );
+
+              // // تمرير الـ scroll لأحدث رسالة
+              // _scrollController.animateTo(
+              //   0,
+              //   duration: const Duration(milliseconds: 300),
+              //   curve: Curves.easeOut,
+              // );
             },
             child: CircleAvatar(
               radius: 22,
@@ -156,5 +151,3 @@ class ChatScreen extends StatelessWidget {
     );
   }
 }
-
-//--------------------------------------------------------------------
