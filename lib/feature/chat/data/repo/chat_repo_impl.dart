@@ -158,4 +158,27 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(UnexpectedFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, List<MessageModel>>> getAllMessages(
+      String chatId) async {
+    try {
+      final messagesQuery = await firestore
+          .collection("chats")
+          .doc(chatId)
+          .collection("messages")
+          .orderBy("timestamp", descending: false)
+          .get();
+
+      final messages = messagesQuery.docs
+          .map((doc) => MessageModel.fromMap(doc.data()))
+          .toList();
+
+      return Right(messages);
+    } on FirebaseException catch (e) {
+      return Left(NetworkFailure(e.message ?? "Network error"));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
 }

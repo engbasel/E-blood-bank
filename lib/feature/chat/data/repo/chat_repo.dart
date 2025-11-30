@@ -20,4 +20,5 @@ abstract class ChatRepository {
       String currentUserId);
 
   String generateChatId(String user1Id, String user2Id);
+  Future<Either<Failure, List<MessageModel>>> getAllMessages(String chatId);
 }
