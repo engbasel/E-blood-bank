@@ -1,5 +1,6 @@
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_messages_cubit/chat_messages_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/send_message_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
@@ -12,12 +13,14 @@ class ChatScreen extends StatelessWidget {
   final String userName;
   final String userImage;
   final String chatId;
+  final ChatUsersCubit chatUsersCubit;
 
   ChatScreen({
     super.key,
     required this.userName,
     required this.userImage,
     required this.chatId,
+    required this.chatUsersCubit,
   });
 
   final ScrollController _scrollController = ScrollController();
@@ -63,11 +66,12 @@ class ChatScreen extends StatelessWidget {
               child: BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
                 builder: (context, state) {
                   if (state is ChatMessagesLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return SizedBox();
                   } else if (state is ChatMessagesError) {
                     return Center(child: Text(state.message));
                   } else if (state is ChatMessagesLoaded) {
                     final messages = state.messages.reversed.toList();
+
                     return ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.all(12),
@@ -122,12 +126,13 @@ class ChatScreen extends StatelessWidget {
               if (state is SendMessageSuccess) {
                 controller.clear();
                 context.read<ChatMessagesCubit>().fetchMessages(chatId);
-
                 _scrollController.animateTo(
                   0,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
                 );
+                // Refresh users list to update last message
+                chatUsersCubit.refreshUsers();
               } else if (state is SendMessageError) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(state.message)),

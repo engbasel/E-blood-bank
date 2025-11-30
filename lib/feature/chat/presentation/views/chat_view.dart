@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ChatView extends StatelessWidget {
   const ChatView({super.key, required this.currentUserId});
   final String currentUserId;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -18,7 +19,7 @@ class ChatView extends StatelessWidget {
         chatRepository:
             ChatRepositoryImpl(firestore: FirebaseFirestore.instance),
         currentUserId: currentUserId,
-      )..fetchAllUsers(),
+      )..listenToUsers(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(

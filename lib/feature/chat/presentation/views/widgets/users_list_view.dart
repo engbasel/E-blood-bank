@@ -18,10 +18,12 @@ class UsersListView extends StatelessWidget {
           return Center(child: Text(state.message));
         } else if (state is ChatUsersLoaded) {
           final users = state.users;
+
           return ListView.builder(
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
+
               return UserListViewItem(
                 imageUrl: user.imageUrl,
                 name: user.name,
@@ -40,6 +42,7 @@ class UsersListView extends StatelessWidget {
                             .generateChatId(currentUserId, user.userId),
                         userName: user.name,
                         userImage: user.imageUrl,
+                        chatUsersCubit: context.read<ChatUsersCubit>(),
                       ),
                     ),
                   );
@@ -54,9 +57,9 @@ class UsersListView extends StatelessWidget {
     );
   }
 
-  String generateChatId(String user1Id, String user2Id) {
-    final ids = [user1Id, user2Id];
-    ids.sort(); // sort ascending
-    return '${ids[0]}_${ids[1]}';
-  }
+  // String generateChatId(String user1Id, String user2Id) {
+  //   final ids = [user1Id, user2Id];
+  //   ids.sort(); // sort ascending
+  //   return '${ids[0]}_${ids[1]}';
+  // }
 }

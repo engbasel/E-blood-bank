@@ -94,7 +94,6 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
       String currentUserId) {
-    // نسمع جميع المستخدمين
     return firestore
         .collection('users')
         .snapshots()
@@ -107,18 +106,22 @@ class ChatRepositoryImpl implements ChatRepository {
         final userData = doc.data();
         final chatId = generateChatId(currentUserId, doc.id);
 
-        final chatDoc = await firestore.collection('chats').doc(chatId).get();
-        final chatData = chatDoc.exists ? chatDoc.data() : null;
+        // Stream لكل chat
+        final chatStream =
+            firestore.collection('chats').doc(chatId).snapshots();
+
+        // ناخد أحدث رسالة مباشرة
+        final chatDoc = await chatStream.first;
 
         final userChat = UserChatModel.fromData(
           userData: {...userData, "uid": doc.id},
-          chatData: chatData,
+          chatData: chatDoc.exists ? chatDoc.data() : null,
         );
 
         userChats.add(userChat);
       }
 
-      // نرتب حسب آخر رسالة
+      // ترتيب حسب آخر رسالة
       userChats.sort((a, b) {
         final aTime =
             a.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);

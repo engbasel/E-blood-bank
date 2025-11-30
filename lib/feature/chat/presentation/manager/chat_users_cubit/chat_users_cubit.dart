@@ -1,7 +1,8 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'chat_users_state.dart';
-import 'package:blood_bank/feature/chat/data/repo/chat_repo.dart';
 import 'dart:async';
+
+import 'package:blood_bank/feature/chat/data/repo/chat_repo.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatUsersCubit extends Cubit<ChatUsersState> {
   final ChatRepository chatRepository;
@@ -14,7 +15,7 @@ class ChatUsersCubit extends Cubit<ChatUsersState> {
     required this.currentUserId,
   }) : super(ChatUsersInitial());
 
-  void fetchAllUsers() {
+  void listenToUsers() {
     emit(ChatUsersLoading());
 
     _subscription = chatRepository
@@ -24,6 +25,11 @@ class ChatUsersCubit extends Cubit<ChatUsersState> {
     }, onError: (error) {
       emit(ChatUsersError(error.toString()));
     });
+  }
+
+  void refreshUsers() {
+    _subscription?.cancel();
+    listenToUsers();
   }
 
   @override
