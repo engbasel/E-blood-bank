@@ -54,6 +54,7 @@ class ChatRepositoryImpl implements ChatRepository {
         "receiverId": receiverId,
         "text": messageText,
         "timestamp": FieldValue.serverTimestamp(),
+        "isSeen": false,
       });
 
       await chatDocRef.update({

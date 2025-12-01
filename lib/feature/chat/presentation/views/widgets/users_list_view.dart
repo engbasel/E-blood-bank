@@ -1,6 +1,5 @@
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_state.dart';
-import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
 import 'package:flutter/material.dart';
@@ -25,42 +24,31 @@ class UsersListView extends StatelessWidget {
             itemBuilder: (context, index) {
               final user = users[index];
 
-              return BlocProvider(
-                create: (_) => UnreadMessagesCubit(
-                  context.read<ChatUsersCubit>().chatRepository,
-                )..listenToUnreadMessages(
-                    context
-                        .read<ChatUsersCubit>()
-                        .chatRepository
-                        .generateChatId(currentUserId, user.userId),
-                    currentUserId,
-                  ),
-                child: UserListViewItem(
-                  currentUserId: currentUserId,
-                  lastMessageSenderId: user.lastMessageSenderId,
-                  imageUrl: user.imageUrl,
-                  name: user.name,
-                  lastMessage:
-                      user.lastMessage.isEmpty ? "Say hi 👋" : user.lastMessage,
-                  lastMessageTime: user.lastMessageTime,
-                  lastMessageSeen: user.lastMessageSeen,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ChatScreen(
-                          chatId: context
-                              .read<ChatUsersCubit>()
-                              .chatRepository
-                              .generateChatId(currentUserId, user.userId),
-                          userName: user.name,
-                          userImage: user.imageUrl,
-                          chatUsersCubit: context.read<ChatUsersCubit>(),
-                        ),
+              return UserListViewItem(
+                currentUserId: currentUserId,
+                senderId: user.lastMessageSenderId,
+                imageUrl: user.imageUrl,
+                name: user.name,
+                lastMessage:
+                    user.lastMessage.isEmpty ? "Say hi 👋" : user.lastMessage,
+                lastMessageTime: user.lastMessageTime,
+                lastMessageSeen: user.lastMessageSeen,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatScreen(
+                        chatId: context
+                            .read<ChatUsersCubit>()
+                            .chatRepository
+                            .generateChatId(currentUserId, user.userId),
+                        userName: user.name,
+                        userImage: user.imageUrl,
+                        chatUsersCubit: context.read<ChatUsersCubit>(),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               );
             },
           );

@@ -1,21 +1,20 @@
 import 'package:blood_bank/feature/chat/data/repo/chat_repo.dart';
-import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UnreadMessagesCubit extends Cubit<UnreadMessagesState> {
+class UnreadMessagesCubit extends Cubit<Map<String, int>> {
   final ChatRepository chatRepository;
 
-  UnreadMessagesCubit(this.chatRepository) : super(UnreadMessagesInitial());
+  UnreadMessagesCubit(this.chatRepository) : super({});
 
-  void listenToUnreadMessages(String chatId, String currentUserId) {
-    emit(UnreadMessagesLoading());
+  void listenToAllUnread(String currentUserId, List<String> userIds) {
+    for (var userId in userIds) {
+      final chatId = chatRepository.generateChatId(currentUserId, userId);
 
-    try {
       chatRepository.getUnreadCount(chatId, currentUserId).listen((count) {
-        emit(UnreadMessagesLoaded(count));
+        final newState = Map<String, int>.from(state);
+        newState[userId] = count;
+        emit(newState);
       });
-    } catch (e) {
-      emit(UnreadMessagesError(e.toString()));
     }
   }
 }
