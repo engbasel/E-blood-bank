@@ -9,6 +9,9 @@ class UserListViewItem extends StatelessWidget {
   final DateTime? lastMessageTime;
   final bool lastMessageSeen;
   final VoidCallback? onTap;
+  final String lastMessageSenderId;
+  final String currentUserId;
+
   const UserListViewItem({
     super.key,
     required this.imageUrl,
@@ -17,6 +20,8 @@ class UserListViewItem extends StatelessWidget {
     required this.lastMessageTime,
     required this.lastMessageSeen,
     this.onTap,
+    required this.lastMessageSenderId,
+    required this.currentUserId,
   });
 
   @override
@@ -25,6 +30,8 @@ class UserListViewItem extends StatelessWidget {
     if (lastMessageTime != null) {
       formattedTime = DateFormat('hh:mm a').format(lastMessageTime!);
     }
+
+    bool isMyMessage = lastMessageSenderId == currentUserId;
 
     return Card(
       elevation: 2,
@@ -63,7 +70,7 @@ class UserListViewItem extends StatelessWidget {
         ),
         subtitle: Row(
           children: [
-            if (lastMessage != "Say hi 👋")
+            if (isMyMessage && lastMessage != "Say hi 👋")
               Icon(
                 Icons.done_all,
                 size: 18,
