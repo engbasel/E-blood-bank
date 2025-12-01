@@ -73,21 +73,38 @@ class ChatRepositoryImpl implements ChatRepository {
 
   // ======================= Mark Last Message As Seen =======================
   @override
-  Future<Either<Failure, void>> markMessageAsSeen(String chatId) async {
+  Future<Either<Failure, void>> markMessageAsSeen(
+      String chatId, String currentUserId) async {
     try {
-      final chatDocRef = firestore.collection("chats").doc(chatId);
-      final chatDoc = await chatDocRef.get();
-      if (!chatDoc.exists) return const Right(null);
+      final messagesRef =
+          firestore.collection("chats").doc(chatId).collection("messages");
 
-      await chatDocRef.update({
-        "lastMessageSeen": true,
-      });
+      final unreadMessages = await messagesRef
+          .where("receiverId", isEqualTo: currentUserId)
+          .where("isSeen", isEqualTo: false)
+          .get();
+
+      for (var msg in unreadMessages.docs) {
+        await msg.reference.update({"isSeen": true});
+      }
+
       return const Right(null);
-    } on FirebaseException catch (e) {
-      return Left(NetworkFailure(e.message ?? "Network error"));
     } catch (e) {
       return Left(UnexpectedFailure(e.toString()));
     }
+  }
+
+//-------------------get unread count----------------------------------------------
+  @override
+  Stream<int> getUnreadCount(String chatId, String currentUserId) {
+    return firestore
+        .collection("chats")
+        .doc(chatId)
+        .collection("messages")
+        .where("receiverId", isEqualTo: currentUserId)
+        .where("isSeen", isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.size);
   }
 
   // ======================= Get All Users With Last Message =======================

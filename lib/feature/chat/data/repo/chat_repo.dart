@@ -14,8 +14,9 @@ abstract class ChatRepository {
     required String messageText,
   });
   Future<Either<Failure, MessageModel?>> getChatData(String chatId);
-  Future<Either<Failure, void>> markMessageAsSeen(String chatId);
-
+  Future<Either<Failure, void>> markMessageAsSeen(
+      String chatId, String currentUserId);
+  Stream<int> getUnreadCount(String chatId, String currentUserId);
   Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
       String currentUserId);
 
