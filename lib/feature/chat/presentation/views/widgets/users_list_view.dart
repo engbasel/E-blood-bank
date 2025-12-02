@@ -30,7 +30,6 @@ class UsersListView extends StatelessWidget {
           final users = state.users;
           final userIds = users.map((u) => u.userId).toList();
 
-          // Start listening to unread messages
           unreadCubit.listenToAllUnread(currentUserId, userIds);
 
           return BlocBuilder<UnreadMessagesCubit, UnreadMessagesState>(

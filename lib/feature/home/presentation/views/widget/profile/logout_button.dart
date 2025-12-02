@@ -58,7 +58,6 @@ class LogoutFeature extends StatelessWidget {
     try {
       await authService.signOut(); // Call the signOut function
 
-      // Remove all previous routes and push the LoginView
       Navigator.of(context).pushAndRemoveUntil(
         buildPageRoute(const LoginView()),
         (Route<dynamic> route) => false, // This condition removes all routes

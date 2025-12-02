@@ -3,6 +3,7 @@ import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/send_message_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
+import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -129,62 +130,107 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildInputField() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                hintText: "Type a message...",
-                border: InputBorder.none,
+      child: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 2.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                  ),
+                  child: TextField(
+                    controller: _controller,
+                    maxLines: 5,
+                    minLines: 1,
+                    keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      hintText: "hint_Text".tr(context),
+                      hintStyle: TextStyle(color: Colors.grey[500]),
+                      border: InputBorder.none,
+                      suffixIcon:
+                          Icon(Icons.mood_outlined, color: Colors.grey[500]),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          BlocConsumer<SendMessageCubit, SendMessageState>(
-            listener: (context, state) {
-              if (state is SendMessageSuccess) {
-                _controller.clear();
+            const SizedBox(width: 8),
+            // زر الإرسال
+            BlocConsumer<SendMessageCubit, SendMessageState>(
+              listener: (context, state) {
+                if (state is SendMessageSuccess) {
+                  _controller.clear();
 
-                _scrollController.animateTo(
-                  0,
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOut,
-                );
-                widget.onUpdateRequired!();
-              }
-            },
-            builder: (context, state) {
-              return GestureDetector(
-                onTap: () {
-                  final text = _controller.text.trim();
-                  if (text.isEmpty) return;
-
-                  final receiverId = widget.chatId
-                      .split("_")
-                      .firstWhere((id) => id != currentUserId);
-
-                  sendMessageCubit.sendMessage(
-                    chatId: widget.chatId,
-                    senderId: currentUserId,
-                    receiverId: receiverId,
-                    messageText: text,
+                  _scrollController.animateTo(
+                    0,
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOut,
                   );
-                },
-                child: CircleAvatar(
-                  radius: 22,
-                  backgroundColor: AppColors.primaryColor,
-                  child: state is SendMessageLoading
-                      ? const CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2)
-                      : const Icon(Icons.send, color: Colors.white),
-                ),
-              );
-            },
-          ),
-        ],
+                  widget.onUpdateRequired!();
+                }
+              },
+              builder: (context, state) {
+                final bool isLoading = state is SendMessageLoading;
+
+                return GestureDetector(
+                  onTap: isLoading
+                      ? null
+                      : () {
+                          final text = _controller.text.trim();
+                          if (text.isEmpty) return;
+
+                          final receiverId = widget.chatId
+                              .split("_")
+                              .firstWhere((id) => id != currentUserId);
+
+                          sendMessageCubit.sendMessage(
+                            chatId: widget.chatId,
+                            senderId: currentUserId,
+                            receiverId: receiverId,
+                            messageText: text,
+                          );
+                        },
+                  // زر دائري مع تأثير عند الضغط
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryColor.withOpacity(0.4),
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2),
+                            )
+                          : const Icon(Icons.send,
+                              color: Colors.white, size: 22),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
