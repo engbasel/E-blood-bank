@@ -8,20 +8,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class UsersListView extends StatelessWidget {
   const UsersListView({super.key, required this.currentUserId});
   final String currentUserId;
+
   @override
   Widget build(BuildContext context) {
+    final chatUsersCubit = context.watch<ChatUsersCubit>(); // Safe caching
+
     return BlocBuilder<ChatUsersCubit, ChatUsersState>(
       builder: (context, state) {
         if (state is ChatUsersLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is ChatUsersError) {
+        }
+
+        if (state is ChatUsersError) {
           return Center(child: Text(state.message));
-        } else if (state is ChatUsersLoaded) {
+        }
+
+        if (state is ChatUsersLoaded) {
           final users = state.users;
 
           return ListView.builder(
             itemCount: users.length,
-            itemBuilder: (context, index) {
+            itemBuilder: (_, index) {
               final user = users[index];
 
               return UserListViewItem(
@@ -34,17 +41,16 @@ class UsersListView extends StatelessWidget {
                 lastMessageTime: user.lastMessageTime,
                 lastMessageSeen: user.lastMessageSeen,
                 onTap: () {
+                  final chatId = chatUsersCubit.chatRepository
+                      .generateChatId(currentUserId, user.userId);
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChatScreen(
-                        chatId: context
-                            .read<ChatUsersCubit>()
-                            .chatRepository
-                            .generateChatId(currentUserId, user.userId),
+                        chatId: chatId,
                         userName: user.name,
                         userImage: user.imageUrl,
-                        chatUsersCubit: context.read<ChatUsersCubit>(),
                       ),
                     ),
                   );
@@ -52,16 +58,10 @@ class UsersListView extends StatelessWidget {
               );
             },
           );
-        } else {
-          return const SizedBox();
         }
+
+        return const SizedBox();
       },
     );
   }
-
-  // String generateChatId(String user1Id, String user2Id) {
-  //   final ids = [user1Id, user2Id];
-  //   ids.sort(); // sort ascending
-  //   return '${ids[0]}_${ids[1]}';
-  // }
 }
