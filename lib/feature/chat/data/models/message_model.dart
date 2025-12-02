@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MessageModel {
   final String senderId;
   final String receiverId;
@@ -25,7 +27,9 @@ class MessageModel {
       senderId: map["senderId"],
       receiverId: map["receiverId"],
       text: map["text"],
-      timestamp: map["timestamp"]?.toDate(),
+      timestamp: map["timestamp"] == null
+          ? DateTime.now()
+          : (map["timestamp"] as Timestamp).toDate(),
     );
   }
 }

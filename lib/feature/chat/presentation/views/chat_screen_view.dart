@@ -1,5 +1,5 @@
+import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
-import 'package:blood_bank/feature/chat/presentation/manager/chat_messages_cubit/chat_messages_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/send_message_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
@@ -33,10 +33,6 @@ class ChatScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => ChatMessagesCubit(chatRepository: chatRepo)
-            ..fetchMessages(chatId),
-        ),
-        BlocProvider(
           create: (_) => SendMessageCubit(chatRepository: chatRepo),
         ),
       ],
@@ -63,29 +59,50 @@ class ChatScreen extends StatelessWidget {
         body: Column(
           children: [
             Expanded(
-              child: BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
-                builder: (context, state) {
-                  if (state is ChatMessagesLoading) {
-                    return SizedBox();
-                  } else if (state is ChatMessagesError) {
-                    return Center(child: Text(state.message));
-                  } else if (state is ChatMessagesLoaded) {
-                    final messages = state.messages.reversed.toList();
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(12),
-                      reverse: true,
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        final isMe = message.senderId == currentUserId;
-                        return MessageBubble(message: message, isMe: isMe);
-                      },
-                    );
-                  } else {
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("chats")
+                    .doc(chatId)
+                    .collection("messages")
+                    .orderBy("timestamp", descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const SizedBox();
                   }
+
+                  if (snapshot.hasError) {
+                    return const Center(child: Text("Error loading messages"));
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text("No messages yet"));
+                  }
+
+                  final docs = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(12),
+                    reverse: true,
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final data = docs[index].data() as Map<String, dynamic>;
+
+                      final message = MessageModel(
+                        senderId: data["senderId"],
+                        receiverId: data["receiverId"],
+                        text: data["text"],
+                        timestamp: data["timestamp"] == null
+                            ? DateTime.now()
+                            : (data["timestamp"] as Timestamp).toDate(),
+                      );
+
+                      final isMe = message.senderId == currentUserId;
+
+                      return MessageBubble(message: message, isMe: isMe);
+                    },
+                  );
                 },
               ),
             ),
@@ -125,13 +142,15 @@ class ChatScreen extends StatelessWidget {
             listener: (context, state) {
               if (state is SendMessageSuccess) {
                 controller.clear();
-                context.read<ChatMessagesCubit>().fetchMessages(chatId);
+
+                /// scroll to bottom
                 _scrollController.animateTo(
                   0,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
                 );
-                // Refresh users list to update last message
+
+                /// update last message in users list
                 chatUsersCubit.refreshUsers();
               } else if (state is SendMessageError) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -160,7 +179,9 @@ class ChatScreen extends StatelessWidget {
                   backgroundColor: AppColors.primaryColor,
                   child: state is SendMessageLoading
                       ? const CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2)
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        )
                       : const Icon(Icons.send, color: Colors.white),
                 ),
               );
