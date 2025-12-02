@@ -1,3 +1,4 @@
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,6 +12,7 @@ class UserListViewItem extends StatelessWidget {
   final VoidCallback? onTap;
   final String currentUserId;
   final String senderId;
+  final int unreadCount;
   const UserListViewItem({
     super.key,
     required this.imageUrl,
@@ -21,6 +23,7 @@ class UserListViewItem extends StatelessWidget {
     this.onTap,
     required this.currentUserId,
     required this.senderId,
+    required this.unreadCount,
   });
 
   @override
@@ -82,12 +85,27 @@ class UserListViewItem extends StatelessWidget {
             ),
           ],
         ),
-        trailing: Text(
-          lastMessageTime == null ? "" : formattedTime,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              lastMessageTime == null ? "" : formattedTime,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            if (unreadCount > 0)
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  unreadCount.toString(),
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+          ],
         ),
       ),
     );

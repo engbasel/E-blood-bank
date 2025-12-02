@@ -97,15 +97,18 @@ class ChatRepositoryImpl implements ChatRepository {
 
 //-------------------get unread count----------------------------------------------
   @override
-  Stream<int> getUnreadCount(String chatId, String currentUserId) {
-    return firestore
+  Stream<QuerySnapshot> getUnreadMessages({
+    required String currentUserId,
+    required String otherUserId,
+  }) {
+    final chatId = generateChatId(currentUserId, otherUserId);
+    return FirebaseFirestore.instance
         .collection("chats")
         .doc(chatId)
         .collection("messages")
-        .where("receiverId", isEqualTo: currentUserId)
         .where("isSeen", isEqualTo: false)
-        .snapshots()
-        .map((snapshot) => snapshot.size);
+        .where("receiverId", isEqualTo: currentUserId)
+        .snapshots();
   }
 
   // ======================= Get All Users With Last Message =======================

@@ -5,12 +5,13 @@ class MessageModel {
   final String receiverId;
   final String text;
   final DateTime timestamp;
-
+  final bool isSeen;
   MessageModel({
     required this.senderId,
     required this.receiverId,
     required this.text,
     required this.timestamp,
+    this.isSeen = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +20,7 @@ class MessageModel {
       "receiverId": receiverId,
       "text": text,
       "timestamp": timestamp,
+      "isSeen": isSeen,
     };
   }
 
@@ -30,6 +32,7 @@ class MessageModel {
       timestamp: map["timestamp"] == null
           ? DateTime.now()
           : (map["timestamp"] as Timestamp).toDate(),
+      isSeen: map["isSeen"] ?? false,
     );
   }
 }

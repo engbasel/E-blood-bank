@@ -2,6 +2,7 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/chat_view_body.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,12 +15,21 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ChatUsersCubit(
-        chatRepository:
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ChatUsersCubit>(
+          create: (context) => ChatUsersCubit(
+            chatRepository:
+                ChatRepositoryImpl(firestore: FirebaseFirestore.instance),
+            currentUserId: currentUserId,
+          )..listenToUsers(),
+        ),
+        BlocProvider<UnreadMessagesCubit>(
+          create: (context) => UnreadMessagesCubit(
             ChatRepositoryImpl(firestore: FirebaseFirestore.instance),
-        currentUserId: currentUserId,
-      )..listenToUsers(),
+          ),
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: Text(

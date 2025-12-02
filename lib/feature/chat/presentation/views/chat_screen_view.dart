@@ -37,7 +37,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _scrollController = ScrollController();
     _controller = TextEditingController();
-
+    markMessagesAsSeen();
     sendMessageCubit = SendMessageCubit(chatRepository: chatRepo);
   }
 
@@ -185,5 +185,24 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  void markMessagesAsSeen() async {
+    final chatId = widget.chatId;
+    final batch = FirebaseFirestore.instance.batch();
+
+    final unreadMessages = await FirebaseFirestore.instance
+        .collection("chats")
+        .doc(chatId)
+        .collection("messages")
+        .where("receiverId", isEqualTo: currentUserId)
+        .where("isSeen", isEqualTo: false)
+        .get();
+
+    for (var doc in unreadMessages.docs) {
+      batch.update(doc.reference, {"isSeen": true});
+    }
+
+    await batch.commit();
   }
 }

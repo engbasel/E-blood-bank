@@ -1,20 +1,62 @@
+import 'dart:async';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UnreadMessagesCubit extends Cubit<Map<String, int>> {
+class UnreadMessagesCubit extends Cubit<UnreadMessagesState> {
   final ChatRepository chatRepository;
+  final Map<String, StreamSubscription> _subscriptions = {};
+  final Map<String, int> _counts = {}; // local storage of unread counts
 
-  UnreadMessagesCubit(this.chatRepository) : super({});
+  UnreadMessagesCubit(this.chatRepository) : super(UnreadMessagesInitial());
 
+  /// Start listening to unread messages for multiple users
   void listenToAllUnread(String currentUserId, List<String> userIds) {
-    for (var userId in userIds) {
-      final chatId = chatRepository.generateChatId(currentUserId, userId);
+    if (userIds.isEmpty) return;
 
-      chatRepository.getUnreadCount(chatId, currentUserId).listen((count) {
-        final newState = Map<String, int>.from(state);
-        newState[userId] = count;
-        emit(newState);
-      });
+    emit(UnreadMessagesLoading());
+
+    try {
+      for (var otherUserId in userIds) {
+        if (_subscriptions.containsKey(otherUserId)) continue;
+
+        // Listen to unread messages using named parameters
+        final sub = chatRepository
+            .getUnreadMessages(
+          currentUserId: currentUserId,
+          otherUserId: otherUserId,
+        )
+            .listen(
+          (snapshot) {
+            final count = snapshot.docs.length;
+            _counts[otherUserId] = count;
+            emit(UnreadMessagesLoaded(Map<String, int>.from(_counts)));
+          },
+          onError: (error) {
+            emit(UnreadMessagesError(error.toString()));
+          },
+        );
+
+        _subscriptions[otherUserId] = sub;
+      }
+    } catch (e) {
+      emit(UnreadMessagesError(e.toString()));
     }
+  }
+
+  /// Stop listening to a user
+  void stopListening(String userId) {
+    _subscriptions[userId]?.cancel();
+    _subscriptions.remove(userId);
+    _counts.remove(userId);
+    emit(UnreadMessagesLoaded(Map<String, int>.from(_counts)));
+  }
+
+  @override
+  Future<void> close() {
+    for (var sub in _subscriptions.values) {
+      sub.cancel();
+    }
+    return super.close();
   }
 }

@@ -2,6 +2,7 @@ import 'package:blood_bank/core/error/failures.dart';
 import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/models/user_chat_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class ChatRepository {
@@ -16,7 +17,10 @@ abstract class ChatRepository {
   Future<Either<Failure, MessageModel?>> getChatData(String chatId);
   Future<Either<Failure, void>> markMessageAsSeen(
       String chatId, String currentUserId);
-  Stream<int> getUnreadCount(String chatId, String currentUserId);
+  Stream<QuerySnapshot> getUnreadMessages({
+    required String currentUserId,
+    required String otherUserId,
+  });
   Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
       String currentUserId);
 
