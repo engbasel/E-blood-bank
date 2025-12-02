@@ -12,12 +12,13 @@ class ChatScreen extends StatefulWidget {
   final String userName;
   final String userImage;
   final String chatId;
-
+  final VoidCallback? onUpdateRequired;
   const ChatScreen({
     super.key,
     required this.userName,
     required this.userImage,
     required this.chatId,
+    this.onUpdateRequired,
   });
 
   @override
@@ -152,6 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   duration: const Duration(milliseconds: 250),
                   curve: Curves.easeOut,
                 );
+                widget.onUpdateRequired!();
               }
             },
             builder: (context, state) {
@@ -199,10 +201,15 @@ class _ChatScreenState extends State<ChatScreen> {
         .where("isSeen", isEqualTo: false)
         .get();
 
+    bool updated = false;
     for (var doc in unreadMessages.docs) {
       batch.update(doc.reference, {"isSeen": true});
+      updated = true;
     }
 
-    await batch.commit();
+    if (updated) {
+      await batch.commit();
+      widget.onUpdateRequired!();
+    }
   }
 }
