@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'sql_helper_notification.dart';
+
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
@@ -70,11 +71,11 @@ class NotificationService {
 
     await _localNotifications
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     const initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     final initializationSettingsDarwin = DarwinInitializationSettings();
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
@@ -105,7 +106,7 @@ class NotificationService {
 
     if (userId != null) {
       final existingDoc =
-      await firestore.collection('userTokens').doc(userId).get();
+          await firestore.collection('userTokens').doc(userId).get();
 
       if (existingDoc.exists && existingDoc['token'] == token) {
         log('Token already exists. Skipping save.');
@@ -143,7 +144,8 @@ class NotificationService {
         final token = doc['token'];
 
         if (!_hasNotificationBeenSent(token, title, body)) {
-          final response = await _sendNotificationViaRestApi(token, title, body, data);
+          final response =
+              await _sendNotificationViaRestApi(token, title, body, data);
 
           if (response.body.contains('"errorCode":"UNREGISTERED"')) {
             await doc.reference.delete();
@@ -172,19 +174,19 @@ class NotificationService {
 
   bool _hasNotificationBeenSent(String token, String title, String body) {
     return _notifications.any(
-          (notification) =>
-      notification['title'] == title &&
+      (notification) =>
+          notification['title'] == title &&
           notification['body'] == body &&
           notification['token'] == token,
     );
   }
 
   Future<http.Response> _sendNotificationViaRestApi(
-      String token,
-      String title,
-      String body,
-      Map<String, String> data,
-      ) async {
+    String token,
+    String title,
+    String body,
+    Map<String, String> data,
+  ) async {
     final accessToken = await getAccessToken();
 
     const serverUrl =
@@ -221,13 +223,13 @@ class NotificationService {
 
   Future<String> getAccessToken() async {
     final serviceAccountCredentials =
-    await rootBundle.loadString('assets/service_account_file.json');
+        await rootBundle.loadString('assets/service_account_file.json');
 
     final serviceAccountCredentialsJson =
-    json.decode(serviceAccountCredentials);
+        json.decode(serviceAccountCredentials);
 
     final credentials =
-    ServiceAccountCredentials.fromJson(serviceAccountCredentialsJson);
+        ServiceAccountCredentials.fromJson(serviceAccountCredentialsJson);
 
     final client = await clientViaServiceAccount(
       credentials,
@@ -242,7 +244,7 @@ class NotificationService {
     final notifications = await SQlHelperNotification().getNotifications();
 
     return notifications.any((existingNotification) =>
-    existingNotification['title'] == notification['title'] &&
+        existingNotification['title'] == notification['title'] &&
         existingNotification['body'] == notification['body'] &&
         existingNotification['timestamp'] == notification['timestamp']);
   }
@@ -263,7 +265,7 @@ class NotificationService {
     try {
       final batch = FirebaseFirestore.instance.batch();
       final notificationsSnapshot =
-      await FirebaseFirestore.instance.collection('notifications').get();
+          await FirebaseFirestore.instance.collection('notifications').get();
 
       for (final doc in notificationsSnapshot.docs) {
         batch.delete(doc.reference);
@@ -312,5 +314,28 @@ class NotificationService {
       );
     }
   }
-}
 
+  Future<void> sendNotificationToUser({
+    required String token,
+    required String title,
+    required String body,
+    required Map<String, String> data,
+  }) async {
+    final response =
+        await _sendNotificationViaRestApi(token, title, body, data);
+
+    if (response.body.contains('"errorCode":"UNREGISTERED"')) {
+      await FirebaseFirestore.instance
+          .collection('userTokens')
+          .where('token', isEqualTo: token)
+          .get()
+          .then((snapshot) {
+        for (var doc in snapshot.docs) {
+          doc.reference.delete();
+        }
+      });
+
+      log('🟡 Removed invalid token: $token');
+    }
+  }
+}

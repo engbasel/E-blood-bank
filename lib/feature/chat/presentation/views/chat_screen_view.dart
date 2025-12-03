@@ -2,6 +2,7 @@ import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/send_message_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/manager/send_notification_cubit/send_notification_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,10 +31,12 @@ class _ChatScreenState extends State<ChatScreen> {
   late final ScrollController _scrollController;
   late final TextEditingController _controller;
   late final SendMessageCubit sendMessageCubit;
+  late final NotificationCubit notificationCubit;
   final chatRepo = ChatRepositoryImpl(firestore: FirebaseFirestore.instance);
 
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
+  late final String receiverId;
+  late final String text;
   @override
   void initState() {
     super.initState();
@@ -41,6 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller = TextEditingController();
     markMessagesAsSeen();
     sendMessageCubit = SendMessageCubit(chatRepository: chatRepo);
+    notificationCubit = NotificationCubit();
   }
 
   @override
@@ -48,13 +52,18 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.dispose();
     _controller.dispose();
     sendMessageCubit.close();
+    notificationCubit.close();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: sendMessageCubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: sendMessageCubit),
+        BlocProvider.value(value: notificationCubit),
+      ],
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: _buildAppBar(),
@@ -164,12 +173,21 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            // زر الإرسال
             BlocConsumer<SendMessageCubit, SendMessageState>(
               listener: (context, state) {
                 if (state is SendMessageSuccess) {
                   _controller.clear();
-
+//----------------send notification----------------
+                  context.read<NotificationCubit>().sendMessageNotification(
+                    receiverId: receiverId,
+                    title: "New Message",
+                    body: text,
+                    data: {
+                      "chat_id": widget.chatId,
+                      "sender_id": currentUserId,
+                    },
+                  );
+                  //-----------------------------------------------
                   _scrollController.animateTo(
                     0,
                     duration: const Duration(milliseconds: 250),
@@ -185,10 +203,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   onTap: isLoading
                       ? null
                       : () {
-                          final text = _controller.text.trim();
+                          text = _controller.text.trim();
                           if (text.isEmpty) return;
 
-                          final receiverId = widget.chatId
+                          receiverId = widget.chatId
                               .split("_")
                               .firstWhere((id) => id != currentUserId);
 
@@ -199,7 +217,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             messageText: text,
                           );
                         },
-                  // زر دائري مع تأثير عند الضغط
                   child: Container(
                     width: 44,
                     height: 44,
