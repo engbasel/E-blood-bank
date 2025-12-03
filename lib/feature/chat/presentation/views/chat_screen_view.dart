@@ -191,12 +191,12 @@ class _ChatScreenState extends State<ChatScreen> {
               listener: (context, state) {
                 if (state is SendMessageSuccess) {
                   _controller.clear();
-
+//-------------------------- Notification Sending ----------------
                   if (_messageTextForNotification != null) {
                     context.read<NotificationCubit>().sendMessageNotification(
                       receiverId: receiverId,
-                      title: "New Message",
-                      body: _messageTextForNotification!,
+                      title: "New Message From ${widget.userName}",
+                      body: "Message: $_messageTextForNotification!",
                       data: {
                         "chat_id": widget.chatId,
                         "sender_id": currentUserId,
@@ -204,7 +204,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     );
                     _messageTextForNotification = null;
                   }
-
+//---------------------------------------------------------------
                   _scrollController.animateTo(
                     0,
                     duration: const Duration(milliseconds: 250),
@@ -268,26 +268,27 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void markMessagesAsSeen() async {
-    final chatId = widget.chatId;
-    final batch = FirebaseFirestore.instance.batch();
+    final chatDocRef =
+        FirebaseFirestore.instance.collection("chats").doc(widget.chatId);
+    final messagesRef = chatDocRef.collection("messages");
 
-    final unreadMessages = await FirebaseFirestore.instance
-        .collection("chats")
-        .doc(chatId)
-        .collection("messages")
+    final unreadMessages = await messagesRef
         .where("receiverId", isEqualTo: currentUserId)
         .where("isSeen", isEqualTo: false)
         .get();
 
-    bool updated = false;
+    if (unreadMessages.docs.isEmpty) return;
+
+    final batch = FirebaseFirestore.instance.batch();
+
     for (var doc in unreadMessages.docs) {
       batch.update(doc.reference, {"isSeen": true});
-      updated = true;
     }
 
-    if (updated) {
-      await batch.commit();
-      widget.onUpdateRequired!();
-    }
+    batch.update(chatDocRef, {"lastMessageSeen": true});
+
+    await batch.commit();
+
+    widget.onUpdateRequired?.call();
   }
 }

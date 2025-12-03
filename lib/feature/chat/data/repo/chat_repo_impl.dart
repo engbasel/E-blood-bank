@@ -129,9 +129,11 @@ class ChatRepositoryImpl implements ChatRepository {
             firestore.collection('chats').doc(chatId).snapshots();
 
         final userChatStream = chatStream.map((chatDoc) {
+          final chatData = chatDoc.data();
+
           return UserChatModel.fromData(
             userData: userData,
-            chatData: chatDoc.data(),
+            chatData: chatData,
           );
         });
 
