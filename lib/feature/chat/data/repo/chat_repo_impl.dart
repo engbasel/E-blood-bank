@@ -5,6 +5,7 @@ import 'package:blood_bank/feature/chat/data/models/user_chat_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
   final FirebaseFirestore firestore;
@@ -115,43 +116,41 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
       String currentUserId) {
-    return firestore
-        .collection('users')
-        .snapshots()
-        .asyncMap((usersSnapshot) async {
-      List<UserChatModel> userChats = [];
+    return firestore.collection('users').snapshots().switchMap((usersSnapshot) {
+      List<Stream<UserChatModel>> userStreams = [];
 
       for (var doc in usersSnapshot.docs) {
         if (doc.id == currentUserId) continue;
 
-        final userData = doc.data();
+        final userData = {...doc.data(), "uid": doc.id};
         final chatId = generateChatId(currentUserId, doc.id);
 
-        // Stream لكل chat
         final chatStream =
             firestore.collection('chats').doc(chatId).snapshots();
 
-        // ناخد أحدث رسالة مباشرة
-        final chatDoc = await chatStream.first;
+        final userChatStream = chatStream.map((chatDoc) {
+          return UserChatModel.fromData(
+            userData: userData,
+            chatData: chatDoc.data(),
+          );
+        });
 
-        final userChat = UserChatModel.fromData(
-          userData: {...userData, "uid": doc.id},
-          chatData: chatDoc.exists ? chatDoc.data() : null,
-        );
-
-        userChats.add(userChat);
+        userStreams.add(userChatStream);
       }
 
-      // ترتيب حسب آخر رسالة
-      userChats.sort((a, b) {
-        final aTime =
-            a.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bTime =
-            b.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
-        return bTime.compareTo(aTime);
-      });
+      return Rx.combineLatestList(userStreams).map((userChats) {
+        final sorted = List<UserChatModel>.from(userChats);
 
-      return userChats;
+        sorted.sort((a, b) {
+          final aTime =
+              a.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bTime =
+              b.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return bTime.compareTo(aTime);
+        });
+
+        return sorted;
+      });
     });
   }
 

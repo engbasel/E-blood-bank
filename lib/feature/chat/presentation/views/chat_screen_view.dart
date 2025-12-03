@@ -36,12 +36,18 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
   late final String receiverId;
-  late final String text;
+
+  String? _messageTextForNotification;
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _controller = TextEditingController();
+
+    receiverId =
+        widget.chatId.split("_").firstWhere((id) => id != currentUserId);
+
     markMessagesAsSeen();
     sendMessageCubit = SendMessageCubit(chatRepository: chatRepo);
     notificationCubit = NotificationCubit();
@@ -52,7 +58,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.dispose();
     _controller.dispose();
     sendMessageCubit.close();
-    notificationCubit.close();
 
     super.dispose();
   }
@@ -83,10 +88,14 @@ class _ChatScreenState extends State<ChatScreen> {
       elevation: 1,
       leading: BackButton(color: Colors.black),
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CircleAvatar(backgroundImage: NetworkImage(widget.userImage)),
           const SizedBox(width: 10),
-          Text(widget.userName, style: const TextStyle(color: Colors.black)),
+          SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Text(widget.userName,
+                  style: const TextStyle(color: Colors.black))),
         ],
       ),
     );
@@ -177,17 +186,20 @@ class _ChatScreenState extends State<ChatScreen> {
               listener: (context, state) {
                 if (state is SendMessageSuccess) {
                   _controller.clear();
-//----------------send notification----------------
-                  context.read<NotificationCubit>().sendMessageNotification(
-                    receiverId: receiverId,
-                    title: "New Message",
-                    body: text,
-                    data: {
-                      "chat_id": widget.chatId,
-                      "sender_id": currentUserId,
-                    },
-                  );
-                  //-----------------------------------------------
+
+                  if (_messageTextForNotification != null) {
+                    context.read<NotificationCubit>().sendMessageNotification(
+                      receiverId: receiverId,
+                      title: "New Message",
+                      body: _messageTextForNotification!,
+                      data: {
+                        "chat_id": widget.chatId,
+                        "sender_id": currentUserId,
+                      },
+                    );
+                    _messageTextForNotification = null;
+                  }
+
                   _scrollController.animateTo(
                     0,
                     duration: const Duration(milliseconds: 250),
@@ -203,12 +215,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   onTap: isLoading
                       ? null
                       : () {
-                          text = _controller.text.trim();
+                          final text = _controller.text.trim();
                           if (text.isEmpty) return;
 
-                          receiverId = widget.chatId
-                              .split("_")
-                              .firstWhere((id) => id != currentUserId);
+                          _messageTextForNotification = text;
 
                           sendMessageCubit.sendMessage(
                             chatId: widget.chatId,
