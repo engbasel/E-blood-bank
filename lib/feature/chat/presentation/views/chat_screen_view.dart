@@ -86,16 +86,21 @@ class _ChatScreenState extends State<ChatScreen> {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 1,
+      titleSpacing: 0,
       leading: BackButton(color: Colors.black),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CircleAvatar(backgroundImage: NetworkImage(widget.userImage)),
           const SizedBox(width: 10),
-          SizedBox(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: Text(widget.userName,
-                  style: const TextStyle(color: Colors.black))),
+          Expanded(
+            child: Text(
+              widget.userName,
+              style: const TextStyle(color: Colors.black),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
