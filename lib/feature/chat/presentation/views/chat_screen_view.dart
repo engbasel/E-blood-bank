@@ -5,6 +5,7 @@ import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/
 import 'package:blood_bank/feature/chat/presentation/manager/send_notification_cubit/send_notification_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/empty_chat_animation.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/phone_call_widget.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,12 +17,14 @@ class ChatScreen extends StatefulWidget {
   final String userImage;
   final String chatId;
   final VoidCallback? onUpdateRequired;
+  final String contactNumber;
   const ChatScreen({
     super.key,
     required this.userName,
     required this.userImage,
     required this.chatId,
     this.onUpdateRequired,
+    required this.contactNumber,
   });
 
   @override
@@ -87,8 +90,12 @@ class _ChatScreenState extends State<ChatScreen> {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 1,
+      actions: [
+        if (widget.contactNumber.isNotEmpty)
+          CallIcon(phoneNumber: widget.contactNumber),
+      ],
       titleSpacing: 0,
-      leading: BackButton(color: Colors.black),
+      leading: BackButton(color: AppColors.primaryColor),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -197,7 +204,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     context.read<NotificationCubit>().sendMessageNotification(
                       receiverId: receiverId,
                       title: "New Message From ${widget.userName}",
-                      body: "Message: $_messageTextForNotification!",
+                      body: "Message: $_messageTextForNotification ",
                       data: {
                         "chat_id": widget.chatId,
                         "sender_id": currentUserId,

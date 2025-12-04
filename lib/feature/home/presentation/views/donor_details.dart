@@ -118,6 +118,7 @@ class DonorProfileScreen extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => ChatScreen(
+                                    contactNumber: donor.contact.toString(),
                                     userName: donor.name,
                                     userImage: donor.photoUrl!,
                                     chatId: generateChatId(

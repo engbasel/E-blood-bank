@@ -54,6 +54,7 @@ class NeedDetailsScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => ChatScreen(
                         userName: needData['name'],
+                        contactNumber: needData['contactNumber'],
                         userImage: needData['photoUrl'],
                         chatId: generateChatId(currentUserId, needData['uId']),
                       ),
