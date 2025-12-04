@@ -15,6 +15,7 @@ class NeederModel {
   final String hospitalName;
   final DateTime? dateTime;
   final String status;
+  final bool notified;
 
   NeederModel({
     required this.patientName,
@@ -30,6 +31,7 @@ class NeederModel {
     required this.hospitalName,
     this.dateTime,
     required this.status,
+    this.notified = false,
   });
 
   factory NeederModel.fromEntity(NeederRequestEntity addNeederInputEntity) {
@@ -47,10 +49,10 @@ class NeederModel {
       hospitalName: addNeederInputEntity.hospitalName,
       dateTime: addNeederInputEntity.dateTime,
       status: addNeederInputEntity.status,
+      notified: false, // من الـ Entity دايمًا يبدأ false
     );
   }
 
-  /// ✅ هنا الإضافة
   factory NeederModel.fromJson(Map<String, dynamic> json) {
     return NeederModel(
       patientName: json['patientName'] ?? '',
@@ -68,6 +70,7 @@ class NeederModel {
           ? (json['dateTime'] as Timestamp).toDate()
           : null,
       status: json['status'] ?? '',
+      notified: json['notified'] ?? false,
     );
   }
 
@@ -86,6 +89,8 @@ class NeederModel {
       'hospitalName': hospitalName,
       'dateTime': dateTime != null ? Timestamp.fromDate(dateTime!) : null,
       'status': status,
+      'notified': notified,
     };
   }
 }
+

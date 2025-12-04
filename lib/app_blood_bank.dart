@@ -1,6 +1,7 @@
 import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_donor_request_usecase.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
@@ -30,12 +31,16 @@ class BloodBank extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) =>
-              AuthBloc(authRepository: getIt<AuthRepository>()),
+              AuthBloc(authRepository: getIt<AuthRepository>(),
+                  signInWithGoogleUseCase: getIt.get<SignInWithGoogle>()
+              ),
         ),
         BlocProvider(
           create: (context) => AddNeederRequestBloc(
               getIt<AddNeederRequestUseCase>(),
-              getIt<GetAcceptedNeederRequestsUseCase>())..add(GetAcceptedNeederRequestsEvent()),
+              getIt<GetAcceptedNeederRequestsUseCase>(),
+
+          )..add(GetAcceptedNeederRequestsEvent()),
         ),
         BlocProvider(
           create: (context) => DonorRequestsBloc(

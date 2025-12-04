@@ -150,10 +150,10 @@ class _LoginViewBodyState extends State<LoginViewBody> {
                     image: Assets.imagesGoogel,
                   ),
                   const SizedBox(width: 24),
-                  SocialLoginButton(
-                    onPressed: () {},
-                    image: Assets.imagesFacebook,
-                  ),
+                  // SocialLoginButton(
+                  //   onPressed: () {},
+                  //   image: Assets.imagesFacebook,
+                  // ),
                   // const SizedBox(width: 24),
                   Platform.isIOS
                       ? SocialLoginButton(

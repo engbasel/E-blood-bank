@@ -57,9 +57,6 @@ class DonorProfileScreen extends StatelessWidget {
 
               final donorList = requests.where((r) => r.uId == uId).toList();
               final donor = donorList.first;
-              print('=========================================');
-              print(donor.lastDonationDate);
-              print('=========================================');
 
               return SingleChildScrollView(
                 child: Column(

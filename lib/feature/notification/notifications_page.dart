@@ -101,6 +101,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           return ListView.builder(
             itemCount: notifications.length,
             itemBuilder: (context, index) {
+
               final notification = notifications[index];
               final id = notification['id'];
 

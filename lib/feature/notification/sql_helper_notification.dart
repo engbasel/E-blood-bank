@@ -44,8 +44,12 @@ class SQlHelperNotification {
 
   Future<List<Map<String, dynamic>>> getNotifications() async {
     final db = await database;
-    return await db.query('notifications');
+    return await db.query(
+      'notifications',
+      orderBy: 'id DESC',
+    );
   }
+
 
   Future<int> deleteNotification(int id) async {
     final db = await database;

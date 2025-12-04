@@ -7,12 +7,64 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:301094002417:android:dc70bc0baecde6d2691350",
+        "android_client_info": {
+          "package_name": "com.example.adminbloodv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "301094002417-rktadhmkn0bdpe9p3b4mh2gvp86r1gu2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRVGtU93xjUyWyvBJ6bLZp7qCXgKq2MOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "301094002417-rktadhmkn0bdpe9p3b4mh2gvp86r1gu2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "301094002417-8kobhdlnptmg0dsjgcr2t0faf0u6mbro.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.newsapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:301094002417:android:1477b90222a4e2f2691350",
         "android_client_info": {
           "package_name": "com.example.blood_bank"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "301094002417-gofr50elhqfsghtpdg7lo10797avocmv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blood_bank",
+            "certificate_hash": "7fb1c7c69fa16390ae2bfe7d453a42698f551c00"
+          }
+        },
+        {
+          "client_id": "301094002417-ve8g30gmtt366kmlgjpka7pkg0sqs114.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.blood_bank",
+            "certificate_hash": "ddaef7ee1e0deef68d8986ab8dd5e19f0a3ba03e"
+          }
+        },
         {
           "client_id": "301094002417-rktadhmkn0bdpe9p3b4mh2gvp86r1gu2.apps.googleusercontent.com",
           "client_type": 3

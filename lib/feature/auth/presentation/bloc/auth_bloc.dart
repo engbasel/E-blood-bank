@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:blood_bank/feature/auth/domain/entities/user_entity.dart';
 import 'package:blood_bank/feature/auth/domain/repositories/auth_repository.dart';
+import 'package:blood_bank/feature/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_event.dart';
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,9 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   StreamSubscription<UserEntity?>? _authStateSubscription;
+  final SignInWithGoogle signInWithGoogleUseCase;
 
-  AuthBloc({
+  AuthBloc( {
     required AuthRepository authRepository,
+    required this.signInWithGoogleUseCase,
+
   })  : _authRepository = authRepository,
         super(AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
@@ -95,18 +99,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (user) => emit(EmailNotVerified(user)),
     );
   }
+  //
+  // Future<void> _onSignInWithGoogle(
+  //   SignInWithGoogleEvent event,
+  //   Emitter<AuthState> emit,
+  // ) async {
+  //   emit(AuthActionInProgress());
+  //   final result = await _authRepository.signInWithGoogle();
+  //   result.fold(
+  //     (failure) => emit(AuthActionFailure(failure.toString())),
+  //     (user) => emit(Authenticated(user)),
+  //   );
+  // }
 
   Future<void> _onSignInWithGoogle(
-    SignInWithGoogleEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+      SignInWithGoogleEvent event,
+      Emitter<AuthState> emit,
+      ) async {
     emit(AuthActionInProgress());
-    final result = await _authRepository.signInWithGoogle();
+    final result = await signInWithGoogleUseCase();
     result.fold(
-      (failure) => emit(AuthActionFailure(failure.toString())),
-      (user) => emit(Authenticated(user)),
+          (failure) => emit(AuthActionFailure(failure.toString())),
+          (user) => emit(Authenticated(user)),
     );
   }
+
 
   Future<void> _onSignInWithFacebook(
     SignInWithFacebookEvent event,

@@ -13,6 +13,8 @@ abstract class NeederRemoteDataSource {
   Future<Map<String, dynamic>?> getUserById(String userId);
 
   Stream<List<NeederModel>> getAcceptedRequests();
+
+  Future<void> sendApprovalNotifications(NeederModel model, {required String requestDocId}) ;
 }
 
 class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
@@ -34,7 +36,9 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
     }
   }
 
-  Future<void> sendApprovalNotifications(NeederModel model) async {
+  @override
+  Future<void> sendApprovalNotifications(NeederModel model, {required String requestDocId}) async {
+
     final userDoc = await FirebaseFirestore.instance
         .collection('users')
         .doc(model.uId)
@@ -43,17 +47,18 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
     final userPhoto = userDoc.data()?['photoUrl'] ?? '';
 
     await NotificationService.instance.sendNotification(
-      title: "Approved Blood Request",
+      title: "Approved blood request",
       body: "${model.patientName} needs ${model.bloodType}.",
       data: {
         "user_name": model.patientName,
         "user_email": userEmail,
-        "photoUrl": "",
-        "request_id": model.uId,
+        "photoUrl": userPhoto,
+        "request_id": requestDocId,
         "type": "approved_request_broadcast",
       },
       excludeUserId: model.uId,
     );
+
 
     final userTokenDoc = await FirebaseFirestore.instance
         .collection('userTokens')
@@ -64,17 +69,16 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
     if (token != null) {
       await NotificationService.instance.sendNotificationToUser(
         token: token,
-        title: "Request Approved",
+        title: "Request approved",
         body: "Your blood request has been approved by admin.",
         data: {
-          "request_id": model.uId,
+          "request_id": requestDocId,
           "photoUrl": userPhoto,
           "type": "request_approved",
         },
       );
     }
   }
-
 
   @override
   Future<bool> hasActiveRequest(String userId) async {
@@ -92,8 +96,7 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
   @override
   Future<Map<String, dynamic>?> getUserById(String userId) async {
     try {
-      final data =
-          await databaseService.getData(path: 'users', docuementId: userId);
+      final data = await databaseService.getData(path: 'users', docuementId: userId);
       if (data is Map<String, dynamic>) return data;
       return null;
     } catch (_) {
@@ -102,24 +105,44 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
   }
 
   @override
-  @override
   Stream<List<NeederModel>> getAcceptedRequests() {
     return FirebaseFirestore.instance
         .collection('neederRequest')
         .snapshots()
         .map((snapshot) {
-      final acceptedModels = snapshot.docs
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+
+        final status = (data['status'] ?? '').toString().toLowerCase();
+        final notified = (data['notified'] ?? false) == true;
+
+        if (status == 'accepted' && !notified) {
+          final model = NeederModel.fromJson(data);
+
+          Future.microtask(() async {
+            try {
+              await sendApprovalNotifications(model, requestDocId: doc.id);
+            } catch (e, st) {
+              log("Error sending notifications: $e\n$st");
+            } finally {
+              try {
+                await FirebaseFirestore.instance
+                    .collection('neederRequest')
+                    .doc(doc.id)
+                    .update({'notified': true});
+              } catch (e, st) {
+                log("Error flagging notified: $e\n$st");
+              }
+            }
+          });
+        }
+      }
+
+      return snapshot.docs
           .map((doc) => NeederModel.fromJson(doc.data()))
           .where((model) => model.status.toLowerCase() == 'accepted')
           .toList();
-
-
-      for (final model in acceptedModels) {
-        sendApprovalNotifications(model);
-      }
-
-      return acceptedModels;
     });
   }
-
 }
+
