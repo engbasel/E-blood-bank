@@ -3,6 +3,7 @@ import 'package:blood_bank/feature/chat/data/models/message_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_message_cubit/send_message_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_notification_cubit/send_notification_cubit.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/empty_chat_animation.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -122,7 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
         final docs = snapshot.data!.docs;
 
         if (docs.isEmpty) {
-          return const Center(child: Text("No messages yet"));
+          return EmptyChatAnimation();
         }
 
         return ListView.builder(
