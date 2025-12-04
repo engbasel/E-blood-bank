@@ -62,6 +62,14 @@ class Assets {
   /// assets/images/donersplash.svg
   static const String imagesDonersplash = "assets/images/donersplash.svg";
 
+  /// Assets for imagesEmpty
+  /// assets/images/empty.json
+  static const String imagesEmpty = "assets/images/empty.json";
+
+  /// Assets for imagesEmpty1
+  /// assets/images/empty1.json
+  static const String imagesEmpty1 = "assets/images/empty1.json";
+
   /// Assets for imagesEmptydrop
   /// assets/images/emptydrop.svg
   static const String imagesEmptydrop = "assets/images/emptydrop.svg";
@@ -69,6 +77,10 @@ class Assets {
   /// Assets for imagesFacebook
   /// assets/images/facebook.svg
   static const String imagesFacebook = "assets/images/facebook.svg";
+
+  /// Assets for imagesFinallllllllogo
+  /// assets/images/finallllllllogo.png
+  static const String imagesFinallllllllogo = "assets/images/finallllllllogo.png";
 
   /// Assets for imagesFinallogo
   /// assets/images/finallogo.svg

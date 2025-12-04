@@ -1,6 +1,9 @@
+import 'package:blood_bank/core/helper_function/generate_chat_id_fun.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
+import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -10,6 +13,8 @@ class NeedDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
@@ -32,6 +37,41 @@ class NeedDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeaderSection(context),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.backgroundColor,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 3,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        userName: needData['name'],
+                        userImage: needData['photoUrl'],
+                        chatId: generateChatId(currentUserId, needData['uId']),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.wechat_outlined,
+                    color: Colors.white, size: 26),
+                label: Text(
+                  "send_message".tr(context),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             _buildDetailsSection(context),
           ],
@@ -40,7 +80,6 @@ class NeedDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Header Section
   Widget _buildHeaderSection(BuildContext context) {
     return Card(
       elevation: 3,
@@ -62,7 +101,8 @@ class NeedDetailsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.local_hospital, color: AppColors.backgroundColor),
+                const Icon(Icons.local_hospital,
+                    color: AppColors.backgroundColor),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -91,24 +131,35 @@ class NeedDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildDetailItem(context, Icons.location_on, 'address', needData['address']),
-            _buildDetailItem(context, Icons.cake, 'age', needData['age'].toString()),
-            _buildDetailItem(context, Icons.bloodtype, 'blood_type', needData['bloodType']),
-            _buildDetailItem(context, Icons.phone, 'contact', needData['contact']),
-            _buildDetailItem(context, Icons.volunteer_activism, 'donation_type', needData['donationType']),
-            _buildDetailItem(context, Icons.person, 'gender', needData['gender']),
-            _buildDetailItem(context, Icons.credit_card, 'id_card', needData['idCard'].toString()),
-            _buildDetailItem(context, Icons.calendar_today, 'date_time', needData['dateTime']),
-            _buildDetailItem(context, Icons.health_and_safety, 'medical_conditions', needData['medicalConditions']),
-            _buildDetailItem(context, Icons.assignment, 'status', needData['status']),
+            _buildDetailItem(
+                context, Icons.location_on, 'address', needData['address']),
+            _buildDetailItem(
+                context, Icons.cake, 'age', needData['age'].toString()),
+            _buildDetailItem(
+                context, Icons.bloodtype, 'blood_type', needData['bloodType']),
+            _buildDetailItem(
+                context, Icons.phone, 'contact', needData['contact']),
+            _buildDetailItem(context, Icons.volunteer_activism, 'donation_type',
+                needData['donationType']),
+            _buildDetailItem(
+                context, Icons.person, 'gender', needData['gender']),
+            _buildDetailItem(context, Icons.credit_card, 'id_card',
+                needData['idCard'].toString()),
+            _buildDetailItem(context, Icons.calendar_today, 'date_time',
+                needData['dateTime']),
+            _buildDetailItem(context, Icons.health_and_safety,
+                'medical_conditions', needData['medicalConditions']),
+            _buildDetailItem(
+                context, Icons.assignment, 'status', needData['status']),
           ],
         ),
       ),
     );
   }
 
-  // Detail Item with Icon
-  Widget _buildDetailItem(BuildContext context, IconData icon, String labelKey, dynamic value) {
+  // Detail Item
+  Widget _buildDetailItem(
+      BuildContext context, IconData icon, String labelKey, dynamic value) {
     String formattedValue = _formatDate(value);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

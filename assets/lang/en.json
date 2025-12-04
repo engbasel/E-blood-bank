@@ -319,10 +319,12 @@
   "full_name": "Full Name",
   "contact_number": "Contact Number",
   "additional_notes": "Additional Notes",
-  "accepted_requests" : "Accepted Requests",
+  "accepted_requests": "Accepted Requests",
   "status": "status",
   "date_time": "date Time",
   "need_details": "Need Details",
-  "chat_title": "Chats and Users"
-
+  "chat_title": "Chats and Users",
+  "hint_Text": "Type your message here...",
+  "send_to_donor": "Send Message to Donor",
+  "send_message": "Send Message"
 }
