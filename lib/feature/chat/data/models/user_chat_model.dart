@@ -2,11 +2,12 @@ class UserChatModel {
   final String userId;
   final String name;
   final String imageUrl;
-
   final String lastMessage;
   final DateTime? lastMessageTime;
   final bool lastMessageSeen;
   final String lastMessageSenderId;
+
+  final String? contactNumber;
 
   UserChatModel({
     required this.userId,
@@ -16,6 +17,7 @@ class UserChatModel {
     required this.lastMessageTime,
     required this.lastMessageSeen,
     required this.lastMessageSenderId,
+    this.contactNumber,
   });
 
   factory UserChatModel.fromData({
@@ -30,6 +32,7 @@ class UserChatModel {
       lastMessageTime: chatData?["lastMessageTime"]?.toDate(),
       lastMessageSeen: chatData?["lastMessageSeen"] ?? true,
       lastMessageSenderId: chatData?["lastMessageSenderId"] ?? "",
+      contactNumber: userData["contactNumber"],
     );
   }
 }

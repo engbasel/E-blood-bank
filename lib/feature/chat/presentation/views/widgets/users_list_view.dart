@@ -66,6 +66,7 @@ class UsersListView extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => ChatScreen(
+                            contactNumber: user.contactNumber ?? "",
                             onUpdateRequired: chatUsersCubit.listenToUsers,
                             chatId: chatId,
                             userName: user.name,

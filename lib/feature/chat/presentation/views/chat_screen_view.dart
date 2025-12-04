@@ -17,12 +17,14 @@ class ChatScreen extends StatefulWidget {
   final String userImage;
   final String chatId;
   final VoidCallback? onUpdateRequired;
+  final String contactNumber;
   const ChatScreen({
     super.key,
     required this.userName,
     required this.userImage,
     required this.chatId,
     this.onUpdateRequired,
+    required this.contactNumber,
   });
 
   @override
@@ -89,7 +91,8 @@ class _ChatScreenState extends State<ChatScreen> {
       backgroundColor: Colors.white,
       elevation: 1,
       actions: [
-        CallIcon(phoneNumber: "+201275566392"),
+        if (widget.contactNumber.isNotEmpty)
+          CallIcon(phoneNumber: widget.contactNumber),
       ],
       titleSpacing: 0,
       leading: BackButton(color: AppColors.primaryColor),
