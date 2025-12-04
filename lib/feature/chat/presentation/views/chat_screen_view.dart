@@ -210,7 +210,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     duration: const Duration(milliseconds: 250),
                     curve: Curves.easeOut,
                   );
-                  widget.onUpdateRequired!();
+                  if (widget.onUpdateRequired != null) {
+                    widget.onUpdateRequired!();
+                  }
                 }
               },
               builder: (context, state) {
