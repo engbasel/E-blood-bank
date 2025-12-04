@@ -23,6 +23,10 @@ class DonorProfileScreen extends StatelessWidget {
     if (date is Timestamp) {
       return DateFormat('MMM dd, yyyy').format(date.toDate());
     }
+    if (date is DateTime) {
+      return DateFormat('MMM dd, yyyy').format(date);
+    }
+
     if (date is String) return date;
     return 'n_a'.tr(context);
   }
@@ -53,6 +57,9 @@ class DonorProfileScreen extends StatelessWidget {
 
               final donorList = requests.where((r) => r.uId == uId).toList();
               final donor = donorList.first;
+              print('=========================================');
+              print(donor.lastDonationDate);
+              print('=========================================');
 
               return SingleChildScrollView(
                 child: Column(

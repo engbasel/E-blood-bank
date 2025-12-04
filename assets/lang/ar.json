@@ -314,5 +314,7 @@
   "send_message": "إرسال الرسالة",
   "alert": "تنبيه",
   "could_not_launch_call": "تعذر إجراء المكالمة",
-  "ok": "حسناً"
+  "ok": "حسناً",
+  "request_date": "وقت الطلب",
+  "patient_profile" : "ملف المريض"
 }

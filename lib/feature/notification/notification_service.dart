@@ -44,7 +44,6 @@ class NotificationService {
       await saveUserToken(token);
     }
 
-    // استمع للتوكن الجديد أوتوماتيك
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       saveUserToken(newToken);
     });
@@ -149,7 +148,7 @@ class NotificationService {
 
           if (response.body.contains('"errorCode":"UNREGISTERED"')) {
             await doc.reference.delete();
-            log('🟡 Removed invalid token: $token');
+            log('Removed invalid token: $token');
           } else {
             await firestore.collection('notifications').add({
               'title': title,
@@ -171,6 +170,54 @@ class NotificationService {
       }
     }
   }
+
+  Future<void> sendNotification({
+    required String title,
+    required String body,
+    required Map<String, String> data,
+    String? excludeUserId,
+  }) async {
+    final firestore = FirebaseFirestore.instance;
+    final tokensSnapshot = await firestore.collection('userTokens').get();
+
+    if (tokensSnapshot.docs.isNotEmpty) {
+      for (final doc in tokensSnapshot.docs) {
+        final token = doc['token'];
+        final userId = doc['userId'];
+
+        if (excludeUserId != null && userId == excludeUserId) {
+          continue;
+        }
+
+        if (!_hasNotificationBeenSent(token, title, body)) {
+          final response =
+          await _sendNotificationViaRestApi(token, title, body, data);
+
+          if (response.body.contains('"errorCode":"UNREGISTERED"')) {
+            await doc.reference.delete();
+            log('Removed invalid token: $token');
+          } else {
+            await firestore.collection('notifications').add({
+              'title': title,
+              'body': body,
+              'data': data,
+              'token': token,
+              'timestamp': Timestamp.now(),
+            });
+
+            _notifications.add({
+              'title': title,
+              'body': body,
+              'data': data,
+              'token': token,
+              'timestamp': Timestamp.now(),
+            });
+          }
+        }
+      }
+    }
+  }
+
 
   bool _hasNotificationBeenSent(String token, String title, String body) {
     return _notifications.any(
@@ -213,9 +260,9 @@ class NotificationService {
     );
 
     if (response.statusCode == 200) {
-      log('✅ Notification sent successfully: ${response.body}');
+      log(' Notification sent successfully: ${response.body}');
     } else {
-      log('❌ Failed to send notification: ${response.body}');
+      log(' Failed to send notification: ${response.body}');
     }
 
     return response;
@@ -335,7 +382,7 @@ class NotificationService {
         }
       });
 
-      log('🟡 Removed invalid token: $token');
+      log(' Removed invalid token: $token');
     }
   }
 }

@@ -26,7 +26,7 @@ class NeederProfileScreen extends StatelessWidget {
       textDirection: isArabic ? flutter.TextDirection.rtl : flutter.TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('needer_profile'.tr(context),
+          title: Text('patient_profile'.tr(context),
               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           backgroundColor: primaryColor,
           elevation: 0,

@@ -329,5 +329,7 @@
   "send_message": "Send Message",
   "alert": "Alert",
   "could_not_launch_call": "Could not launch call",
-  "ok": "OK"
+  "ok": "OK",
+  "request_date" : "Request Date",
+  "patient_profile": "Patient Profile"
 }

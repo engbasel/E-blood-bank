@@ -38,7 +38,7 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(model.uId).get();
     final userEmail = userDoc.data()?['email'] ?? '';
 
-    await NotificationService.instance.sendNotificationToAllUsers(
+    await NotificationService.instance.sendNotification(
       title: "New Blood Request",
       body: "${model.name} Wants to donate blood!",
       data: {
