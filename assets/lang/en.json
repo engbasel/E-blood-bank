@@ -325,5 +325,6 @@
   "need_details": "Need Details",
   "chat_title": "Chats and Users",
   "hint_Text": "Type your message here...",
-  "send_to_donor": "Send Message to Donor"
+  "send_to_donor": "Send Message to Donor",
+  "send_message": "Send Message"
 }
