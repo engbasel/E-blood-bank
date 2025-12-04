@@ -36,6 +36,8 @@ class _ChatScreenState extends State<ChatScreen> {
   late final TextEditingController _controller;
   late final SendMessageCubit sendMessageCubit;
   late final NotificationCubit notificationCubit;
+  String? currentUserName;
+
   final chatRepo = ChatRepositoryImpl(firestore: FirebaseFirestore.instance);
 
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
@@ -55,6 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
     markMessagesAsSeen();
     sendMessageCubit = SendMessageCubit(chatRepository: chatRepo);
     notificationCubit = NotificationCubit();
+    getCurrentUserName();
   }
 
   @override
@@ -203,7 +206,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (_messageTextForNotification != null) {
                     context.read<NotificationCubit>().sendMessageNotification(
                       receiverId: receiverId,
-                      title: "New Message From ${widget.userName}",
+                      title: "New Message From ${currentUserName ?? ''}",
                       body: "Message: $_messageTextForNotification ",
                       data: {
                         "chat_id": widget.chatId,
@@ -300,5 +303,18 @@ class _ChatScreenState extends State<ChatScreen> {
     await batch.commit();
 
     widget.onUpdateRequired?.call();
+  }
+
+  Future<void> getCurrentUserName() async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUserId)
+        .get();
+
+    if (userDoc.exists) {
+      setState(() {
+        currentUserName = userDoc.data()!["name"];
+      });
+    }
   }
 }

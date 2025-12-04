@@ -34,7 +34,7 @@ class BloodRequestCard extends StatelessWidget {
         return Colors.red;
       case 'pending':
       default:
-        return AppColors.backgroundColor.withValues(alpha: 0.6);
+        return Colors.grey.shade600;
     }
   }
 
@@ -49,7 +49,7 @@ class BloodRequestCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 6,
               offset: const Offset(0, 6),
             ),
@@ -60,6 +60,7 @@ class BloodRequestCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   alignment: Alignment.center,
@@ -89,39 +90,72 @@ class BloodRequestCard extends StatelessWidget {
                         '${'emergency'.tr(context)} ${request['bloodType'].toString().tr(context)} ${'blood_needed'.tr(context)}',
                         style: TextStyles.bold16
                             .copyWith(color: AppColors.primaryColor),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 8),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SvgPicture.asset(
-                            Assets.imagesHospital,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            request['hospitalName'] ??
-                                'unknown_hospital'.tr(context),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  Assets.imagesHospital,
+                                  width: 14,
+                                  height: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    request['hospitalName'] ??
+                                        'unknown_hospital'.tr(context),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(width: 8),
-                          SvgPicture.asset(
-                            Assets.imagesOcloc,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            request['dateTime'] != null
-                                ? DateFormat('dd MMM yyyy')
-                                    .format(request['dateTime'].toDate())
-                                : 'unknown_date'.tr(context),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
+                          Expanded(
+                            flex: 1,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  Assets.imagesOcloc,
+                                  width: 14,
+                                  height: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    request['dateTime'] != null
+                                        ? DateFormat('dd MMM yyyy').format(
+                                            request['dateTime'].toDate())
+                                        : 'unknown_date'.tr(context),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    maxLines: 1,
+                                    textAlign: TextAlign.end,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),

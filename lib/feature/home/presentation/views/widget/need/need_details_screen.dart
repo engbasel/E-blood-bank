@@ -1,9 +1,6 @@
-import 'package:blood_bank/core/helper_function/generate_chat_id_fun.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
-import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,8 +10,6 @@ class NeedDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
@@ -38,41 +33,6 @@ class NeedDetailsScreen extends StatelessWidget {
           children: [
             _buildHeaderSection(context),
             const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.backgroundColor,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 3,
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ChatScreen(
-                        userName: needData['name'],
-                        contactNumber: needData['contactNumber'],
-                        userImage: needData['photoUrl'],
-                        chatId: generateChatId(currentUserId, needData['uId']),
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.wechat_outlined,
-                    color: Colors.white, size: 26),
-                label: Text(
-                  "send_message".tr(context),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
             const SizedBox(height: 20),
             _buildDetailsSection(context),
           ],
@@ -122,7 +82,6 @@ class NeedDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Details Section
   Widget _buildDetailsSection(BuildContext context) {
     return Card(
       elevation: 3,
@@ -158,7 +117,6 @@ class NeedDetailsScreen extends StatelessWidget {
     );
   }
 
-  // Detail Item
   Widget _buildDetailItem(
       BuildContext context, IconData icon, String labelKey, dynamic value) {
     String formattedValue = _formatDate(value);

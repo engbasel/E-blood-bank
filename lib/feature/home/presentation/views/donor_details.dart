@@ -117,47 +117,48 @@ class DonorProfileScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ChatScreen(
-                                    contactNumber: donor.contact.toString(),
-                                    userName: donor.name,
-                                    userImage: donor.photoUrl!,
-                                    chatId: generateChatId(
-                                        currentUserId, donor.uId),
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(30),
-                                border:
-                                    Border.all(color: Colors.white, width: 1),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.message_rounded,
-                                      color: Colors.white, size: 24),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'send_to_donor'.tr(context),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                          if (donor.uId != currentUserId)
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                      contactNumber: donor.contact.toString(),
+                                      userName: donor.name,
+                                      userImage: donor.photoUrl!,
+                                      chatId: generateChatId(
+                                          currentUserId, donor.uId),
                                     ),
                                   ),
-                                ],
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border:
+                                      Border.all(color: Colors.white, width: 1),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.message_rounded,
+                                        color: Colors.white, size: 24),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'send_to_donor'.tr(context),
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),
