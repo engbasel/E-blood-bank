@@ -316,5 +316,6 @@
   "could_not_launch_call": "تعذر إجراء المكالمة",
   "ok": "حسناً",
   "request_date": "وقت الطلب",
-  "patient_profile" : "ملف المريض"
+  "patient_profile" : "ملف المريض",
+  "send_to_patient": "مراسلة المريض"
 }
