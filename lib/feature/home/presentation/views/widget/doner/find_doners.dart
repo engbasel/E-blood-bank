@@ -2,8 +2,10 @@ import 'dart:developer';
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
+import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/core/widget/governorate_drop_down.dart';
+import 'package:blood_bank/feature/home/presentation/views/donor_details.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +50,7 @@ class _FindDonorsState extends State<FindDonors> {
           .collection('donerRequest')
           .where('bloodType', isEqualTo: selectedBloodGroup)
           .where('address', isEqualTo: location)
+          .where('units', isEqualTo: selectedUnits)
           .get();
 
       final fetchedDonors = querySnapshot.docs.map((doc) {
@@ -136,52 +139,68 @@ class _FindDonorsState extends State<FindDonors> {
               const SizedBox(height: 16),
               if (isLoading)
                 const Center(child: CustomCircularProgressIndicator())
-              else if (donors.isNotEmpty)
-                Column(
-                  children: donors.map((donor) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 6, // تأثير الظل
+              else
+                if (donors.isNotEmpty)
+                  Column(
+                    children: donors.map((donor) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            buildPageRoute(
+                                DonorProfileScreen(uId: donor['uId'],)
+                            ),
+                          );
 
-                      color: Colors.white,
-                      child: ListTile(
-                        contentPadding:
-                            const EdgeInsets.all(16), // إضافة padding داخلي
-                        leading: CircleAvatar(
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white, // لون الأيقونة
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 6,
+                          // تأثير الظل
+
+                          color: Colors.white,
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            // إضافة padding داخلي
+                            leading: CircleAvatar(
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white, // لون الأيقونة
+                              ),
+                            ),
+                            title: Text(
+                              donor['name'] ?? "Unknown",
+                              style: TextStyles.semiBold16.copyWith(
+                                  color:
+                                  AppColors.primaryColor), // يمكن تغيير اللون
+                            ),
+                            subtitle: Text(
+                              '${"location".tr(context)}: ${donor['address']
+                                  .toString()
+                                  .tr(context)}, ${"blood_group".tr(
+                                  context)}: ${donor['bloodType'].toString().tr(
+                                  context)}',
+                              style: TextStyles.regular13.copyWith(
+                                  color:
+                                  AppColors.primaryColor), // يمكن تغيير اللون
+                            ),
+                            trailing: Text(
+                              '${donor['units'] ?? "0"} ${"units".tr(context)}',
+                              style: TextStyles.semiBold14.copyWith(
+                                  color:
+                                  AppColors.primaryColor), // يمكن تغيير اللون
+                            ),
                           ),
                         ),
-                        title: Text(
-                          donor['name'] ?? "Unknown",
-                          style: TextStyles.semiBold16.copyWith(
-                              color:
-                                  AppColors.primaryColor), // يمكن تغيير اللون
-                        ),
-                        subtitle: Text(
-                          '${"location".tr(context)}: ${donor['address'].toString().tr(context)}, ${"blood_group".tr(context)}: ${donor['bloodType'].toString().tr(context)}',
-                          style: TextStyles.regular13.copyWith(
-                              color:
-                                  AppColors.primaryColor), // يمكن تغيير اللون
-                        ),
-                        trailing: Text(
-                          '${donor['units'] ?? "0"} ${"units".tr(context)}',
-                          style: TextStyles.semiBold14.copyWith(
-                              color:
-                                  AppColors.primaryColor), // يمكن تغيير اللون
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                )
-              else
-                Center(
-                  child: Text("no_donors_found".tr(context)),
-                ),
+                      );
+                    }).toList(),
+                  )
+                else
+                  Center(
+                    child: Text("no_donors_found".tr(context)),
+                  ),
             ],
           ),
         ),
