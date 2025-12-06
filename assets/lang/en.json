@@ -332,5 +332,7 @@
   "ok": "OK",
   "request_date": "Request Date",
   "patient_profile": "Patient Profile",
-  "send_to_patient": "Send to Patient"
+  "send_to_patient": "Send to Patient",
+  "delete_request": "Delete Request",
+  "confirm_delete_request": "Are you sure you want to delete this request?"
 }
