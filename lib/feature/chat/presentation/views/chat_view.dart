@@ -56,7 +56,11 @@ class ChatView extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => UsersView()),
+                  MaterialPageRoute(
+                    builder: (_) => UsersView(
+                      currentUserId: currentUserId,
+                    ),
+                  ),
                 );
               },
               backgroundColor: AppColors.primaryColor,
