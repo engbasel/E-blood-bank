@@ -26,7 +26,6 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
         docuementId: null,
       );
 
-
       unawaited(_sendNotification(model));
     } catch (e, st) {
       log("Error in addDonorRequest: $e\n$st");
@@ -48,6 +47,7 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
         "request_id": model.uId,
         "type": "new_request",
       },
+      excludeUserId: model.uId,
     );
   }
 
