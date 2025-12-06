@@ -117,7 +117,7 @@ class ChatRepositoryImpl implements ChatRepository {
   Stream<List<UserChatModel>> getAllUsersWithLastMessageStream(
       String currentUserId) {
     return firestore.collection('users').snapshots().switchMap((usersSnapshot) {
-      List<Stream<UserChatModel>> userStreams = [];
+      List<Stream<UserChatModel?>> userStreams = [];
 
       for (var doc in usersSnapshot.docs) {
         if (doc.id == currentUserId) continue;
@@ -131,6 +131,12 @@ class ChatRepositoryImpl implements ChatRepository {
         final userChatStream = chatStream.map((chatDoc) {
           final chatData = chatDoc.data();
 
+          if (chatData == null ||
+              chatData["lastMessage"] == null ||
+              chatData["lastMessageTime"] == null) {
+            return null;
+          }
+
           return UserChatModel.fromData(
             userData: userData,
             chatData: chatData,
@@ -141,9 +147,10 @@ class ChatRepositoryImpl implements ChatRepository {
       }
 
       return Rx.combineLatestList(userStreams).map((userChats) {
-        final sorted = List<UserChatModel>.from(userChats);
+        final filtered =
+            userChats.where((u) => u != null).cast<UserChatModel>().toList();
 
-        sorted.sort((a, b) {
+        filtered.sort((a, b) {
           final aTime =
               a.lastMessageTime ?? DateTime.fromMillisecondsSinceEpoch(0);
           final bTime =
@@ -151,7 +158,7 @@ class ChatRepositoryImpl implements ChatRepository {
           return bTime.compareTo(aTime);
         });
 
-        return sorted;
+        return filtered;
       });
     });
   }
