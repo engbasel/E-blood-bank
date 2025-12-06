@@ -4,6 +4,7 @@ import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubi
 import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_state.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/chats_list_view_item.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/empty_chat_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,6 +32,9 @@ class ChatsListView extends StatelessWidget {
           final userIds = users.map((u) => u.userId).toList();
 
           unreadCubit.listenToAllUnread(currentUserId, userIds);
+          if (users.isEmpty) {
+            return const Center(child: EmptyChatAnimation());
+          }
 
           return BlocBuilder<UnreadMessagesCubit, UnreadMessagesState>(
             builder: (context, unreadState) {
