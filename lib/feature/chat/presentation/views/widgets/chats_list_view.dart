@@ -3,7 +3,7 @@ import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/ch
 import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_state.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_screen_view.dart';
-import 'package:blood_bank/feature/chat/presentation/views/widgets/users_list_view_item.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/chats_list_view_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

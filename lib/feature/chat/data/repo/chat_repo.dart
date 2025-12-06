@@ -25,4 +25,6 @@ abstract class ChatRepository {
       String currentUserId);
 
   String generateChatId(String user1Id, String user2Id);
+  Stream<List<Map<String, dynamic>>> getUsersWithoutChatStream(
+      String currentUserId);
 }

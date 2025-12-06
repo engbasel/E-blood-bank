@@ -163,6 +163,36 @@ class ChatRepositoryImpl implements ChatRepository {
     });
   }
 
+  //------------------get all users without chat------------------------------
+  @override
+  Stream<List<Map<String, dynamic>>> getUsersWithoutChatStream(
+      String currentUserId) {
+    final allUsersStream =
+        firestore.collection('users').snapshots().map((snapshot) {
+      return snapshot.docs
+          .where((d) => d.id != currentUserId)
+          .map((doc) => {...doc.data(), "uid": doc.id})
+          .toList();
+    });
+
+    final chattedUsersStream =
+        getAllUsersWithLastMessageStream(currentUserId).map((chatList) {
+      return chatList.map((u) => u.userId).toSet(); // IDs فقط
+    });
+
+    return Rx.combineLatest2(
+      allUsersStream,
+      chattedUsersStream,
+      (List<Map<String, dynamic>> allUsers, Set<String> chattedIds) {
+        final filtered = allUsers
+            .where((user) => !chattedIds.contains(user["uid"]))
+            .toList();
+
+        return filtered;
+      },
+    );
+  }
+
   // ======================= Generate Chat ID =======================
   @override
   String generateChatId(String user1Id, String user2Id) {
