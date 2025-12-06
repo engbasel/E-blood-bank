@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class UserListViewItem extends StatelessWidget {
+class ChatListViewItem extends StatelessWidget {
   final String imageUrl;
   final String name;
   final String lastMessage;
@@ -13,7 +13,7 @@ class UserListViewItem extends StatelessWidget {
   final String currentUserId;
   final String senderId;
   final int unreadCount;
-  const UserListViewItem({
+  const ChatListViewItem({
     super.key,
     required this.imageUrl,
     required this.name,

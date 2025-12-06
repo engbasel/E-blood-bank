@@ -7,8 +7,8 @@ import 'package:blood_bank/feature/chat/presentation/views/widgets/chats_list_vi
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UsersListView extends StatelessWidget {
-  const UsersListView({super.key, required this.currentUserId});
+class ChatsListView extends StatelessWidget {
+  const ChatsListView({super.key, required this.currentUserId});
   final String currentUserId;
 
   @override
@@ -47,7 +47,7 @@ class UsersListView extends StatelessWidget {
                   final user = users[index];
                   final unreadCount = getUnreadCount(user.userId);
 
-                  return UserListViewItem(
+                  return ChatListViewItem(
                     currentUserId: currentUserId,
                     senderId: user.lastMessageSenderId,
                     imageUrl: user.imageUrl,

@@ -6,7 +6,7 @@ class ChatViewBody extends StatelessWidget {
   final String currentUserId;
   @override
   Widget build(BuildContext context) {
-    return UsersListView(
+    return ChatsListView(
       currentUserId: currentUserId,
     );
   }
