@@ -12,7 +12,7 @@ class UsersView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'chat_title'.tr(context),
+          'users_title'.tr(context),
           style: TextStyles.semiBold19.copyWith(color: Colors.white),
         ),
         centerTitle: true,

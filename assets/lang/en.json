@@ -323,7 +323,8 @@
   "status": "status",
   "date_time": "date Time",
   "need_details": "Need Details",
-  "chat_title": "Chats and Users",
+  "chat_title": "Chats",
+  "users_title": "Users",
   "hint_Text": "Type your message here...",
   "send_to_donor": "Send Message to Donor",
   "send_message": "Send Message",
@@ -334,5 +335,7 @@
   "patient_profile": "Patient Profile",
   "send_to_patient": "Send to Patient",
   "delete_request": "Delete Request",
-  "confirm_delete_request": "Are you sure you want to delete this request?"
+  "confirm_delete_request": "Are you sure you want to delete this request?",
+  "tap_to_chat": "Tap to start a chat 👋",
+  "chat": "Chat"
 }

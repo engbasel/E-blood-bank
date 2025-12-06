@@ -308,7 +308,8 @@
   "medical_info": "المعلومات الطبية",
   "full_name": "الاسم الكامل",
   "contact_number": "رقم",
-  "chat_title": "الدردشات والمستخدمون",
+  "chat_title": "الدردشات السابقة",
+  "users_title": "المستخدمين",
   "hint_Text": "اكتب رسالتك هنا...",
   "send_to_donor": "مراسلة المتبرع",
   "send_message": "إرسال الرسالة",
@@ -316,6 +317,8 @@
   "could_not_launch_call": "تعذر إجراء المكالمة",
   "ok": "حسناً",
   "request_date": "وقت الطلب",
-  "patient_profile" : "ملف المريض",
-  "send_to_patient": "مراسلة المريض"
+  "patient_profile": "ملف المريض",
+  "send_to_patient": "مراسلة المريض",
+  "tap_to_chat": "اضغط للدردشة 👋 ",
+  "chat": "محادثة"
 }

@@ -1,4 +1,5 @@
 import 'package:blood_bank/core/utils/app_colors.dart';
+import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -51,8 +52,8 @@ class UserListItem extends StatelessWidget {
             fontSize: 16,
           ),
         ),
-        subtitle: const Text(
-          "Tap to start a chat 👋",
+        subtitle: Text(
+          "tap_to_chat".tr(context),
           style: TextStyle(
             fontSize: 14,
             color: Colors.grey,
@@ -64,8 +65,8 @@ class UserListItem extends StatelessWidget {
             color: AppColors.primaryColor,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Text(
-            "Chat",
+          child: Text(
+            "chat".tr(context),
             style: TextStyle(color: Colors.white, fontSize: 14),
           ),
         ),
