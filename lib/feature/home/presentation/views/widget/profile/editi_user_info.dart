@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:blood_bank/constants.dart';
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
+import 'package:blood_bank/core/helper_function/validators_textform.dart';
 import 'package:blood_bank/core/services/shared_preferences_sengleton.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/custom_progrss_hud.dart';
@@ -192,20 +193,22 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 children: [
                   GestureDetector(
                     onTap: _pickImage,
-                    child:CircleAvatar(
+                    child: CircleAvatar(
                       radius: 50,
                       backgroundColor: AppColors.lightColor,
                       backgroundImage: _selectedImage != null
                           ? FileImage(_selectedImage!)
-                          : (_uploadedImageUrl != null && _uploadedImageUrl!.isNotEmpty
-                          ? NetworkImage(_uploadedImageUrl!)
-                          : null),
-                      child: (_selectedImage == null && (_uploadedImageUrl == null || _uploadedImageUrl!.isEmpty))
-                          ? const Icon(Icons.camera_alt, size: 50, color: Colors.white)
+                          : (_uploadedImageUrl != null &&
+                                  _uploadedImageUrl!.isNotEmpty
+                              ? NetworkImage(_uploadedImageUrl!)
+                              : null),
+                      child: (_selectedImage == null &&
+                              (_uploadedImageUrl == null ||
+                                  _uploadedImageUrl!.isEmpty))
+                          ? const Icon(Icons.camera_alt,
+                              size: 50, color: Colors.white)
                           : null,
                     ),
-
-
                   ),
                   const SizedBox(height: 16),
                   CustomTextFormField(
@@ -227,8 +230,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     controller: _contactNumberController,
                     hintText: 'Contact Number',
                     textInputType: TextInputType.phone,
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please enter contact number' : null,
+                    validator: (value) => value!.isEmpty
+                        ? 'Please enter contact number'
+                        : Validators.validateContactNumber(value, context),
                   ),
                   const SizedBox(height: 16),
                   BloodTypeDropdown(

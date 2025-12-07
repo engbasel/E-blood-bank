@@ -17,8 +17,8 @@ class StateDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> states = [
       {
-        'key': 'doner',
-        'name': 'doner'.tr(context),
+        'key': 'donor',
+        'name': 'donor'.tr(context),
         'icon': Icons.bloodtype,
       },
       {

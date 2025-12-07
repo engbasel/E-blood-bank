@@ -27,6 +27,7 @@ class AcceptedRequestsSection extends StatelessWidget {
 
         if (state is AcceptedNeederRequestsLoaded) {
           final acceptedRequests = state.requests;
+          print(acceptedRequests.last);
 
 
           if (acceptedRequests.isEmpty) {

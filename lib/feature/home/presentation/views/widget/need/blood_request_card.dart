@@ -1,22 +1,19 @@
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/comptable_donor_list.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-
 class BloodRequestCard extends StatelessWidget {
   final Map<String, dynamic> request;
 
-  const BloodRequestCard({
-    super.key,
-    required this.request,
-  });
+  const BloodRequestCard({super.key, required this.request});
 
   String getStatusMessage(BuildContext context) {
     switch (request['status']) {
-      case 'accepted':
+      case 'approved':
         return 'request_accepted'.tr(context);
       case 'rejected':
         return 'request_rejected'.tr(context);
@@ -28,7 +25,7 @@ class BloodRequestCard extends StatelessWidget {
 
   Color getStatusColor() {
     switch (request['status']) {
-      case 'accepted':
+      case 'approved':
         return Colors.green;
       case 'rejected':
         return Colors.red;
@@ -40,6 +37,8 @@ class BloodRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAccepted = request['status'] == 'approved';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
@@ -49,14 +48,13 @@ class BloodRequestCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black38,
               blurRadius: 6,
               offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -65,19 +63,11 @@ class BloodRequestCard extends StatelessWidget {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    SvgPicture.asset(
-                      Assets.imagesCircle,
-                      width: 45,
-                    ),
-                    SvgPicture.asset(
-                      Assets.imagesNblood,
-                      width: 28,
-                    ),
+                    SvgPicture.asset(Assets.imagesCircle, width: 45),
+                    SvgPicture.asset(Assets.imagesNblood, width: 28),
                     Text(
                       request['bloodType'].toString().tr(context),
-                      style: TextStyles.semiBold14.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: TextStyles.semiBold14.copyWith(color: Colors.white),
                     ),
                   ],
                 ),
@@ -88,102 +78,74 @@ class BloodRequestCard extends StatelessWidget {
                     children: [
                       Text(
                         '${'emergency'.tr(context)} ${request['bloodType'].toString().tr(context)} ${'blood_needed'.tr(context)}',
-                        style: TextStyles.bold16
-                            .copyWith(color: AppColors.primaryColor),
+                        style: TextStyles.bold16.copyWith(color: AppColors.primaryColor),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Icon(Icons.local_hospital, size: 16, color: Colors.grey.shade600),
+                          const SizedBox(width: 4),
                           Expanded(
-                            flex: 2,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(
-                                  Assets.imagesHospital,
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    request['hospitalName'] ??
-                                        'unknown_hospital'.tr(context),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              request['hospitalName'] ?? 'unknown_hospital'.tr(context),
+                              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(
-                                  Assets.imagesOcloc,
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    request['dateTime'] != null
-                                        ? DateFormat('dd MMM yyyy').format(
-                                            request['dateTime'].toDate())
-                                        : 'unknown_date'.tr(context),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                    maxLines: 1,
-                                    textAlign: TextAlign.end,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                          const SizedBox(width: 4),
+                          Text(
+                            request['dateTime'] != null
+                                ? DateFormat('dd MMM yyyy').format(request['dateTime'].toDate())
+                                : 'unknown_date'.tr(context),
+                            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
+
             const SizedBox(height: 16),
+
             Row(
               children: [
-                Icon(
-                  Icons.access_time,
-                  color: getStatusColor(),
-                ),
+                Icon(Icons.access_time, color: getStatusColor()),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     getStatusMessage(context),
-                    style: TextStyles.semiBold16.copyWith(
-                      color: getStatusColor(),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+                    style: TextStyles.semiBold16.copyWith(color: getStatusColor()),
                   ),
                 ),
               ],
             ),
+
+            if (isAccepted) ...[
+              const SizedBox(height: 16),
+              Text(
+                'compatible_donors'.tr(context),
+                style: TextStyles.bold16.copyWith(color: AppColors.primaryColor),
+              ),
+              const SizedBox(height: 8),
+              CompatibleDonorsList(
+                bloodType: request['bloodType'],
+                donationType: request['donationType'],
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 }
+
+
+
+

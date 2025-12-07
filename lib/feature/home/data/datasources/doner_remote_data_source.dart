@@ -26,7 +26,7 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
         docuementId: null,
       );
 
-      unawaited(_sendNotification(model));
+      // unawaited(_sendNotification(model));
     } catch (e, st) {
       log("Error in addDonorRequest: $e\n$st");
       rethrow;

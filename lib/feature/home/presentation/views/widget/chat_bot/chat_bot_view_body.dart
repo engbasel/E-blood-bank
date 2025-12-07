@@ -320,7 +320,7 @@ class ChatBotViewBodyState extends State<ChatBotViewBody> {
         _messages.add(
           ChatMessage(
             user: _currentUser!,
-            createdAt: DateTime.now(),
+            createdAt: DateTime.now().add(Duration(milliseconds: 1)),
             text: text,
           ),
         );

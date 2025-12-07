@@ -15,6 +15,8 @@ abstract class NeederRemoteDataSource {
   Stream<List<NeederModel>> getAcceptedRequests();
 
   Future<void> sendApprovalNotifications(NeederModel model, {required String requestDocId}) ;
+
+  Future<void> rejectedNotifications(NeederModel model, {required String requestDocId}) ;
 }
 
 class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
@@ -46,20 +48,6 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
     final userEmail = userDoc.data()?['email'] ?? '';
     final userPhoto = userDoc.data()?['photoUrl'] ?? '';
 
-    await NotificationService.instance.sendNotification(
-      title: "Approved blood request",
-      body: "${model.patientName} needs ${model.bloodType}.",
-      data: {
-        "user_name": model.patientName,
-        "user_email": userEmail,
-        "photoUrl": userPhoto,
-        "request_id": requestDocId,
-        "type": "approved_request_broadcast",
-      },
-      excludeUserId: model.uId,
-    );
-
-
     final userTokenDoc = await FirebaseFirestore.instance
         .collection('userTokens')
         .doc(model.uId)
@@ -75,6 +63,53 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
           "request_id": requestDocId,
           "photoUrl": userPhoto,
           "type": "request_approved",
+        },
+      );
+    }
+
+
+    await NotificationService.instance.sendNotification(
+      title: "blood request",
+      body: "${model.patientName} needs ${model.bloodType}.",
+      data: {
+        "user_name": model.patientName,
+        "user_email": userEmail,
+        "photoUrl": userPhoto,
+        "request_id": requestDocId,
+        "type": "approved_request_broadcast",
+      },
+      excludeUserId: model.uId,
+    );
+
+
+
+  }
+
+  @override
+  Future<void> rejectedNotifications(NeederModel model, {required String requestDocId}) async {
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(model.uId)
+        .get();
+    final userPhoto = userDoc.data()?['photoUrl'] ?? '';
+
+
+    final userTokenDoc = await FirebaseFirestore.instance
+        .collection('userTokens')
+        .doc(model.uId)
+        .get();
+
+    final token = userTokenDoc.data()?['token'];
+    if (token != null) {
+      await NotificationService.instance.sendNotificationToUser(
+        token: token,
+        title: "Request rejected",
+        body: "Your blood request has been rejected by admin.",
+        data: {
+          "request_id": requestDocId,
+          "photoUrl": userPhoto,
+          "type": "request_rejected",
         },
       );
     }
@@ -116,7 +151,7 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
         final status = (data['status'] ?? '').toString().toLowerCase();
         final notified = (data['notified'] ?? false) == true;
 
-        if (status == 'accepted' && !notified) {
+        if (status == 'approved' && !notified) {
           final model = NeederModel.fromJson(data);
 
           Future.microtask(() async {
@@ -136,11 +171,32 @@ class NeederRemoteDataSourceImpl implements NeederRemoteDataSource {
             }
           });
         }
+
+        if (status == 'rejected' && !notified) {
+          final model = NeederModel.fromJson(data);
+
+          Future.microtask(() async {
+            try {
+              await rejectedNotifications(model, requestDocId: doc.id);
+            } catch (e, st) {
+              log("Error sending notifications: $e\n$st");
+            } finally {
+              try {
+                await FirebaseFirestore.instance
+                    .collection('neederRequest')
+                    .doc(doc.id)
+                    .update({'notified': true});
+              } catch (e, st) {
+                log("Error flagging notified: $e\n$st");
+              }
+            }
+          });
+        }
       }
 
       return snapshot.docs
           .map((doc) => NeederModel.fromJson(doc.data()))
-          .where((model) => model.status.toLowerCase() == 'accepted')
+          .where((model) => model.status.toLowerCase() == 'approved')
           .toList();
     });
   }

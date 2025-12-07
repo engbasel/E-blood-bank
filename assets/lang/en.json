@@ -337,5 +337,8 @@
   "delete_request": "Delete Request",
   "confirm_delete_request": "Are you sure you want to delete this request?",
   "tap_to_chat": "Tap to start a chat 👋",
-  "chat": "Chat"
+  "chat": "Chat",
+  "no_compatible_donors": "No Compatible Donors",
+  "not_submitted": "You have not submitted any request"
+
 }

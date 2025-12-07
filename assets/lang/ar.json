@@ -320,5 +320,9 @@
   "patient_profile": "ملف المريض",
   "send_to_patient": "مراسلة المريض",
   "tap_to_chat": "اضغط للدردشة 👋 ",
-  "chat": "محادثة"
+  "chat": "محادثة",
+  "no_compatible_donors": "لا يوجد متبرعين متوافقين حاليا",
+  "not_submitted": "انت لم تدخل اي طلب حتى الان"
+
+
 }

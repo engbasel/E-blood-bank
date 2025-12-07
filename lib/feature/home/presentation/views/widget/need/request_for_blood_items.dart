@@ -1,12 +1,13 @@
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
-import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
-import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/need/blood_request_card.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/need/blood_skeletonizer.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 
 class BloodRequest extends StatelessWidget {
   const BloodRequest({super.key});
@@ -17,12 +18,12 @@ class BloodRequest extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: buildAppBar(context),
       body: StreamBuilder(
-        stream:
-            FirebaseFirestore.instance.collection('neederRequest').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('neederRequest')
+            .where('uId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+            .snapshots()
+            .distinct((prev, next) => prev.docs == next.docs),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CustomCircularProgressIndicator());
-          }
 
           if (snapshot.hasError) {
             return CustomDialog(
@@ -30,22 +31,43 @@ class BloodRequest extends StatelessWidget {
               content: 'error_occurred: ${snapshot.error}'.tr(context),
             );
           }
+          if (!snapshot.hasData) {
+            return ListView.builder(
+              itemCount: 3,
+              itemBuilder: (context, index) => const BloodRequestSkeletonCard(),
+            );
+          }
 
           final requests = snapshot.data?.docs ?? [];
           if (requests.isEmpty) {
-            return CustomDialog(
-              title: 'thanks for your contribution'.tr(context),
-              content: 'No requests available at the moment.'.tr(context),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'not_submitted'.tr(context),
+                    style: TextStyles.bold16.copyWith(color: AppColors.primaryColor),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: 200,
+                    child: Lottie.asset(
+                      'assets/images/no_request.json',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
+
 
           return ListView.builder(
             itemCount: requests.length,
             itemBuilder: (context, index) {
               final request = requests[index].data();
-              return BloodRequestCard(
-                request: request,
-              );
+              return BloodRequestCard(request: request);
             },
           );
         },
@@ -56,23 +78,13 @@ class BloodRequest extends StatelessWidget {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
-      title: Text(
-        "Blood Requests",
-        style: TextStyles.semiBold19,
-      ),
+      title: Text("Blood Requests", style: TextStyles.semiBold19),
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
         onPressed: () => Navigator.pop(context),
       ),
-      actions: [
-        IconButton(
-          icon: SvgPicture.asset(
-            Assets.imagesNotifcationTwo,
-          ),
-          onPressed: () {},
-        ),
-      ],
     );
   }
 }
+
