@@ -157,10 +157,6 @@ class NeederProfileScreen extends StatelessWidget {
                       icon: Icons.wc_outlined,
                       label: 'gender'.tr(context),
                       value: needer.gender),
-                  InfoTile(
-                      icon: Icons.credit_card_outlined,
-                      label: 'id_card'.tr(context),
-                      value: needer.idCard.toString()),
                 ],
               ),
 

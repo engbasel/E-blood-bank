@@ -22,21 +22,27 @@ class VerifiedEmailView extends StatefulWidget {
 }
 
 class VerifiedEmailViewState extends State<VerifiedEmailView> {
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.userChanges().listen((user) async {
-      if (user != null) {
-        await user.reload();
-        if (user.emailVerified) {
-          if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            buildPageRoute(const DonorOrNeed()),
-          );
-        }
-      }
-    });
+
+  Future<void> checkEmailVerification() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
+
+    if (user != null && user.emailVerified) {
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        buildPageRoute(const DonorOrNeed()),
+            (Route<dynamic> route) => false,
+      );
+    } else {
+      if (!mounted) return;
+      failureTopSnackBar(
+        context,
+        'email_not_verified_yet'.tr(context),
+      );
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +66,26 @@ class VerifiedEmailViewState extends State<VerifiedEmailView> {
               height: 300,
             ),
             const SizedBox(height: 50),
+
             CustomButton(
+              onPressed: () => checkEmailVerification(),
+              text: 'i_verified_go_next'.tr(context),
+            ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
                 onPressed: () => resendVerificationEmail(context),
-                text: 'resend_verification_email'.tr(context)),
+                child: Text('resend_verification_email'.tr(context)),
+              ),
+            ),
           ],
         ),
       ),
@@ -74,11 +97,17 @@ class VerifiedEmailViewState extends State<VerifiedEmailView> {
     if (user != null && !user.emailVerified) {
       await user.sendEmailVerification();
       if (!mounted) return;
-
-      successTopSnackBar(context, 'email_verification_link_sent.'.tr(context));
+      successTopSnackBar(
+        context,
+        'email_verification_link_sent.'.tr(context),
+      );
     } else {
       failureTopSnackBar(
-          context, 'unable_to_send_verification_email.'.tr(context));
+        context,
+        'unable_to_send_verification_email.'.tr(context),
+      );
     }
   }
 }
+
+

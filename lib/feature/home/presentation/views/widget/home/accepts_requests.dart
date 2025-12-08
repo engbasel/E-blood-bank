@@ -25,10 +25,10 @@ class AcceptedRequestsSection extends StatelessWidget {
           return Center(child: Text('error: ${state.message}'));
         }
 
-        if (state is AcceptedNeederRequestsLoaded) {
-          final acceptedRequests = state.requests;
-          print(acceptedRequests.last);
-
+        if (state is AcceptedNeederRequestsLoaded || state is AddNeederRequestSuccess) {
+          final acceptedRequests = state is AcceptedNeederRequestsLoaded
+              ? state.requests
+              : [];
 
           if (acceptedRequests.isEmpty) {
             return Center(

@@ -179,10 +179,6 @@ class DonorProfileScreen extends StatelessWidget {
                             icon: Icons.wc_outlined,
                             label: 'gender'.tr(context),
                             value: donor.gender),
-                        InfoTile(
-                            icon: Icons.credit_card_outlined,
-                            label: 'id_card'.tr(context),
-                            value: donor.idCard.toString()),
                       ],
                     ),
                     InfoSection(

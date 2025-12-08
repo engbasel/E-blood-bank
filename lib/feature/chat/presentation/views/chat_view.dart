@@ -4,7 +4,6 @@ import 'package:blood_bank/feature/chat/data/repo/chat_repo_impl.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/chat_users_cubit/chat_users_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/send_notification_cubit/send_notification_cubit.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/unread_message_cubit/unread_messages_cubit.dart';
-import 'package:blood_bank/feature/chat/presentation/views/users_view.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/chat_view_body.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,33 +46,33 @@ class ChatView extends StatelessWidget {
         body: ChatViewBody(
           currentUserId: currentUserId,
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 48.0),
-          child: SizedBox(
-            width: 64,
-            height: 64,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UsersView(
-                      currentUserId: currentUserId,
-                    ),
-                  ),
-                );
-              },
-              backgroundColor: AppColors.primaryColor,
-              shape: const CircleBorder(),
-              elevation: 6,
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 35,
-              ),
-            ),
-          ),
-        ),
+        // floatingActionButton: Padding(
+        //   padding: const EdgeInsets.only(bottom: 48.0),
+        //   child: SizedBox(
+        //     width: 64,
+        //     height: 64,
+        //     child: FloatingActionButton(
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (_) => UsersView(
+        //               currentUserId: currentUserId,
+        //             ),
+        //           ),
+        //         );
+        //       },
+        //       backgroundColor: AppColors.primaryColor,
+        //       shape: const CircleBorder(),
+        //       elevation: 6,
+        //       child: const Icon(
+        //         Icons.add,
+        //         color: Colors.white,
+        //         size: 35,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }

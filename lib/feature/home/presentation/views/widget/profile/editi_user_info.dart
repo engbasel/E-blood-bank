@@ -12,6 +12,7 @@ import 'package:blood_bank/core/widget/custom_text_field.dart';
 import 'package:blood_bank/core/widget/doner_or_neder_state.dart';
 import 'package:blood_bank/core/widget/governorate_drop_down.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -230,9 +231,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     controller: _contactNumberController,
                     hintText: 'Contact Number',
                     textInputType: TextInputType.phone,
-                    validator: (value) => value!.isEmpty
-                        ? 'Please enter contact number'
-                        : Validators.validateContactNumber(value, context),
+                    validator: (value) => Validators.validateContactNumber(value, context),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(11),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   BloodTypeDropdown(

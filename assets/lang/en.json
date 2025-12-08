@@ -134,7 +134,7 @@
   "update_failed": "Failed to update user state",
   "please_select_an_option": "Please select an option",
   "user_state": "User state",
-  "no_user_data_available": "لا توجد بيانات للمستخدم",
+  "no_user_data_available": "No user data available",
   "user_not": "User not found",
   "failed_to_update_user_state": "Failed to update user state",
   "password_reset_link_sent_to": "Password reset link sent to your email",
@@ -339,6 +339,12 @@
   "tap_to_chat": "Tap to start a chat 👋",
   "chat": "Chat",
   "no_compatible_donors": "No Compatible Donors",
-  "not_submitted": "You have not submitted any request"
+  "not_submitted": "You have not submitted any request",
+  "i_verified_go_next": "Email verified, continue",
+  "email_not_verified_yet" : "Email not verified yet",
+  "no_chats_yet": "You haven't started any chats yet",
+  "minimum_donation_interval_error": "You cannot submit a request yet. Minimum donation interval is 3 months.",
+  "next_donation_date_past_error": "Next donation date cannot be in the past."
+
 
 }

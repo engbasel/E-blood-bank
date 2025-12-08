@@ -1,4 +1,6 @@
+import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
+import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -19,6 +21,13 @@ class EmptyChatAnimation extends StatelessWidget {
           height: 100,
           fit: BoxFit.cover,
           repeat: true,
+        ),
+        const SizedBox(height: 150.0,),
+        Text('no_chats_yet'.tr(context),
+          style: TextStyle(
+              color: AppColors.primaryColor,
+              fontSize: 18
+          ),
         ),
       ],
     );

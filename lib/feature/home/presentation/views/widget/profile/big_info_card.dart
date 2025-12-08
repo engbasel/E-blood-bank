@@ -1,173 +1,4 @@
-// import 'package:blood_bank/core/utils/assets_images.dart';
-// import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
-// import 'package:blood_bank/core/widget/coustom_dialog.dart';
-// import 'package:blood_bank/feature/home/presentation/views/widget/profile/info_column.dart';
-// import 'package:blood_bank/feature/localization/app_localizations.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 
-// class BigInfoCard extends StatelessWidget {
-//   final String savedLives;
-//   final String bloodGroup;
-//   final String nextDonationDate;
-
-//   const BigInfoCard({
-//     super.key,
-//     required this.savedLives,
-//     required this.bloodGroup,
-//     required this.nextDonationDate,
-//   });
-
-//   void _handleNextDonationDate(BuildContext context, DocumentSnapshot request) {
-//     final data = request.data() as Map<String, dynamic>?; // Explicit cast
-//     if (data != null && data.containsKey('lastRequestDate')) {
-//       final nextDonationTimestamp = data['lastRequestDate'];
-//       if (nextDonationTimestamp != null && nextDonationTimestamp is Timestamp) {
-//         DateTime nextDonationDateTime = nextDonationTimestamp.toDate();
-//         // Check if the next donation date has passed by at least one day
-//         if (nextDonationDateTime
-//             .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
-//           WidgetsBinding.instance.addPostFrameCallback((_) {
-//             _promptUserToSetNewDate(context, request);
-//           });
-//         }
-//       }
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // double width = MediaQuery.of(context).size.width;
-//     final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-//     if (currentUserUid == null) {
-//       return const Center(child: Text('No user is logged in'));
-//     }
-//     return StreamBuilder<QuerySnapshot>(
-//       stream: FirebaseFirestore.instance
-//           .collection('donerRequest')
-//           .where('uId', isEqualTo: currentUserUid)
-//           .snapshots(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.waiting) {
-//           return const Center(child: CoustomCircularProgressIndicator());
-//         }
-
-//         if (snapshot.hasError) {
-//           return CustomDialog(
-//             title: 'error_occurred'.tr(context),
-//             content: 'error_occurred: ${snapshot.error}'.tr(context),
-//           );
-//         }
-
-//         final requests = snapshot.data?.docs ?? [];
-//         debugPrint('Number of requests: ${requests.length}');
-
-//         String formattedNextDonationDate = 'next_donation_date'.tr(context);
-//         bool isTodayDonationDay = false;
-
-//         if (requests.isNotEmpty) {
-//           final request = requests[0];
-//           debugPrint('Request data: ${request.data()}');
-//           _handleNextDonationDate(context, request);
-
-//           final data = request.data() as Map<String, dynamic>?; // Explicit cast
-//           if (data != null && data.containsKey('lastRequestDate')) {
-//             final nextDonationTimestamp = data['lastRequestDate'];
-//             if (nextDonationTimestamp != null &&
-//                 nextDonationTimestamp is Timestamp) {
-//               DateTime nextDonationDateTime = nextDonationTimestamp.toDate();
-//               formattedNextDonationDate =
-//                   DateFormat('yyyy-MM-dd').format(nextDonationDateTime);
-
-//               // Check if today is the donation day
-//               if (nextDonationDateTime.year == DateTime.now().year &&
-//                   nextDonationDateTime.month == DateTime.now().month &&
-//                   nextDonationDateTime.day == DateTime.now().day) {
-//                 isTodayDonationDay = true;
-//               }
-//             }
-//           } else {
-//             formattedNextDonationDate =
-//                 'no_next_donation_scheduled'.tr(context);
-//           }
-//         }
-
-//         return Container(
-//           padding: const EdgeInsets.all(20),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(15),
-//             boxShadow: [
-//               BoxShadow(
-//                 color: Colors.grey.shade400,
-//                 blurRadius: 5,
-//                 spreadRadius: 1,
-//               ),
-//             ],
-//           ),
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               InfoColumn(title: savedLives, image: Assets.imagesLifesaved),
-//               // SizedBox(width: width * 0.1),
-//               InfoColumn(title: bloodGroup, image: Assets.imagesBlood),
-//               // SizedBox(width: width * 0.15),
-//               InfoColumn(
-//                 title: isTodayDonationDay
-//                     ? 'Today is your donation day'.tr(context)
-//                     : formattedNextDonationDate,
-//                 image: Assets.imagesNextdonation,
-//                 isTodayDonationDay: isTodayDonationDay,
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-
-//   void _promptUserToSetNewDate(BuildContext context, DocumentSnapshot request) {
-//     showDialog(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         title: const Text('Donation Day Passed'),
-//         content: const Text(
-//             'Your donation day has passed. Would you like to set a new donation date?'),
-//         actions: [
-//           TextButton(
-//             onPressed: () {
-//               FirebaseFirestore.instance
-//                   .collection('donerRequest')
-//                   .doc(request.id)
-//                   .delete()
-//                   .then((_) {
-//                 ScaffoldMessenger.of(context).showSnackBar(
-//                   const SnackBar(
-//                       content: Text('Request deleted successfully.')),
-//                 );
-//                 Navigator.pop(context); // Close the dialog
-//               }).catchError((error) {
-//                 ScaffoldMessenger.of(context).showSnackBar(
-//                   SnackBar(content: Text('Error: $error')),
-//                 );
-//               });
-//             },
-//             child: const Text('Skip'),
-//           ),
-//           TextButton(
-//             onPressed: () {
-//               // Add your navigation logic here
-//               Navigator.pop(context); // Close the dialog
-//             },
-//             child: const Text('Set New Date'),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
@@ -178,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class BigInfoCard extends StatelessWidget {
+class BigInfoCard extends StatefulWidget {
   final String savedLives;
   final String bloodGroup;
   final String nextDonationDate;
@@ -190,30 +21,20 @@ class BigInfoCard extends StatelessWidget {
     required this.nextDonationDate,
   });
 
-  void _handleNextDonationDate(BuildContext context, DocumentSnapshot request) {
-    final data = request.data() as Map<String, dynamic>?; // Explicit cast
-    if (data != null && data.containsKey('nextDonationDate')) {
-      final nextDonationTimestamp = data['nextDonationDate'];
-      if (nextDonationTimestamp != null && nextDonationTimestamp is Timestamp) {
-        DateTime nextDonationDateTime = nextDonationTimestamp.toDate();
-        // Check if the next donation date has passed by at least one day
-        if (nextDonationDateTime
-            .isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _promptUserToSetNewDate(context, request);
-          });
-        }
-      }
-    }
-  }
+  @override
+  State<BigInfoCard> createState() => _BigInfoCardState();
+}
+
+class _BigInfoCardState extends State<BigInfoCard> {
+  bool _promptOpen = false; // prevent multiple dialogs in stream rebuilds
 
   @override
   Widget build(BuildContext context) {
-    // double width = MediaQuery.of(context).size.width;
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
     if (currentUserUid == null) {
       return const Center(child: Text('No user is logged in'));
     }
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('donerRequest')
@@ -232,31 +53,46 @@ class BigInfoCard extends StatelessWidget {
         }
 
         final requests = snapshot.data?.docs ?? [];
-        debugPrint('Number of requests: ${requests.length}');
-
         String formattedNextDonationDate = 'next_donation_date'.tr(context);
         bool isTodayDonationDay = false;
 
         if (requests.isNotEmpty) {
-          final request = requests[0];
-          debugPrint('Request data: ${request.data()}');
-          _handleNextDonationDate(context, request);
+          final request = requests.first;
+          final data = request.data() as Map<String, dynamic>?;
 
-          final data = request.data() as Map<String, dynamic>?; // Explicit cast
-          if (data != null && data.containsKey('nextDonationDate')) {
-            final nextDonationTimestamp = data['nextDonationDate'];
-            if (nextDonationTimestamp != null &&
-                nextDonationTimestamp is Timestamp) {
-              DateTime nextDonationDateTime = nextDonationTimestamp.toDate();
-              formattedNextDonationDate =
-                  DateFormat('yyyy-MM-dd').format(nextDonationDateTime);
+          if (data != null && data['nextDonationDate'] is Timestamp) {
+            final ts = data['nextDonationDate'] as Timestamp;
+            final nextDonationDateTime = ts.toDate();
 
-              // Check if today is the donation day
-              if (nextDonationDateTime.year == DateTime.now().year &&
-                  nextDonationDateTime.month == DateTime.now().month &&
-                  nextDonationDateTime.day == DateTime.now().day) {
-                isTodayDonationDay = true;
-              }
+            formattedNextDonationDate =
+                DateFormat('yyyy-MM-dd').format(nextDonationDateTime);
+
+            // Today check
+            final now = DateTime.now();
+            if (nextDonationDateTime.year == now.year &&
+                nextDonationDateTime.month == now.month &&
+                nextDonationDateTime.day == now.day) {
+              isTodayDonationDay = true;
+            }
+
+            // Passed-by-at-least-one-day check using date-only
+            final today = DateTime(now.year, now.month, now.day);
+            final scheduled = DateTime(
+              nextDonationDateTime.year,
+              nextDonationDateTime.month,
+              nextDonationDateTime.day,
+            );
+            final daysDiff = today.difference(scheduled).inDays;
+
+            if (daysDiff >= 1 && !_promptOpen) {
+              _promptOpen = true; // lock to avoid multiple prompts
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                if (!mounted) return;
+                await _promptUserDonationStatus(context, request);
+                if (mounted) {
+                  _promptOpen = false; // unlock after flow completes
+                }
+              });
             }
           } else {
             formattedNextDonationDate =
@@ -280,10 +116,9 @@ class BigInfoCard extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InfoColumn(title: savedLives, image: Assets.imagesLifesaved),
-              // SizedBox(width: width * 0.1),
-              InfoColumn(title: bloodGroup, image: Assets.imagesBlood),
-              // SizedBox(width: width * 0.15),
+              InfoColumn(
+                  title: widget.savedLives, image: Assets.imagesLifesaved),
+              InfoColumn(title: widget.bloodGroup, image: Assets.imagesBlood),
               InfoColumn(
                 title: isTodayDonationDay
                     ? 'Today is your donation day'.tr(context)
@@ -297,121 +132,122 @@ class BigInfoCard extends StatelessWidget {
       },
     );
   }
-  //
-  // void _promptUserToSetNewDate(BuildContext context, DocumentSnapshot request) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Donation Day Passed'),
-  //       content: const Text(
-  //           'Your donation day has passed. Would you like to set a new donation date?'),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () {
-  //             // Close the dialog without deleting the request
-  //             Navigator.pop(context);
-  //           },
-  //           child: const Text('Skip'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () async {
-  //             Navigator.pop(context); // Close the dialog
-  //             DateTime? pickedDate = await showDatePicker(
-  //               context: context,
-  //               initialDate: DateTime.now(),
-  //               firstDate: DateTime(2020),
-  //               lastDate: DateTime(2100),
-  //             );
-  //
-  //             if (pickedDate != null) {
-  //               _updateNextDonationDate(request, pickedDate);
-  //             }
-  //
-  //           },
-  //           child: const Text('Set New Date'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  //
-  // Future<void> _updateNextDonationDate(DocumentSnapshot<Object?> request, DateTime pickedDate) async {
-  //   try {
-  //     await FirebaseFirestore.instance
-  //         .collection('donerRequest')
-  //         .doc(request.id)
-  //         .update({
-  //       'nextDonationDate': Timestamp.fromDate(pickedDate),
-  //     });
-  //
-  //     debugPrint("Next donation date updated to $pickedDate");
-  //
-  //
-  //      ScaffoldMessenger.of(context).showSnackBar(
-  //        const SnackBar(content: Text("تم تحديث ميعاد التبرع بنجاح")),
-  //     );
-  //
-  //   } catch (e) {
-  //     debugPrint("Error updating next donation date: $e");
-  //     rethrow;
-  //   }
-  // }
-  //
 
-  Future<void> _promptUserToSetNewDate(BuildContext context, DocumentSnapshot request) async {
-    final pickedDate = await showDialog<DateTime>(
+  Future<void> _promptUserDonationStatus(
+      BuildContext context,
+      DocumentSnapshot request,
+      ) async {
+    // First prompt: did you donate?
+    final result = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Donation Day Passed'),
-        content: const Text('Your donation day has passed. Would you like to set a new donation date?'),
+        content: const Text('Did you donate on your scheduled day?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Skip'),
+            onPressed: () => Navigator.of(dialogContext).pop('no'),
+            child: const Text('No'),
           ),
           TextButton(
-            onPressed: () async {
-              final date = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2100),
-              );
-              Navigator.pop(context, date);
-            },
-            child: const Text('Set New Date'),
+            onPressed: () => Navigator.of(dialogContext).pop('yes'),
+            child: const Text('Yes'),
           ),
         ],
       ),
     );
 
-    if (pickedDate != null) {
-      await _updateNextDonationDate(context, request, pickedDate);
-    }
-  }
+    if (!mounted) return;
 
-
-  Future<void> _updateNextDonationDate(
-      BuildContext context, DocumentSnapshot<Object?> request, DateTime pickedDate) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('donerRequest')
-          .doc(request.id)
-          .update({
-        'nextDonationDate': Timestamp.fromDate(pickedDate),
-      });
-
-      debugPrint("Next donation date updated to $pickedDate");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("تم تحديث ميعاد التبرع بنجاح")),
+    if (result == 'yes') {
+      // افتح الدايلوج التاني بعد ما الأول يتقفل فعليًا
+      final hospitalName = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          final controller = TextEditingController();
+          return AlertDialog(
+            title: const Text('Enter Hospital Name'),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(hintText: 'Hospital Name'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () =>
+                    Navigator.of(dialogContext).pop(controller.text.trim()),
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
       );
-    } catch (e) {
-      debugPrint("Error updating next donation date: $e");
-      rethrow;
+
+      if (!mounted) return;
+
+      if (hospitalName != null && hospitalName.isNotEmpty) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('successfulDonations')
+              .add({
+            'uId': FirebaseAuth.instance.currentUser?.uid,
+            'donationDate': Timestamp.now(),
+            'hospitalName': hospitalName,
+          });
+
+          await FirebaseFirestore.instance
+              .collection('donerRequest')
+              .doc(request.id)
+              .delete();
+
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Donation recorded and request deleted'),
+            ),
+          );
+        } catch (e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
+    } else if (result == 'no') {
+      Future.microtask(() async {
+        final pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2100),
+        );
+
+        if (!mounted) return;
+
+        if (pickedDate != null) {
+          try {
+            await FirebaseFirestore.instance
+                .collection('donerRequest')
+                .doc(request.id)
+                .update({
+              'nextDonationDate': Timestamp.fromDate(pickedDate),
+            });
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Next donation date updated')),
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: $e')),
+            );
+          }
+        }
+      });
     }
   }
-
-
 }
 

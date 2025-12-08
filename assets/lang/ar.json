@@ -70,7 +70,7 @@
   "verify_email": "تحقق من البريد الإلكتروني",
   "resend_verification_email": "إعادة إرسال رابط التحقق",
   "please_verify_email_address": "يرجى التحقق من عنوان بريدك الإلكتروني.",
-  "no_user_data_available": "No user data available",
+  "no_user_data_available": "لا توجد بيانات للمستخدم",
   "password_reset_link_sent_to": "تم إرسال رابط إعادة تعيين كلمة المرور إلى ايميلك",
   "forgot_password": "نسيت كلمة المرور",
   "error": "خطاء",
@@ -322,7 +322,12 @@
   "tap_to_chat": "اضغط للدردشة 👋 ",
   "chat": "محادثة",
   "no_compatible_donors": "لا يوجد متبرعين متوافقين حاليا",
-  "not_submitted": "انت لم تدخل اي طلب حتى الان"
+  "not_submitted": "انت لم تدخل اي طلب حتى الان",
+  "i_verified_go_next": "تم التفعيل، اذهب للصفحة التالية",
+  "email_not_verified_yet": "لم يتم تفعيل البريد الإلكتروني بعد",
+  "no_chats_yet": "لم تبدأ أي محادثة بعد",
+  "minimum_donation_interval_error": "لا يمكنك تقديم طلب الآن. الحد الأدنى للفاصل بين التبرعات هو 3 أشهر",
+  "next_donation_date_past_error": "لا يمكن أن يكون تاريخ التبرع القادم في الماضي"
 
 
 }

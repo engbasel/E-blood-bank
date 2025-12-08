@@ -8,14 +8,12 @@ import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/core/widget/custom_app_bar.dart';
 import 'package:blood_bank/core/widget/custom_button.dart';
-import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
-import 'package:blood_bank/feature/auth/presentation/bloc/auth_state.dart';
 import 'package:blood_bank/feature/auth/presentation/view/widget/preference_button.dart';
 import 'package:blood_bank/feature/home/presentation/views/custom_bottom_nav_bar.dart';
 import 'package:blood_bank/core/services/shared_preferences_sengleton.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DonorOrNeed extends StatefulWidget {
   const DonorOrNeed({super.key});
@@ -38,13 +36,18 @@ class _DonorOrNeedState extends State<DonorOrNeed> {
   }
 
   Future<void> _checkIfUserStateExists() async {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is Authenticated) {
-      final userId = authState.user.uId;
-      final isUserStateSelected = Prefs.getBool('${userId}_$kIsUserStateSelected');
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final userId = user.uid;
+      final isUserStateSelected =
+      Prefs.getBool('${userId}_$kIsUserStateSelected');
       if (isUserStateSelected) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           buildPageRoute(const CustomBottomNavBar()),
+              (Route<dynamic> route) => false,
         );
       }
     }
@@ -60,9 +63,12 @@ class _DonorOrNeedState extends State<DonorOrNeed> {
       isSaving = true;
     });
 
-    final authState = context.read<AuthBloc>().state;
-    if (authState is Authenticated) {
-      final userId = authState.user.uId;
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final userId = user.uid;
 
       try {
         await fireStoreService.updateData(
@@ -72,15 +78,15 @@ class _DonorOrNeedState extends State<DonorOrNeed> {
         );
 
         final currentUserData = Prefs.getString(kUserData);
-        Map<String, dynamic> userData = currentUserData.isNotEmpty
-            ? jsonDecode(currentUserData)
-            : {};
+        Map<String, dynamic> userData =
+        currentUserData.isNotEmpty ? jsonDecode(currentUserData) : {};
 
         userData['userState'] = selectedKey;
         Prefs.setString(kUserData, jsonEncode(userData));
         Prefs.setBool('${userId}_$kIsUserStateSelected', true);
 
-        successTopSnackBar(context, 'user_state_updated_successfully'.tr(context));
+        successTopSnackBar(
+            context, 'user_state_updated_successfully'.tr(context));
 
         Navigator.of(context).pushReplacement(
           buildPageRoute(const CustomBottomNavBar()),
@@ -104,87 +110,75 @@ class _DonorOrNeedState extends State<DonorOrNeed> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is Authenticated) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: CustomAppBar(
-              top: 120,
-              left: 50,
-              title: '',
-              leadingIcon: Icons.arrow_back_ios_new_rounded,
-              onSkipPressed: () {},
-            ),
-            body: Stack(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        top: 120,
+        left: 50,
+        title: '',
+        leadingIcon: Icons.arrow_back_ios_new_rounded,
+        onSkipPressed: () {},
+      ),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kHorizintalPadding),
+            child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kHorizintalPadding),
-                  child: Column(
+                const SizedBox(height: 90),
+                Text(
+                  "Choose which one do you prefer?".tr(context),
+                  style: TextStyles.semiBold19,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 50),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 90),
-                      Text(
-                        "Choose which one do you prefer?".tr(context),
-                        style: TextStyles.semiBold19,
-                        textAlign: TextAlign.center,
+                      PreferenceButton(
+                        image: Assets.imagesNeed,
+                        label: "need".tr(context),
+                        isSelected: selectedKey == "need",
+                        onPressed: () {
+                          setState(() {
+                            selectedKey = "need";
+                          });
+                        },
                       ),
-                      const SizedBox(height: 50),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PreferenceButton(
-                              image: Assets.imagesNeed,
-                              label: "need".tr(context),
-                              isSelected: selectedKey == "need",
-                              onPressed: () {
-                                setState(() {
-                                  selectedKey = "need";
-                                });
-                              },
-                            ),
-                            SizedBox(width: width * 0.1),
-                            PreferenceButton(
-                              image: Assets.imagesDoner,
-                              label: "donor".tr(context),
-                              isSelected: selectedKey == "donor",
-                              onPressed: () {
-                                setState(() {
-                                  selectedKey = "donor";
-                                });
-                              },
-                            ),
-                          ],
-                        ),
+                      SizedBox(width: width * 0.1),
+                      PreferenceButton(
+                        image: Assets.imagesDoner,
+                        label: "donor".tr(context),
+                        isSelected: selectedKey == "donor",
+                        onPressed: () {
+                          setState(() {
+                            selectedKey = "donor";
+                          });
+                        },
                       ),
-                      const Spacer(),
-                      CustomButton(
-                        onPressed: saveUserState,
-                        text: isSaving ? "Saving...".tr(context) : "next".tr(context),
-                      ),
-                      const SizedBox(height: 80),
                     ],
                   ),
                 ),
-                if (isSaving)
-                  Container(
-                    color: Colors.black54,
-                    child: const Center(
-                      child: CustomCircularProgressIndicator(),
-                    ),
-                  ),
+                const Spacer(),
+                CustomButton(
+                  onPressed: saveUserState,
+                  text: isSaving ? "Saving...".tr(context) : "next".tr(context),
+                ),
+                const SizedBox(height: 80),
               ],
             ),
-          );
-        }
-
-        return const Scaffold(
-          body: Center(
-            child: CustomCircularProgressIndicator(),
           ),
-        );
-      },
+          if (isSaving)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CustomCircularProgressIndicator(),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

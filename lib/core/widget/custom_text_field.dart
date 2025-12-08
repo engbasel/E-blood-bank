@@ -1,6 +1,7 @@
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
@@ -15,6 +16,7 @@ class CustomTextFormField extends StatelessWidget {
     this.prefixIcon,
     this.onSubmitted,
     this.onChanged,
+    this.inputFormatters,
   });
 
   final String hintText;
@@ -27,6 +29,8 @@ class CustomTextFormField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final void Function(String)? onSubmitted; // Added this parameter
   final void Function(String)? onChanged; // Added this parameter
+  final List<TextInputFormatter>? inputFormatters;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -37,7 +41,9 @@ class CustomTextFormField extends StatelessWidget {
       onSaved: onSaved,
       validator: validator,
       keyboardType: textInputType,
-      onFieldSubmitted: onSubmitted, // Use this for handling submissions
+      inputFormatters: inputFormatters,
+      onFieldSubmitted: onSubmitted,
+      // Use this for handling submissions
       decoration: InputDecoration(
         label: Text(hintText),
         prefixIcon: prefixIcon,

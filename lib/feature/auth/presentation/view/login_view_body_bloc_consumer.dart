@@ -42,8 +42,9 @@ class LoginViewBodyBlocConsumer extends StatelessWidget {
       context,
       'signed_in_successfully'.tr(context),
     );
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).pushAndRemoveUntil(
       buildPageRoute(const DonorOrNeed()),
+          (Route<dynamic> route) => false,
     );
   }
 

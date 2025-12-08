@@ -24,8 +24,9 @@ class SignupViewBodyBlockConsumer extends StatelessWidget {
               context,
               'account_created_successfully'.tr(context),
             );
-            Navigator.of(context).pushReplacement(
+            Navigator.of(context).pushAndRemoveUntil(
               buildPageRoute(const DonorOrNeed()),
+                  (Route<dynamic> route) => false,
             );
           }
 

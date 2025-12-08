@@ -21,7 +21,11 @@ class AddNeederRequestBloc
     final result = await addUseCase.call(event.request);
     result.fold(
           (failure) => emit(AddNeederRequestFailure(failure.message)),
-          (_) => emit(AddNeederRequestSuccess()),
+          (_) {
+        emit(AddNeederRequestSuccess());
+
+        add(GetAcceptedNeederRequestsEvent());
+      },
     );
   }
 

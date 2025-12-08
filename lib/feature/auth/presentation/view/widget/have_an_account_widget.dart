@@ -1,5 +1,7 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
+import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/core/widget/under_line.dart';
+import 'package:blood_bank/feature/auth/presentation/view/login_view.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +19,15 @@ class HaveAnAccountWidget extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).push(
+              buildPageRoute(
+                const LoginView(),
+              ),
+            );
           },
           child: UnderLine(
             child: Text(
-              'sign_up'.tr(context),
+              'login'.tr(context),
               style: TextStyles.semiBold14,
             ),
           ),
