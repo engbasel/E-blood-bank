@@ -22,13 +22,7 @@ class EmptyChatAnimation extends StatelessWidget {
           fit: BoxFit.cover,
           repeat: true,
         ),
-        const SizedBox(height: 150.0,),
-        Text('no_chats_yet'.tr(context),
-          style: TextStyle(
-              color: AppColors.primaryColor,
-              fontSize: 18
-          ),
-        ),
+
       ],
     );
   }
