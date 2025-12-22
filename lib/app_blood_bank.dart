@@ -5,8 +5,8 @@ import 'package:blood_bank/feature/auth/domain/usecases/sign_in_with_google.dart
 import 'package:blood_bank/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_donor_request_usecase.dart';
 import 'package:blood_bank/feature/home/domain/usecases/add_needer_request_usecase.dart';
-import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_use_case.dart';
-import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_requests_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_requests_use_case.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_event.dart';
@@ -30,16 +30,14 @@ class BloodBank extends StatelessWidget {
           create: (context) => LocaleCubit()..getSavedLanguage(),
         ),
         BlocProvider(
-          create: (context) =>
-              AuthBloc(authRepository: getIt<AuthRepository>(),
-                  signInWithGoogleUseCase: getIt.get<SignInWithGoogle>()
-              ),
+          create: (context) => AuthBloc(
+              authRepository: getIt<AuthRepository>(),
+              signInWithGoogleUseCase: getIt.get<SignInWithGoogle>()),
         ),
         BlocProvider(
           create: (context) => AddNeederRequestBloc(
-              getIt<AddNeederRequestUseCase>(),
-              getIt<GetAcceptedNeederRequestsUseCase>(),
-
+            getIt<AddNeederRequestUseCase>(),
+            getIt<GetAcceptedNeederRequestsUseCase>(),
           )..add(GetAcceptedNeederRequestsEvent()),
         ),
         BlocProvider(

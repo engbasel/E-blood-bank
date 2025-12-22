@@ -3,8 +3,8 @@ import 'package:blood_bank/core/services/fire_storage.dart';
 import 'package:blood_bank/core/services/firebase_auth_service.dart';
 import 'package:blood_bank/core/services/firestor_service.dart';
 import 'package:blood_bank/core/services/health_request.dart';
-import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_use_case.dart';
-import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_accepted_needer_requests_use_case.dart';
+import 'package:blood_bank/feature/home/domain/usecases/get_all_donors_requests_use_case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:blood_bank/core/services/storage_service.dart';
@@ -67,8 +67,8 @@ void setupGetIt() {
   );
 
   getIt.registerFactory<DonorRequestsBloc>(
-    () => DonorRequestsBloc(getIt<AddDonorRequestUseCase>(),
-      getIt<GetAllDonorRequestsUseCase>()),
+    () => DonorRequestsBloc(
+        getIt<AddDonorRequestUseCase>(), getIt<GetAllDonorRequestsUseCase>()),
   );
   getIt.registerFactory<NeederRemoteDataSource>(
     () => NeederRemoteDataSourceImpl(getIt<DatabaseService>()),
@@ -96,11 +96,7 @@ void setupGetIt() {
   );
   getIt.registerFactory<GetAcceptedNeederRequestsUseCase>(
     () => GetAcceptedNeederRequestsUseCase(getIt<NeederRepo>()),
-
   );
-
-
-
 
   getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
 
