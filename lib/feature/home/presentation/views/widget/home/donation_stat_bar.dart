@@ -24,20 +24,50 @@ class DonationStatBar extends StatefulWidget {
 class _DonationStatBarState extends State<DonationStatBar>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _animation;
+  late Animation<double> _progressAnimation;
+  late Animation<int> _countAnimation;
+
+  double get _progress {
+    if (widget.maxValue == 0) return 0;
+    return (widget.value / widget.maxValue).clamp(0.0, 1.0);
+  }
 
   @override
   void initState() {
     super.initState();
+    _initAnimation();
+  }
 
+  @override
+  void didUpdateWidget(covariant DonationStatBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.value != widget.value ||
+        oldWidget.maxValue != widget.maxValue) {
+      _controller.dispose();
+      _initAnimation();
+    }
+  }
+
+  void _initAnimation() {
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1100),
     );
 
-    _animation = Tween<double>(
+    _progressAnimation = Tween<double>(
       begin: 0,
-      end: widget.value / widget.maxValue,
+      end: _progress,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutExpo,
+      ),
+    );
+
+    _countAnimation = IntTween(
+      begin: 0,
+      end: widget.value,
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -68,22 +98,29 @@ class _DonationStatBarState extends State<DonationStatBar>
               style: TextStyles.semiBold14,
             ),
             const Spacer(),
-            Text(
-              widget.value.toString(),
-              style: TextStyles.semiBold16,
+            AnimatedBuilder(
+              animation: _countAnimation,
+              builder: (context, _) {
+                return Text(
+                  _countAnimation.value.toString(),
+                  style: TextStyles.semiBold16,
+                );
+              },
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         AnimatedBuilder(
-          animation: _animation,
+          animation: _progressAnimation,
           builder: (context, _) {
-            return LinearProgressIndicator(
-              value: _animation.value,
-              minHeight: 8,
-              backgroundColor: widget.color.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation(widget.color),
+            return ClipRRect(
               borderRadius: BorderRadius.circular(12),
+              child: LinearProgressIndicator(
+                value: _progressAnimation.value,
+                minHeight: 8,
+                backgroundColor: widget.color.withOpacity(0.15),
+                valueColor: AlwaysStoppedAnimation(widget.color),
+              ),
             );
           },
         ),
