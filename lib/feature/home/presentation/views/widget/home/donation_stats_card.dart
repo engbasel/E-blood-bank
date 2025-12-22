@@ -2,6 +2,7 @@ import 'package:blood_bank/constants.dart';
 import 'package:blood_bank/feature/home/data/repos/donation_analyics_repo_impl.dart';
 import 'package:blood_bank/feature/home/domain/repos/donation_analytics_repo.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/custom_stats_widget.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/donations_card_skeleton.dart';
 import 'package:flutter/material.dart';
 
 class DonationStatsCard extends StatefulWidget {
@@ -37,10 +38,7 @@ class _DonationStatsCardState extends State<DonationStatsCard> {
       future: _statsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Padding(
-            padding: EdgeInsets.all(32),
-            child: Center(child: CircularProgressIndicator()),
-          );
+          return DonationStatsCardSkeleton();
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
