@@ -1,6 +1,4 @@
-import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
-import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -22,7 +20,6 @@ class EmptyChatAnimation extends StatelessWidget {
           fit: BoxFit.cover,
           repeat: true,
         ),
-
       ],
     );
   }

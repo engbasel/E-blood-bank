@@ -33,8 +33,11 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
     }
   }
 
-  Future<void> _sendNotification(DonorModel model) async {
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(model.uId).get();
+  Future<void> sendNotification(DonorModel model) async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(model.uId)
+        .get();
     final userEmail = userDoc.data()?['email'] ?? '';
 
     await NotificationService.instance.sendNotification(
@@ -51,7 +54,6 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
     );
   }
 
-
   @override
   Future<bool> hasActiveRequest(String userId) async {
     try {
@@ -64,13 +66,14 @@ class DonorRemoteDataSourceImpl implements DonorRemoteDataSource {
       return false;
     }
   }
+
   @override
   Stream<List<DonorModel>> getAllDonorRequests() {
     return FirebaseFirestore.instance
         .collection('donerRequest')
         .snapshots()
-        .map((snapshot) =>
-        snapshot.docs.map((doc) => DonorModel.fromJson(doc.data())).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => DonorModel.fromJson(doc.data()))
+            .toList());
   }
-
 }

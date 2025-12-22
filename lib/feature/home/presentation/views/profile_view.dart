@@ -1,11 +1,6 @@
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
-import 'package:blood_bank/feature/home/presentation/views/widget/profile/patient_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:googleapis/androidpublisher/v3.dart' hide Timestamp;
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:restart_app/restart_app.dart';
@@ -25,15 +20,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key,});
+  const ProfileView({
+    super.key,
+  });
 
   @override
   ProfileViewState createState() => ProfileViewState();
-
 }
 
-class ProfileViewState extends State<ProfileView>
-    with WidgetsBindingObserver {
+class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
   final shorebirdUpdater = ShorebirdUpdater();
 
   bool _isCheckingForUpdates = false;
@@ -49,8 +44,6 @@ class ProfileViewState extends State<ProfileView>
     _checkNotificationPermission();
     _initializeNotifications();
   }
-
-
 
   @override
   void dispose() {
@@ -248,7 +241,6 @@ class ProfileViewState extends State<ProfileView>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -358,7 +350,6 @@ class ProfileViewState extends State<ProfileView>
               },
             ),
           ),
-
         ],
       ),
     );
@@ -406,6 +397,4 @@ class ProfileViewState extends State<ProfileView>
       },
     );
   }
-
-
 }
