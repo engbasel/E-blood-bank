@@ -23,7 +23,7 @@ class DonationStatBar extends StatefulWidget {
 
 class _DonationStatBarState extends State<DonationStatBar>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late final AnimationController _controller;
   late Animation<double> _progressAnimation;
   late Animation<int> _countAnimation;
 
@@ -35,49 +35,17 @@ class _DonationStatBarState extends State<DonationStatBar>
   @override
   void initState() {
     super.initState();
-    _initAnimation();
-  }
 
-  @override
-  void didUpdateWidget(covariant DonationStatBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.value != widget.value ||
-        oldWidget.maxValue != widget.maxValue) {
-      _controller.dispose();
-      _initAnimation();
-    }
-  }
-
-  void _initAnimation() {
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
     );
 
-    _progressAnimation = Tween<double>(
-      begin: 0,
-      end: _progress,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutExpo,
-      ),
-    );
-
-    _countAnimation = IntTween(
-      begin: 0,
-      end: widget.value,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-
+    _configureAnimations();
     _controller.forward();
   }
 
+  @override
   @override
   void dispose() {
     _controller.dispose();
@@ -125,6 +93,39 @@ class _DonationStatBarState extends State<DonationStatBar>
           },
         ),
       ],
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant DonationStatBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.value != widget.value ||
+        oldWidget.maxValue != widget.maxValue) {
+      _configureAnimations();
+      _controller.forward(from: 0);
+    }
+  }
+
+  void _configureAnimations() {
+    _progressAnimation = Tween<double>(
+      begin: 0,
+      end: _progress,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutExpo,
+      ),
+    );
+
+    _countAnimation = IntTween(
+      begin: 0,
+      end: widget.value,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ),
     );
   }
 }
