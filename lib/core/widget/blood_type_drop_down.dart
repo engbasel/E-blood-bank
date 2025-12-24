@@ -92,8 +92,8 @@ import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 
 class BloodTypeDropdown extends StatelessWidget {
-  final String? selectedBloodType; // المفتاح المحدد مسبقًا
-  final ValueChanged<String?> onChanged; // حدث عند تغيير القيمة
+  final String? selectedBloodType;
+  final ValueChanged<String?> onChanged;
 
   const BloodTypeDropdown({
     super.key,
@@ -104,31 +104,31 @@ class BloodTypeDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> bloodTypes = [
-      {'key': 'A+', 'name': 'A+'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'A-', 'name': 'A-'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'B+', 'name': 'B+'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'B-', 'name': 'B-'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'AB+', 'name': 'AB+'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'AB-', 'name': 'AB-'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'O+', 'name': 'O+'.tr(context), 'icon': Icons.bloodtype},
-      {'key': 'O-', 'name': 'O-'.tr(context), 'icon': Icons.bloodtype},
+      {'key': 'A+', 'name': 'A+', 'icon': Icons.bloodtype},
+      {'key': 'A-', 'name': 'A-', 'icon': Icons.bloodtype},
+      {'key': 'B+', 'name': 'B+', 'icon': Icons.bloodtype},
+      {'key': 'B-', 'name': 'B-', 'icon': Icons.bloodtype},
+      {'key': 'AB+', 'name': 'AB+', 'icon': Icons.bloodtype},
+      {'key': 'AB-', 'name': 'AB-', 'icon': Icons.bloodtype},
+      {'key': 'O+', 'name': 'O+', 'icon': Icons.bloodtype},
+      {'key': 'O-', 'name': 'O-', 'icon': Icons.bloodtype},
     ];
 
     return DropdownButtonFormField<String>(
-      value: selectedBloodType, // القيمة المحددة حاليًا
+      initialValue: selectedBloodType,
       items: bloodTypes.map((governorate) {
         return DropdownMenuItem<String>(
-          value: governorate['key'] as String, // تخزين المفتاح
+          value: governorate['key'] as String,
           child: Row(
             children: [
               Icon(
-                governorate['icon'] as IconData, // الأيقونة
+                governorate['icon'] as IconData,
                 color: AppColors.lightPrimaryColor,
                 size: 20,
               ),
               const SizedBox(width: 10),
               Text(
-                governorate['name'] as String, // الاسم المترجم
+                governorate['name'] as String,
                 style: TextStyles.semiBold14.copyWith(
                   color: AppColors.lightPrimaryColor,
                 ),
@@ -137,7 +137,7 @@ class BloodTypeDropdown extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: onChanged, // تحديث القيمة عند التغيير
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: 'bloodType'.tr(context),
         labelStyle:

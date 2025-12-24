@@ -4,8 +4,8 @@ import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 
 class GovernorateDropdown extends StatelessWidget {
-  final String? selectedKey; // المفتاح المحدد مسبقًا
-  final ValueChanged<String?> onChanged; // حدث عند تغيير القيمة
+  final String? selectedKey;
+  final ValueChanged<String?> onChanged;
 
   const GovernorateDropdown({
     super.key,
@@ -15,7 +15,6 @@ class GovernorateDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // خريطة المحافظات بالمفاتيح والأيقونات
     final List<Map<String, dynamic>> governorates = [
       {
         'key': 'cairo',
@@ -95,20 +94,20 @@ class GovernorateDropdown extends StatelessWidget {
     ];
 
     return DropdownButtonFormField<String>(
-      value: selectedKey, // القيمة المحددة حاليًا
+      initialValue: selectedKey,
       items: governorates.map((governorate) {
         return DropdownMenuItem<String>(
-          value: governorate['key'] as String, // تخزين المفتاح
+          value: governorate['key'] as String,
           child: Row(
             children: [
               Icon(
-                governorate['icon'] as IconData, // الأيقونة
+                governorate['icon'] as IconData,
                 color: AppColors.lightPrimaryColor,
                 size: 20,
               ),
               const SizedBox(width: 10),
               Text(
-                governorate['name'] as String, // الاسم المترجم
+                governorate['name'] as String,
                 style: TextStyles.semiBold14.copyWith(
                   color: AppColors.lightPrimaryColor,
                 ),
@@ -117,7 +116,7 @@ class GovernorateDropdown extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: onChanged, // تحديث القيمة عند التغيير
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: 'select_governorate'.tr(context),
         labelStyle:
