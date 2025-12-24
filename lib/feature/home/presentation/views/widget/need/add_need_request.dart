@@ -1,3 +1,4 @@
+import 'package:blood_bank/core/constants/hospitals_by_governorate.dart';
 import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/widget/blood_type_drop_down.dart';
@@ -6,6 +7,7 @@ import 'package:blood_bank/core/widget/custom_button.dart';
 import 'package:blood_bank/core/widget/custom_request_text_field.dart';
 import 'package:blood_bank/core/widget/donation_type_drop_down.dart';
 import 'package:blood_bank/core/widget/governorate_drop_down.dart';
+import 'package:blood_bank/core/widget/hospital_drop_down.dart';
 import 'package:blood_bank/feature/home/domain/entities/needer_request_entity.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_needer_request_bloc/add_needer_request_event.dart';
@@ -25,13 +27,17 @@ class NeedRequest extends StatefulWidget {
 class NeedRequestState extends State<NeedRequest> {
   final _formKey = GlobalKey<FormState>();
   final User? _user = FirebaseAuth.instance.currentUser;
+  String? selectedGovernorate;
+  String? selectedHospital;
   // Controllers
+
   final TextEditingController patientNameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController idCardController = TextEditingController();
   final TextEditingController medicalConditionsController =
       TextEditingController();
   final TextEditingController contactController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   final TextEditingController hospitalNameController = TextEditingController();
 
   // ----------------- Form Fields -----------------
@@ -62,6 +68,17 @@ class NeedRequestState extends State<NeedRequest> {
     });
   }
 
+  @override
+  void dispose() {
+    patientNameController.dispose();
+    ageController.dispose();
+    idCardController.dispose();
+    medicalConditionsController.dispose();
+    contactController.dispose();
+    addressController.dispose();
+    hospitalNameController.dispose();
+    super.dispose();
+  }
 
   List<String> get bloodTypes {
     return [
@@ -287,21 +304,28 @@ class NeedRequestState extends State<NeedRequest> {
                   },
                 ),
                 GovernorateDropdown(
-                  selectedKey: address,
+                  selectedKey: selectedGovernorate,
                   onChanged: (value) {
                     setState(() {
-                      address = value;
+                      selectedGovernorate = value;
+                      addressController.text = value ?? '';
+                      selectedHospital = null; // reset
+                      hospitalNameController.clear();
                     });
                   },
                 ),
-                CustomRequestTextField(
-                  hintStyle: TextStyle(color: AppColors.primaryColor),
-                  controller: hospitalNameController,
-                  hintText: 'hospitalName'.tr(context),
-                  validator: (value) =>
-                      value!.isEmpty ? 'hospitalNameError'.tr(context) : null,
-                  onSaved: (value) {
-                    hospitalName = value!;
+
+                /// Hospital
+                HospitalDropdown(
+                  hospitals: selectedGovernorate == null
+                      ? []
+                      : hospitalsByGovernorate[selectedGovernorate!] ?? [],
+                  selectedHospital: selectedHospital,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedHospital = value;
+                      hospitalNameController.text = value ?? '';
+                    });
                   },
                 ),
                 const SizedBox(height: 16),
