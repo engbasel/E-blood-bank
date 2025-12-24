@@ -1,4 +1,3 @@
-
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/widget/coustom_circular_progress_indicator.dart';
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
@@ -26,7 +25,7 @@ class BigInfoCard extends StatefulWidget {
 }
 
 class _BigInfoCardState extends State<BigInfoCard> {
-  bool _promptOpen = false; // prevent multiple dialogs in stream rebuilds
+  bool _promptOpen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,41 +62,28 @@ class _BigInfoCardState extends State<BigInfoCard> {
           if (data != null && data['nextDonationDate'] is Timestamp) {
             final ts = data['nextDonationDate'] as Timestamp;
             final nextDonationDateTime = ts.toDate();
-
             formattedNextDonationDate =
                 DateFormat('yyyy-MM-dd').format(nextDonationDateTime);
 
-            // Today check
             final now = DateTime.now();
-            if (nextDonationDateTime.year == now.year &&
-                nextDonationDateTime.month == now.month &&
-                nextDonationDateTime.day == now.day) {
+            final today = DateTime(now.year, now.month, now.day);
+            final scheduled = DateTime(nextDonationDateTime.year,
+                nextDonationDateTime.month, nextDonationDateTime.day);
+
+            if (scheduled.isAtSameMomentAs(today)) {
               isTodayDonationDay = true;
             }
 
-            // Passed-by-at-least-one-day check using date-only
-            final today = DateTime(now.year, now.month, now.day);
-            final scheduled = DateTime(
-              nextDonationDateTime.year,
-              nextDonationDateTime.month,
-              nextDonationDateTime.day,
-            );
-            final daysDiff = today.difference(scheduled).inDays;
-
-            if (daysDiff >= 1 && !_promptOpen) {
-              _promptOpen = true; // lock to avoid multiple prompts
+            if (today.isAfter(scheduled) && !_promptOpen) {
+              _promptOpen = true;
               WidgetsBinding.instance.addPostFrameCallback((_) async {
-                if (!mounted) return;
-                await _promptUserDonationStatus(context, request);
-                if (mounted) {
-                  _promptOpen = false; // unlock after flow completes
-                }
+                await _handleDonationFlow(context, request);
+                if (mounted) setState(() => _promptOpen = false);
               });
             }
-          } else {
-            formattedNextDonationDate =
-                'no_next_donation_scheduled'.tr(context);
           }
+        } else {
+          formattedNextDonationDate = 'no_next_donation_scheduled'.tr(context);
         }
 
         return Container(
@@ -133,121 +119,119 @@ class _BigInfoCardState extends State<BigInfoCard> {
     );
   }
 
-  Future<void> _promptUserDonationStatus(
-      BuildContext context,
-      DocumentSnapshot request,
-      ) async {
-    // First prompt: did you donate?
-    final result = await showDialog<String>(
+  Future<void> _handleDonationFlow(
+      BuildContext context, DocumentSnapshot request) async {
+    final result = await _showSimpleDialog(context, 'Donation Day Passed',
+        'Did you donate on your scheduled day?');
+
+    if (!mounted || result == null) return;
+
+    if (result == 'yes') {
+      final hospitalName = await _showTextFieldDialog(context);
+      if (hospitalName != null && hospitalName.isNotEmpty) {
+        await _recordSuccessfulDonation(context, request, hospitalName);
+      }
+    } else {
+      final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2100),
+      );
+      if (pickedDate != null) {
+        await _updateNextDonationDate(context, request.id, pickedDate);
+      }
+    }
+  }
+
+  Future<String?> _showSimpleDialog(
+      BuildContext context, String title, String content) {
+    return showDialog<String>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Donation Day Passed'),
-        content: const Text('Did you donate on your scheduled day?'),
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop('no'),
-            child: const Text('No'),
-          ),
+              onPressed: () => Navigator.pop(ctx, 'no'),
+              child: const Text('No')),
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop('yes'),
-            child: const Text('Yes'),
-          ),
+              onPressed: () => Navigator.pop(ctx, 'yes'),
+              child: const Text('Yes')),
         ],
       ),
     );
+  }
 
-    if (!mounted) return;
+  Future<String?> _showTextFieldDialog(BuildContext context) {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Enter Hospital Name'),
+        content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Hospital Name')),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+              child: const Text('Save')),
+        ],
+      ),
+    );
+  }
 
-    if (result == 'yes') {
-      // افتح الدايلوج التاني بعد ما الأول يتقفل فعليًا
-      final hospitalName = await showDialog<String>(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogContext) {
-          final controller = TextEditingController();
-          return AlertDialog(
-            title: const Text('Enter Hospital Name'),
-            content: TextField(
-              controller: controller,
-              decoration: const InputDecoration(hintText: 'Hospital Name'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () =>
-                    Navigator.of(dialogContext).pop(controller.text.trim()),
-                child: const Text('Save'),
-              ),
-            ],
-          );
-        },
-      );
+  Future<void> _recordSuccessfulDonation(
+      BuildContext context, DocumentSnapshot request, String hospital) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final batch = FirebaseFirestore.instance.batch();
+    final now = DateTime.now();
 
-      if (!mounted) return;
+    batch.set(
+        FirebaseFirestore.instance.collection('successfulDonations').doc(), {
+      'uId': uid,
+      'donationDate': Timestamp.fromDate(now),
+      'hospitalName': hospital,
+    });
 
-      if (hospitalName != null && hospitalName.isNotEmpty) {
-        try {
-          await FirebaseFirestore.instance
-              .collection('successfulDonations')
-              .add({
-            'uId': FirebaseAuth.instance.currentUser?.uid,
-            'donationDate': Timestamp.now(),
-            'hospitalName': hospitalName,
-          });
+    batch.update(FirebaseFirestore.instance.collection('users').doc(uid), {
+      'lastDonationDate': DateFormat('yyyy-MM-dd').format(now),
+    });
 
-          await FirebaseFirestore.instance
-              .collection('donerRequest')
-              .doc(request.id)
-              .delete();
+    batch.delete(request.reference);
 
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Donation recorded and request deleted'),
-            ),
-          );
-        } catch (e) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
-          );
-        }
-      }
-    } else if (result == 'no') {
-      Future.microtask(() async {
-        final pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2100),
-        );
+    try {
+      await batch.commit();
+      if (context.mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Donation recorded successfully!')));
+    } catch (e) {
+      if (context.mounted)
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
 
-        if (!mounted) return;
-
-        if (pickedDate != null) {
-          try {
-            await FirebaseFirestore.instance
-                .collection('donerRequest')
-                .doc(request.id)
-                .update({
-              'nextDonationDate': Timestamp.fromDate(pickedDate),
-            });
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Next donation date updated')),
-            );
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: $e')),
-            );
-          }
-        }
+  Future<void> _updateNextDonationDate(
+      BuildContext context, String docId, DateTime newDate) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('donerRequest')
+          .doc(docId)
+          .update({
+        'nextDonationDate': Timestamp.fromDate(newDate),
       });
+      if (context.mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Rescheduled successfully')));
+    } catch (e) {
+      if (context.mounted)
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 }
-
