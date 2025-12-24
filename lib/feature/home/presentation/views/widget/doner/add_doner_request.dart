@@ -1,3 +1,4 @@
+import 'package:blood_bank/core/constants/hospitals_by_governorate.dart';
 import 'package:blood_bank/core/helper_function/add_doner_functions_class.dart';
 import 'package:blood_bank/core/helper_function/validators_textform.dart';
 import 'package:blood_bank/core/services/get_it_service.dart';
@@ -9,6 +10,7 @@ import 'package:blood_bank/core/widget/date_picker_field.dart';
 import 'package:blood_bank/core/widget/donation_type_drop_down.dart';
 import 'package:blood_bank/core/widget/gender_drop_down.dart';
 import 'package:blood_bank/core/widget/governorate_drop_down.dart';
+import 'package:blood_bank/core/widget/hospital_drop_down.dart';
 import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
@@ -29,7 +31,8 @@ class DonorRequestState extends State<DonorRequest> {
   final _formKey = GlobalKey<FormState>();
   final User? _user = FirebaseAuth.instance.currentUser;
 
-
+  String? selectedGovernorate;
+  String? selectedHospital;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
@@ -105,7 +108,6 @@ class DonorRequestState extends State<DonorRequest> {
           _clearAllFields();
           FocusScope.of(context).requestFocus(FocusNode());
           setState(() {});
-
         }
       },
       child: SingleChildScrollView(
@@ -148,13 +150,33 @@ class DonorRequestState extends State<DonorRequest> {
                 ),
                 const SizedBox(height: 12),
                 GovernorateDropdown(
-                  selectedKey: addressController.text.isNotEmpty
-                      ? addressController.text
-                      : null,
+                  selectedKey: selectedGovernorate,
                   onChanged: (value) {
-                    addressController.text = value ?? '';
+                    setState(() {
+                      selectedGovernorate = value;
+                      addressController.text = value ?? '';
+                      selectedHospital = null; // reset
+                      hospitalNameController.clear();
+                    });
                   },
                 ),
+
+                const SizedBox(height: 12),
+
+                /// Hospital (DEPENDENT)
+                HospitalDropdown(
+                  hospitals: selectedGovernorate == null
+                      ? []
+                      : hospitalsByGovernorate[selectedGovernorate!] ?? [],
+                  selectedHospital: selectedHospital,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedHospital = value;
+                      hospitalNameController.text = value ?? '';
+                    });
+                  },
+                ),
+
                 const SizedBox(height: 12),
                 GenderDropdown(
                   onGenderSelected: (gender) {
@@ -231,14 +253,7 @@ class DonorRequestState extends State<DonorRequest> {
                   maxLines: 3,
                   onSaved: (value) {},
                 ),
-                const SizedBox(height: 12),
-                CustomRequestTextField(
-                  hintStyle: TextStyle(color: AppColors.primaryColor),
-                  controller: hospitalNameController,
-                  hintText: 'hospitalName'.tr(context),
-                  validator: (value) =>
-                      Validators.validateHospitalName(value, context),
-                ),
+
                 const SizedBox(height: 12),
                 CustomRequestTextField(
                   hintStyle: TextStyle(color: AppColors.primaryColor),

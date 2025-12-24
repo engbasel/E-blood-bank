@@ -332,5 +332,6 @@
   "donors": "المتبرعون",
   "needers": "المحتاجون",
   "in_progress": "قيد التنفيذ",
-  "successful": "ناجح"
+  "successful": "ناجح",
+  "select_hospital": "اختر المستشفى"
 }

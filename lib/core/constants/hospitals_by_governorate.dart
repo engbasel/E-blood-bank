@@ -1,0 +1,152 @@
+const Map<String, List<String>> hospitalsByGovernorate = {
+  'cairo': [
+    'Kasr Al-Ainy Hospital',
+    'Ain Shams University Hospital',
+    'El-Galaa Teaching Hospital',
+    'Al-Salam International Hospital',
+    'Dar Al-Fouad Hospital (Nasr City)',
+    'As-Salam International Hospital',
+    'Cleopatra Hospital',
+    'Saudi German Hospital Cairo',
+    'Children’s Cancer Hospital Egypt 57357',
+    'National Cancer Institute',
+    'Misr International Hospital',
+    'El-Demerdash Hospital',
+    'Cairo Medical Center',
+  ],
+  'giza': [
+    'Al-Haram Hospital',
+    'Om El-Masryeen General Hospital',
+    'Dar Al-Fouad Hospital (6th of October)',
+    'Souad Kafafi University Hospital',
+    'Sheikh Zayed Specialized Hospital',
+    'Global Care Hospital',
+    'Dream Hospital',
+    'Al-Waha Hospital',
+  ],
+  'alexandria': [
+    'Alexandria University Main Hospital',
+    'Ras El-Tin General Hospital',
+    'El-Moassat Hospital',
+    'Smouha University Hospital',
+    'Andalusia Hospital Smouha',
+    'German Medical Center',
+    'Mabaret El-Asafra Hospital',
+    'Alexandria Medical Center',
+  ],
+  'dakahlia': [
+    'Mansoura University Hospital',
+    'Emergency Hospital - Mansoura',
+    'International Specialized Hospital',
+    'Mansoura Ophthalmology Hospital',
+    'Ghoneim Urology and Nephrology Center',
+    'General Mansoura Hospital',
+  ],
+  'sharqia': [
+    'Zagazig University Hospital',
+    'Al-Ahrar Teaching Hospital',
+    'Mabaret El-Zaqaziq Hospital',
+    'Belbeis General Hospital',
+  ],
+  'gharbia': [
+    'Tanta University Hospital',
+    'El-Menshawy General Hospital',
+    'International Tanta Hospital',
+    'Al-Mahalla Al-Kubra General Hospital',
+  ],
+  'qalyubia': [
+    'Benha University Hospital',
+    'Benha Teaching Hospital',
+    'Qalyub General Hospital',
+    'Obour Specialized Hospital',
+  ],
+  'port_said': [
+    'Al-Nasr Specialized Hospital',
+    'Al-Salam Hospital Port Said',
+    'Al-Zohour General Hospital',
+    'Mabaret Port Said Hospital',
+  ],
+  'ismailia': [
+    'Suez Canal University Hospital',
+    'Ismailia General Hospital',
+    'Medical Forest Hospital',
+  ],
+  'suez': [
+    'Suez General Hospital',
+    'Insurance Hospital Suez',
+    'Suez Specialized Hospital',
+  ],
+  'damietta': [
+    'Damietta General Hospital',
+    'Al-Azhar University Hospital (Damietta)',
+    'Damietta Specialized Hospital',
+  ],
+  'asyut': [
+    'Asyut University Hospital',
+    'Al-Iman General Hospital',
+    'Police Hospital Asyut',
+    'Mabaret Asyut Hospital',
+  ],
+  'sohag': [
+    'Sohag University Hospital',
+    'Sohag General Hospital',
+    'Sohag Teaching Hospital',
+  ],
+  'minya': [
+    'Minya University Hospital',
+    'Minya General Hospital',
+    'Insurance Hospital Minya',
+  ],
+  'qena': [
+    'Qena University Hospital',
+    'Qena General Hospital',
+  ],
+  'luxor': [
+    'Luxor International Hospital',
+    'Karnak International Hospital',
+    'Armant Specialized Hospital',
+  ],
+  'aswan': [
+    'Aswan University Hospital',
+    'Aswan Specialized Hospital',
+    'Magdi Yacoub Heart Foundation',
+  ],
+  'kafr_el_sheikh': [
+    'Kafr El-Sheikh University Hospital',
+    'Kafr El-Sheikh General Hospital',
+  ],
+  'beheira': [
+    'Damanhour Teaching Hospital',
+    'Kafr El-Dawar General Hospital',
+  ],
+  'monufia': [
+    'Menoufia University Hospital',
+    'Shebin El-Kom Teaching Hospital',
+  ],
+  'beni_suef': [
+    'Beni Suef University Hospital',
+    'Beni Suef General Hospital',
+  ],
+  'fayoum': [
+    'Fayoum University Hospital',
+    'Fayoum General Hospital',
+  ],
+  'matrouh': [
+    'Marsa Matrouh General Hospital',
+    'Dabaa Central Hospital',
+  ],
+  'red_sea': [
+    'Hurghada General Hospital',
+    'El-Gouna Hospital',
+  ],
+  'north_sinai': [
+    'Arish General Hospital',
+  ],
+  'south_sinai': [
+    'Sharm El-Sheikh International Hospital',
+    'Tor Sinai General Hospital',
+  ],
+  'new_valley': [
+    'Kharga General Hospital',
+  ],
+};
