@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../../domain/entities/user_entity.dart';
+
 class UserModel extends UserEntity {
   final String patientName;
   final String age;
   final String diseaseName;
   final String location;
   final String contactNumber;
+  final String lastDonationDate;
 
   const UserModel({
     required super.uId,
@@ -22,24 +23,25 @@ class UserModel extends UserEntity {
     required this.diseaseName,
     required this.location,
     required this.contactNumber,
+    required this.lastDonationDate,
   });
 
   factory UserModel.fromFirebaseUser(User user) {
     return UserModel(
-      uId: user.uid,
-      name: user.displayName ?? '',
-      email: user.email ?? '',
-      photoUrl: user.photoURL ?? '',
-      emailVerified: user.emailVerified,
-      userStat: 'allowed',
-      userState: 'donor',
-      bloodType: '',
-      patientName: '',
-      age: '',
-      diseaseName: '',
-      location: '',
-      contactNumber: '',
-    );
+        uId: user.uid,
+        name: user.displayName ?? '',
+        email: user.email ?? '',
+        photoUrl: user.photoURL ?? '',
+        emailVerified: user.emailVerified,
+        userStat: 'allowed',
+        userState: 'donor',
+        bloodType: '',
+        patientName: '',
+        age: '',
+        diseaseName: '',
+        location: '',
+        contactNumber: '',
+        lastDonationDate: ' ');
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -57,6 +59,7 @@ class UserModel extends UserEntity {
       diseaseName: json['diseaseName'] ?? '',
       location: json['location'] ?? '',
       contactNumber: json['contactNumber'] ?? '',
+      lastDonationDate: json['lastDonationDate'] ?? ' ',
     );
   }
 
@@ -76,6 +79,7 @@ class UserModel extends UserEntity {
       'diseaseName': diseaseName,
       'location': location,
       'contactNumber': contactNumber,
+      'lastDonationDate': lastDonationDate,
     };
   }
 
@@ -94,7 +98,7 @@ class UserModel extends UserEntity {
       diseaseName: '',
       location: '',
       contactNumber: '',
+      lastDonationDate: ' ',
     );
   }
 }
-
