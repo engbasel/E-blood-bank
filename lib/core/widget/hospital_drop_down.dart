@@ -32,7 +32,7 @@ class HospitalDropdown extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  hospital,
+                  hospital.tr(context),
                   style: TextStyles.semiBold14.copyWith(
                     color: AppColors.lightPrimaryColor,
                   ),
