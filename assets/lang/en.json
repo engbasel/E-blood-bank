@@ -447,5 +447,8 @@
   "Arish General Hospital": "Arish General Hospital",
   "Sharm El-Sheikh International Hospital": "Sharm El-Sheikh International Hospital",
   "Tor Sinai General Hospital": "Tor Sinai General Hospital",
-  "Kharga General Hospital": "Kharga General Hospital"
+  "Kharga General Hospital": "Kharga General Hospital",
+  "There must be at least 56 days between donations": "There must be at least 56 days between donations",
+  "updateDonationDate": "Update Donation Date",
+  "Last donation date updated successfully": "Last donation date updated successfully"
 }

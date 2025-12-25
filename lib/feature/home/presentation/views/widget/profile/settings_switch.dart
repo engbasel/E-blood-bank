@@ -1,3 +1,4 @@
+import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/core/services/shared_preferences_sengleton.dart';
@@ -47,16 +48,16 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
       children: [
         Text(
           widget.title,
-          style: const TextStyle(fontSize: 16),
+          style: TextStyles.bold16,
         ),
         Switch(
           value: _value,
           onChanged: (value) {
             setState(() {
-              _value = value; // تحديث الحالة
+              _value = value;
             });
-            _saveSwitchValue(value); // حفظ القيمة الجديدة
-            widget.onChanged(value); // استدعاء دالة التغيير
+            _saveSwitchValue(value);
+            widget.onChanged(value);
           },
           activeTrackColor: AppColors.primaryColor,
         ),

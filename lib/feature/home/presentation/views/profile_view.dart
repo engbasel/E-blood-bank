@@ -1,4 +1,5 @@
 import 'package:blood_bank/core/widget/coustom_dialog.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/profile/update_last_donation_date.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -167,7 +168,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
         case UpdateStatus.outdated:
           _showUpdateDialog(context, shorebirdUpdater);
         case UpdateStatus.restartRequired:
-          _showRestartSnackBar(context); // عرض رسالة لإعادة التشغيل
+          _showRestartSnackBar(context);
         case UpdateStatus.unavailable:
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('update_unavailable'.tr(context))),
@@ -225,7 +226,6 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
     );
   }
 
-  // عرض رسالة لإعادة التشغيل
   void _showRestartSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -287,7 +287,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                     SettingsSwitch(
                       title: 'available_to_donate'.tr(context),
                       keyName: 'available_to_donate',
-                      value: true, // يمكنك تغيير هذه القيمة
+                      value: true,
                       onChanged: (value) {},
                     ),
                     SettingsSwitch(
@@ -300,6 +300,7 @@ class ProfileViewState extends State<ProfileView> with WidgetsBindingObserver {
                       title: 'manage_address'.tr(context),
                       icon: Icons.location_on,
                     ),
+                    UpdateLastDonationDateTile(),
                     SettingsItem(
                       title: 'language'.tr(context),
                       icon: Icons.language,

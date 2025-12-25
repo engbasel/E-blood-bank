@@ -431,5 +431,7 @@
   "Arish General Hospital": "مستشفى العريش العام",
   "Sharm El-Sheikh International Hospital": "مستشفى شرم الشيخ الدولي",
   "Tor Sinai General Hospital": "مستشفى طور سيناء العام",
-  "Kharga General Hospital": "مستشفى الخارجة العام"
+  "There must be at least 56 days between donations": "يجب أن يمر 56 يومًا على الأقل بين التبرعات",
+  "updateDonationDate": "تحديث تاريخ التبرع",
+  "Last donation date updated successfully": "تم تحديث تاريخ آخر تبرع بنجاح"
 }
