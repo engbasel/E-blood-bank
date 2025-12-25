@@ -1,8 +1,10 @@
 import 'package:blood_bank/constants.dart';
+import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/feature/home/data/repos/donation_analyics_repo_impl.dart';
 import 'package:blood_bank/feature/home/domain/repos/donation_analytics_repo.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/custom_stats_widget.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/donations_card_skeleton.dart';
+import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class DonationStatsCard extends StatefulWidget {
@@ -42,7 +44,11 @@ class _DonationStatsCardState extends State<DonationStatsCard> {
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
-          return const Center(child: Text('Failed to load statistics'));
+          return Center(
+              child: Text(
+            'Failed to load statistics'.tr(context),
+            style: TextStyles.bold13,
+          ));
         }
 
         final donors = snapshot.data![0];

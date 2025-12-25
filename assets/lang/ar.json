@@ -436,5 +436,6 @@
   "Last donation date updated successfully": "تم تحديث تاريخ آخر تبرع بنجاح",
   "no_next_donation_scheduled": "لا يوجد موعد ",
   "pleaseSelectNewDonationDate": "يرجى اختيار تاريخ تبرع جديد",
-  "newDonationDateAfterLastDonationError": "يجب أن يكون تاريخ التبرع"
+  "newDonationDateAfterLastDonationError": "يجب أن يكون تاريخ التبرع",
+  "Failed to load statistics": "فشل في تحميل الإحصائيات"
 }

@@ -453,5 +453,6 @@
   "Last donation date updated successfully": "Last donation date updated successfully",
   "no_next_donation_scheduled": "No donation ",
   "pleaseSelectNewDonationDate": "Please select new donation date",
-  "newDonationDateAfterLastDonationError": "New donation date must be after last donation date"
+  "newDonationDateAfterLastDonationError": "New donation date must be after last donation date",
+  "Failed to load statistics": "Failed to load statistics"
 }

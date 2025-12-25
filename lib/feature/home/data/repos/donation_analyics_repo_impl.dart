@@ -1,5 +1,6 @@
 import 'package:blood_bank/feature/home/domain/repos/donation_analytics_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class DonationAnalyticsRepoImpl implements DonationAnalyticsRepo {
   final FirebaseFirestore _firestore;
@@ -39,11 +40,14 @@ class DonationAnalyticsRepoImpl implements DonationAnalyticsRepo {
 
   @override
   Future<int> getSuccessfulCount() async {
-    final result = await _firestore
-        .collection('donations')
-        .where('status', isEqualTo: 'successful')
-        .count()
-        .get();
-    return result.count ?? 0;
+    try {
+      final result =
+          await _firestore.collection('successfulDonations').count().get();
+
+      return result.count ?? 0;
+    } catch (e) {
+      debugPrint("Error fetching successful donation count: $e");
+      return 0;
+    }
   }
 }
