@@ -20,6 +20,7 @@ class CustomRequestTextField extends StatelessWidget {
     this.onTap,
     this.hintStyle,
     this.maxLength,
+    this.enable = true,
   });
 
   final String hintText;
@@ -36,10 +37,12 @@ class CustomRequestTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final TextStyle? hintStyle;
   final int? maxLength;
+  final bool enable;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enable,
       maxLength: maxLength,
       inputFormatters: [
         if (maxLength != null) LengthLimitingTextInputFormatter(maxLength!),

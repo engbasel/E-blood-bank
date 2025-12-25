@@ -1,5 +1,6 @@
 import 'package:blood_bank/core/constants/hospitals_by_governorate.dart';
 import 'package:blood_bank/core/helper_function/add_doner_functions_class.dart';
+import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
 import 'package:blood_bank/core/helper_function/validators_textform.dart';
 import 'package:blood_bank/core/services/get_it_service.dart';
 import 'package:blood_bank/core/utils/app_colors.dart';
@@ -14,11 +15,13 @@ import 'package:blood_bank/core/widget/hospital_drop_down.dart';
 import 'package:blood_bank/feature/home/data/datasources/doner_remote_data_source.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_event.dart';
-import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_state.dart'; // تأكد من استيراد حالة الـ Bloc
+import 'package:blood_bank/feature/home/presentation/manger/add_doner_request_bloc/add_donor_request_state.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class DonorRequest extends StatefulWidget {
   const DonorRequest({super.key});
@@ -54,6 +57,9 @@ class DonorRequestState extends State<DonorRequest> {
 
   late AddDonorFunctions _addDonorFunction;
 
+  DateTime? _lastDonationFromDb;
+  DateTime? _selectedNewDate;
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +84,36 @@ class DonorRequestState extends State<DonorRequest> {
       donationTypeController: donationTypeController,
       donorRemoteDataSource: getIt<DonorRemoteDataSource>(),
     );
+
+    _loadLastDonationOnly();
+  }
+
+  DateTime _stripTime(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  Future<void> _loadLastDonationOnly() async {
+    if (_user == null) return;
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.uid)
+          .get();
+
+      if (doc.exists && mounted) {
+        final data = doc.data()!;
+        if (data['lastDonationDate'] != null) {
+          setState(() {
+            _lastDonationFromDb =
+                (data['lastDonationDate'] as Timestamp).toDate();
+            lastDonationDateController.text =
+                DateFormat('yyyy-MM-dd').format(_lastDonationFromDb!);
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching last donation date: $e");
+    }
   }
 
   @override
@@ -107,7 +143,6 @@ class DonorRequestState extends State<DonorRequest> {
         if (state is DonorRequestsSuccess) {
           _clearAllFields();
           FocusScope.of(context).requestFocus(FocusNode());
-          setState(() {});
         }
       },
       child: SingleChildScrollView(
@@ -134,9 +169,7 @@ class DonorRequestState extends State<DonorRequest> {
                 ),
                 const SizedBox(height: 12),
                 BloodTypeDropdown(
-                  selectedBloodType: bloodTypeController.text.isNotEmpty
-                      ? bloodTypeController.text
-                      : null,
+                  selectedBloodType: null,
                   onChanged: (selectedBloodType) {
                     bloodTypeController.text = selectedBloodType ?? '';
                   },
@@ -155,15 +188,12 @@ class DonorRequestState extends State<DonorRequest> {
                     setState(() {
                       selectedGovernorate = value;
                       addressController.text = value ?? '';
-                      selectedHospital = null; // reset
+                      selectedHospital = null;
                       hospitalNameController.clear();
                     });
                   },
                 ),
-
                 const SizedBox(height: 12),
-
-                /// Hospital (DEPENDENT)
                 HospitalDropdown(
                   hospitals: selectedGovernorate == null
                       ? []
@@ -176,7 +206,6 @@ class DonorRequestState extends State<DonorRequest> {
                     });
                   },
                 ),
-
                 const SizedBox(height: 12),
                 GenderDropdown(
                   onGenderSelected: (gender) {
@@ -194,17 +223,13 @@ class DonorRequestState extends State<DonorRequest> {
                   maxLength: 14,
                 ),
                 const SizedBox(height: 12),
-                DatePickerField(
+                CustomRequestTextField(
                   controller: lastDonationDateController,
-                  hintStyle: TextStyle(color: AppColors.primaryColor),
-                  context: context,
-                  label: 'last_donation_date'.tr(context),
-                  selectedDate: null,
-                  onDateSelected: (date) {
-                    lastDonationDateController.text =
-                        date.toString().split(' ')[0];
-                  },
-                  isNextDonationDate: false,
+                  hintText: 'last_donation_date'.tr(context),
+                  readOnly: true,
+                  enable: false,
+                  suffixIcon: const Icon(Icons.lock_outline,
+                      color: Colors.grey, size: 20),
                 ),
                 const SizedBox(height: 12),
                 DatePickerField(
@@ -214,8 +239,11 @@ class DonorRequestState extends State<DonorRequest> {
                   label: 'next_donation_date'.tr(context),
                   selectedDate: null,
                   onDateSelected: (date) {
-                    nextDonationDateController.text =
-                        date.toString().split(' ')[0];
+                    setState(() {
+                      _selectedNewDate = date;
+                      nextDonationDateController.text =
+                          DateFormat('yyyy-MM-dd').format(date);
+                    });
                   },
                   isNextDonationDate: true,
                 ),
@@ -251,9 +279,7 @@ class DonorRequestState extends State<DonorRequest> {
                   controller: notesController,
                   hintText: 'Notes'.tr(context),
                   maxLines: 3,
-                  onSaved: (value) {},
                 ),
-
                 const SizedBox(height: 12),
                 CustomRequestTextField(
                   hintStyle: TextStyle(color: AppColors.primaryColor),
@@ -268,6 +294,25 @@ class DonorRequestState extends State<DonorRequest> {
                   text: 'Submit Request'.tr(context),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      if (_lastDonationFromDb != null &&
+                          _selectedNewDate != null) {
+                        final DateTime lastDateOnly =
+                            _stripTime(_lastDonationFromDb!);
+                        final DateTime nextDateOnly =
+                            _stripTime(_selectedNewDate!);
+                        final int differenceInDays =
+                            nextDateOnly.difference(lastDateOnly).inDays;
+
+                        if (differenceInDays < 56) {
+                          failureTopSnackBar(
+                            context,
+                            'There must be at least 56 days between donations'
+                                .tr(context),
+                          );
+                          return;
+                        }
+                      }
+
                       _formKey.currentState!.save();
                       final entity =
                           await _addDonorFunction.toEntityWithCheck();
@@ -303,6 +348,12 @@ class DonorRequestState extends State<DonorRequest> {
     donationTypeController.clear();
     addressController.clear();
     lastDonationDateController.clear();
+    _loadLastDonationOnly();
     nextDonationDateController.clear();
+    setState(() {
+      selectedGovernorate = null;
+      selectedHospital = null;
+      _selectedNewDate = null;
+    });
   }
 }
