@@ -1,6 +1,7 @@
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/chat/presentation/views/chat_view.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/home_user_image.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/notification/notifications_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,24 +62,10 @@ class HomeHeader extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 30,
-              right: isArabic ? 16 : null,
-              left: isArabic ? null : 16,
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
-                    ? NetworkImage(photoUrl!)
-                    : null,
-                backgroundColor: Colors.white,
-                child: photoUrl == null || photoUrl!.isEmpty
-                    ? const Icon(
-                        Icons.person,
-                        size: 30,
-                        color: Colors.grey,
-                      )
-                    : null,
-              ),
-            ),
+                top: 30,
+                right: isArabic ? 16 : null,
+                left: isArabic ? null : 16,
+                child: HomeUserImage(photoUrl: photoUrl)),
             Positioned(
               top: 35,
               right: isArabic ? 90 : null,
