@@ -1,4 +1,5 @@
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/artical_image.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/health_article_details.dart';
 import 'package:flutter/material.dart';
 
@@ -56,15 +57,7 @@ class InfoCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(22),
-              child: Image.network(
-                image,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
+            ArticleImage(image: image),
             Positioned(
               bottom: 0,
               left: 0,

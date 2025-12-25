@@ -1,12 +1,11 @@
 import 'package:blood_bank/core/services/get_it_service.dart';
-import 'package:blood_bank/core/utils/app_colors.dart';
 import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_bloc.dart';
 import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_event.dart';
 import 'package:blood_bank/feature/home/presentation/manger/health_bloc/health_state.dart';
+import 'package:blood_bank/feature/home/presentation/views/widget/home/health_loading_widget.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/home/info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class DonorCarousel extends StatelessWidget {
   const DonorCarousel({super.key});
@@ -22,27 +21,7 @@ class DonorCarousel extends StatelessWidget {
       child: BlocBuilder<HealthBloc, HealthState>(
         builder: (context, state) {
           if (state is HealthLoading) {
-            return SizedBox(
-              height: 160,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Skeletonizer(
-                    child: Container(
-                      width: 280,
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
+            return const HealthLoadingWidget();
           } else if (state is HealthSuccess) {
             final articles = state.articles;
             return SizedBox(
@@ -59,7 +38,7 @@ class DonorCarousel extends StatelessWidget {
                     description: article.description,
                     title: article.title,
                     image: article.image ??
-                        'https://fallback-image.com/default.jpg',
+                        'https://images.alphacoders.com/565/thumb-1920-565095.jpg',
                     publishedAt: article.publishedAt,
                     sourceName: article.sourceName,
                     sourceUrl: article.sourceUrl,
