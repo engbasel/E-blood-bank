@@ -73,7 +73,7 @@ class _UpdateDonationDateDialogState extends State<UpdateDonationDateDialog> {
             const SizedBox(height: 12),
             CustomRequestTextField(
               controller: newDonationDateController,
-              hintText: 'next_donation_date'.tr(context),
+              hintText: 'updateDonationDate'.tr(context),
               readOnly: true,
               suffixIcon: const Icon(Icons.calendar_today),
               onTap: _pickNewDonationDate,

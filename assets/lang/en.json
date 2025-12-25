@@ -451,5 +451,7 @@
   "There must be at least 56 days between donations": "There must be at least 56 days between donations",
   "updateDonationDate": "Update Donation Date",
   "Last donation date updated successfully": "Last donation date updated successfully",
-  "no_next_donation_scheduled": "No donation "
+  "no_next_donation_scheduled": "No donation ",
+  "pleaseSelectNewDonationDate": "Please select new donation date",
+  "newDonationDateAfterLastDonationError": "New donation date must be after last donation date"
 }

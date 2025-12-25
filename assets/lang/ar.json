@@ -434,5 +434,7 @@
   "There must be at least 56 days between donations": "يجب أن يمر 56 يومًا على الأقل بين التبرعات",
   "updateDonationDate": "تحديث تاريخ التبرع",
   "Last donation date updated successfully": "تم تحديث تاريخ آخر تبرع بنجاح",
-  "no_next_donation_scheduled": "لا يوجد موعد "
+  "no_next_donation_scheduled": "لا يوجد موعد ",
+  "pleaseSelectNewDonationDate": "يرجى اختيار تاريخ تبرع جديد",
+  "newDonationDateAfterLastDonationError": "يجب أن يكون تاريخ التبرع"
 }
