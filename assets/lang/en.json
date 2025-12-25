@@ -450,5 +450,6 @@
   "Kharga General Hospital": "Kharga General Hospital",
   "There must be at least 56 days between donations": "There must be at least 56 days between donations",
   "updateDonationDate": "Update Donation Date",
-  "Last donation date updated successfully": "Last donation date updated successfully"
+  "Last donation date updated successfully": "Last donation date updated successfully",
+  "no_next_donation_scheduled": "No donation "
 }

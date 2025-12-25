@@ -52,38 +52,45 @@ class _BigInfoCardState extends State<BigInfoCard> {
         }
 
         final requests = snapshot.data?.docs ?? [];
-        String formattedNextDonationDate = 'next_donation_date'.tr(context);
+
+        String displayDate = 'no_next_donation_scheduled'.tr(context);
         bool isTodayDonationDay = false;
 
         if (requests.isNotEmpty) {
           final request = requests.first;
           final data = request.data() as Map<String, dynamic>?;
 
-          if (data != null && data['nextDonationDate'] is Timestamp) {
-            final ts = data['nextDonationDate'] as Timestamp;
-            final nextDonationDateTime = ts.toDate();
-            formattedNextDonationDate =
-                DateFormat('yyyy-MM-dd').format(nextDonationDateTime);
+          if (data != null && data['nextDonationDate'] != null) {
+            final dynamic rawDate = data['nextDonationDate'];
+            DateTime? nextDonationDateTime;
 
-            final now = DateTime.now();
-            final today = DateTime(now.year, now.month, now.day);
-            final scheduled = DateTime(nextDonationDateTime.year,
-                nextDonationDateTime.month, nextDonationDateTime.day);
-
-            if (scheduled.isAtSameMomentAs(today)) {
-              isTodayDonationDay = true;
+            if (rawDate is Timestamp) {
+              nextDonationDateTime = rawDate.toDate();
             }
 
-            if (today.isAfter(scheduled) && !_promptOpen) {
-              _promptOpen = true;
-              WidgetsBinding.instance.addPostFrameCallback((_) async {
-                await _handleDonationFlow(context, request);
-                if (mounted) setState(() => _promptOpen = false);
-              });
+            if (nextDonationDateTime != null) {
+              displayDate =
+                  DateFormat('yyyy-MM-dd').format(nextDonationDateTime);
+
+              final now = DateTime.now();
+              final today = DateTime(now.year, now.month, now.day);
+              final scheduled = DateTime(nextDonationDateTime.year,
+                  nextDonationDateTime.month, nextDonationDateTime.day);
+
+              if (scheduled.isAtSameMomentAs(today)) {
+                isTodayDonationDay = true;
+                displayDate = 'today_is_your_donation_day'.tr(context);
+              }
+
+              if (today.isAfter(scheduled) && !_promptOpen) {
+                _promptOpen = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  await _handleDonationFlow(context, request);
+                  if (mounted) setState(() => _promptOpen = false);
+                });
+              }
             }
           }
-        } else {
-          formattedNextDonationDate = 'no_next_donation_scheduled'.tr(context);
         }
 
         return Container(
@@ -106,9 +113,7 @@ class _BigInfoCardState extends State<BigInfoCard> {
                   title: widget.savedLives, image: Assets.imagesLifesaved),
               InfoColumn(title: widget.bloodGroup, image: Assets.imagesBlood),
               InfoColumn(
-                title: isTodayDonationDay
-                    ? 'Today is your donation day'.tr(context)
-                    : formattedNextDonationDate,
+                title: displayDate,
                 image: Assets.imagesNextdonation,
                 isTodayDonationDay: isTodayDonationDay,
               ),

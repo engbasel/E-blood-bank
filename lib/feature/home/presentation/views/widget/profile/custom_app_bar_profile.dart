@@ -1,11 +1,11 @@
 import 'package:blood_bank/feature/localization/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:blood_bank/core/utils/assets_images.dart';
 import 'package:blood_bank/core/utils/page_rout_builder.dart';
 import 'package:blood_bank/feature/home/presentation/views/widget/profile/editi_user_info.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-
 
 class CustomProfileAppBar extends StatefulWidget
     implements PreferredSizeWidget {
@@ -139,18 +139,29 @@ class _CustomProfileAppBarState extends State<CustomProfileAppBar> {
             children: [
               CircleAvatar(
                 radius: 40,
-                backgroundImage:
-                    widget.photoUrl != null && widget.photoUrl!.isNotEmpty
-                        ? NetworkImage(widget.photoUrl!)
-                        : null,
                 backgroundColor: Colors.white,
-                child: widget.photoUrl == null || widget.photoUrl!.isEmpty
-                    ? const Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Colors.grey,
-                      )
-                    : null,
+                child: ClipOval(
+                  child: widget.photoUrl != null && widget.photoUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: widget.photoUrl!,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : const Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                ),
               ),
               const SizedBox(height: 8),
               Text(

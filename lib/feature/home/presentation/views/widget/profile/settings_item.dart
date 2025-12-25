@@ -1,3 +1,4 @@
+import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:flutter/material.dart';
 
 class SettingsItem extends StatelessWidget {
@@ -18,7 +19,7 @@ class SettingsItem extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       title: Text(
         title,
-        style: const TextStyle(fontSize: 16),
+        style: TextStyles.bold16,
       ),
       trailing: Icon(icon, size: 18),
       onTap: onTap,
