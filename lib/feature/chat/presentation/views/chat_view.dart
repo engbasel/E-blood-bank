@@ -41,7 +41,12 @@ class ChatView extends StatelessWidget {
           centerTitle: true,
           backgroundColor: AppColors.primaryColor,
           elevation: 4,
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: ChatViewBody(
           currentUserId: currentUserId,

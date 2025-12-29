@@ -437,5 +437,9 @@
   "no_next_donation_scheduled": "لا يوجد موعد ",
   "pleaseSelectNewDonationDate": "يرجى اختيار تاريخ تبرع جديد",
   "newDonationDateAfterLastDonationError": "يجب أن يكون تاريخ التبرع",
-  "Failed to load statistics": "فشل في تحميل الإحصائيات"
+  "Failed to load statistics": "فشل في تحميل الإحصائيات",
+  "Not yet": "ليس بعد",
+  "Yes, Agreed": "نعم، موافق",
+  "Agreement Check": "التحقق من الاتفاقية",
+  "Did you reach an agreement with the donor?": "هل توصلت إلى اتفاق مع المتبرع؟"
 }

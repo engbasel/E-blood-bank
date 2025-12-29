@@ -454,5 +454,9 @@
   "no_next_donation_scheduled": "No donation ",
   "pleaseSelectNewDonationDate": "Please select new donation date",
   "newDonationDateAfterLastDonationError": "New donation date must be after last donation date",
-  "Failed to load statistics": "Failed to load statistics"
+  "Failed to load statistics": "Failed to load statistics",
+  "Not yet": "Not yet",
+  "Yes, Agreed": "Yes, Agreed",
+  "Agreement Check": "Agreement Check",
+  "Did you reach an agreement with the donor?": "Did you reach an agreement with the donor?"
 }

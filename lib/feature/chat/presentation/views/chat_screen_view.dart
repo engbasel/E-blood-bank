@@ -6,6 +6,7 @@ import 'package:blood_bank/feature/chat/presentation/manager/send_notification_c
 import 'package:blood_bank/feature/chat/presentation/views/widgets/empty_chat_animation.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/message_bubble.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/phone_call_widget.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/smart_agreement_navigation_bottom.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,7 +43,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
   late final String receiverId;
-
   String? _messageTextForNotification;
 
   @override
@@ -77,15 +77,18 @@ class _ChatScreenState extends State<ChatScreen> {
         BlocProvider.value(value: notificationCubit),
       ],
       child: Scaffold(
-        backgroundColor: Colors.grey[200],
-        appBar: _buildAppBar(),
-        body: Column(
-          children: [
-            Expanded(child: _buildMessagesList()),
-            _buildInputField(),
-          ],
-        ),
-      ),
+          backgroundColor: Colors.grey[200],
+          appBar: _buildAppBar(),
+          body: Column(
+            children: [
+              Expanded(child: _buildMessagesList()),
+              _buildInputField(),
+            ],
+          ),
+          bottomNavigationBar: SmartAgreementBottomBar(
+            chatId: widget.chatId,
+            neederIdFromChat: currentUserId,
+          )),
     );
   }
 
