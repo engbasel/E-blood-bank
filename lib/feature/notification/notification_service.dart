@@ -86,17 +86,37 @@ class NotificationService {
       onDidReceiveNotificationResponse: (details) {
         log('Notification clicked with payload: ${details.payload}');
         if (details.payload != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  NotificationDetailPage(payload: details.payload!),
-            ),
-          );
+          _handleNotificationClick(context, details.payload!);
         }
       },
     );
 
     _isFlutterLocalNotificationsInitialized = true;
+  }
+
+  void _handleNotificationClick(BuildContext context, String payloadString) {
+    try {
+      final Map<String, dynamic> data = jsonDecode(payloadString);
+
+      if (data['click_action'] == 'open_profile' ||
+          data['type'] == 'agreement') {
+        log('Navigating to Profile View');
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                NotificationDetailPage(payload: payloadString),
+          ),
+        );
+      }
+    } catch (e) {
+      log('Error parsing payload: $e');
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => NotificationDetailPage(payload: payloadString),
+        ),
+      );
+    }
   }
 
   Future<void> saveUserToken(String token) async {
@@ -191,7 +211,7 @@ class NotificationService {
 
         if (!_hasNotificationBeenSent(token, title, body)) {
           final response =
-          await _sendNotificationViaRestApi(token, title, body, data);
+              await _sendNotificationViaRestApi(token, title, body, data);
 
           if (response.body.contains('"errorCode":"UNREGISTERED"')) {
             await doc.reference.delete();
@@ -217,7 +237,6 @@ class NotificationService {
       }
     }
   }
-
 
   bool _hasNotificationBeenSent(String token, String title, String body) {
     return _notifications.any(
@@ -329,7 +348,7 @@ class NotificationService {
       RemoteMessage message, BuildContext context) async {
     final notification = message.notification;
     if (notification != null) {
-      final data = {
+      final dataRecord = {
         'title': notification.title ?? 'No title',
         'body': notification.body ?? 'No body',
         'user_name': message.data['user_name'] ?? 'Unknown',
@@ -338,10 +357,10 @@ class NotificationService {
         'timestamp': DateTime.now().toIso8601String(),
       };
 
-      if (await _isNotificationDuplicateInDatabase(data)) return;
+      if (await _isNotificationDuplicateInDatabase(dataRecord)) return;
 
-      _notifications.add(data);
-      await SQlHelperNotification().insertNotification(data);
+      _notifications.add(dataRecord);
+      await SQlHelperNotification().insertNotification(dataRecord);
 
       await _localNotifications.show(
         notification.hashCode,
@@ -357,7 +376,8 @@ class NotificationService {
           ),
           iOS: DarwinNotificationDetails(),
         ),
-        payload: message.data.toString(),
+        // هنا التعديل المهم: نرسل الـ data كاملة كـ JSON لكي نتمكن من فحصها عند النقر
+        payload: jsonEncode(message.data),
       );
     }
   }
