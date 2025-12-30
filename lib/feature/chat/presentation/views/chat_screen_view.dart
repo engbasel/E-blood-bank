@@ -86,6 +86,8 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ),
           bottomNavigationBar: SmartAgreementBottomBar(
+            donorName: widget.userName,
+            donorImage: widget.userImage,
             chatId: widget.chatId,
             neederIdFromChat: currentUserId,
           )),

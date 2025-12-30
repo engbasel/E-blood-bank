@@ -2,19 +2,22 @@ import 'dart:async';
 
 import 'package:blood_bank/core/utils/app_text_style.dart';
 import 'package:blood_bank/feature/chat/presentation/views/widgets/agreement_bottom_header.dart';
+import 'package:blood_bank/feature/chat/presentation/views/widgets/agreement_form_sheet.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SmartAgreementBottomBar extends StatefulWidget {
+  final String donorName, donorImage;
   final String neederIdFromChat;
-
   final String chatId;
   const SmartAgreementBottomBar({
     super.key,
     required this.neederIdFromChat,
     required this.chatId,
+    required this.donorName,
+    required this.donorImage,
   });
 
   @override
@@ -79,7 +82,7 @@ class _SmartAgreementBottomBarState extends State<SmartAgreementBottomBar> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 20,
                     offset: const Offset(0, -10),
                   ),
@@ -131,14 +134,26 @@ class _SmartAgreementBottomBarState extends State<SmartAgreementBottomBar> {
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.green.withOpacity(0.3),
+                                    color: Colors.green.withValues(alpha: 0.03),
                                     blurRadius: 12,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => AgreementFormSheet(
+                                      neederName: userData['name'] ?? '',
+                                      neederImage: userData['photoUrl'] ?? '',
+                                      donorName: widget.donorName,
+                                      donorImage: widget.donorImage,
+                                    ),
+                                  );
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green[600],
                                   foregroundColor: Colors.white,

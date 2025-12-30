@@ -441,5 +441,8 @@
   "Not yet": "ليس بعد",
   "Yes, Agreed": "نعم، موافق",
   "Agreement Check": "التحقق من الاتفاقية",
-  "Did you reach an agreement with the donor?": "هل توصلت إلى اتفاق مع المتبرع؟"
+  "Did you reach an agreement with the donor?": "هل توصلت إلى اتفاق مع المتبرع؟",
+  "Agreement Details": "تنسيق موعد التبرع",
+  "Confirm": "تأكيد الاتفاق وإرسال",
+  "additional_notes": "ملاحظات إضافية"
 }
