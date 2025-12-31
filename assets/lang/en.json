@@ -460,5 +460,8 @@
   "Agreement Check": "Agreement Check",
   "Did you reach an agreement with the donor?": "Did you reach an agreement with the donor?",
   "Agreement Details": "Agreement Details",
-  "Confirm": "Confirm Agreement"
+  "Confirm": "Confirm Agreement",
+  "New Donation Agreement": "New Donation Agreement",
+  "agreement_sent_successfully": "Agreement sent successfully",
+  "agreement_send_failed": "Failed to send agreement"
 }

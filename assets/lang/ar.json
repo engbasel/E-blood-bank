@@ -444,5 +444,8 @@
   "Did you reach an agreement with the donor?": "هل توصلت إلى اتفاق مع المتبرع؟",
   "Agreement Details": "تنسيق موعد التبرع",
   "Confirm": "تأكيد الاتفاق وإرسال",
-  "additional_notes": "ملاحظات إضافية"
+  "additional_notes": "ملاحظات إضافية",
+  "New Donation Agreement": "اتفاقية تبرع جديدة",
+  "agreement_sent_successfully": "تم إرسال الاتفاقية بنجاح",
+  "agreement_send_failed": "فشل في إرسال الاتفاقية"
 }

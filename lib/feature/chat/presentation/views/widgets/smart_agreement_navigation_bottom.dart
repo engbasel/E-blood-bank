@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SmartAgreementBottomBar extends StatefulWidget {
   final String donorName, donorImage;
   final String neederIdFromChat;
+  final String donorIdFromChat;
   final String chatId;
   const SmartAgreementBottomBar({
     super.key,
@@ -18,6 +19,7 @@ class SmartAgreementBottomBar extends StatefulWidget {
     required this.chatId,
     required this.donorName,
     required this.donorImage,
+    required this.donorIdFromChat,
   });
 
   @override
@@ -147,6 +149,8 @@ class _SmartAgreementBottomBarState extends State<SmartAgreementBottomBar> {
                                     isScrollControlled: true,
                                     backgroundColor: Colors.transparent,
                                     builder: (context) => AgreementFormSheet(
+                                      neederId: widget.neederIdFromChat,
+                                      donorId: widget.donorIdFromChat,
                                       neederName: userData['name'] ?? '',
                                       neederImage: userData['photoUrl'] ?? '',
                                       donorName: widget.donorName,
