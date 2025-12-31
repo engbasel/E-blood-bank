@@ -1,4 +1,5 @@
-import 'package:blood_bank/core/widget/custom_snack_bar.dart';
+import 'package:blood_bank/core/helper_function/scccess_top_snak_bar.dart';
+import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/chat/data/models/agreement_model.dart';
 import 'package:blood_bank/feature/chat/data/repo/agreement_repo_imple.dart';
 import 'package:blood_bank/feature/chat/presentation/manager/agreement_create_cubit/agreement_create_cubit.dart';
@@ -18,22 +19,14 @@ import 'package:blood_bank/core/widget/hospital_drop_down.dart';
 import 'package:blood_bank/core/constants/hospitals_by_governorate.dart';
 
 class AgreementFormSheet extends StatefulWidget {
-  final String donorName;
-  final String neederName;
-  final String? donorImage;
-  final String? neederImage;
-  final String donorId;
-  final String neederId;
+  final UserModel donor;
+  final UserModel needer;
+
   const AgreementFormSheet({
     super.key,
-    required this.donorName,
-    required this.neederName,
-    this.donorImage,
-    this.neederImage,
-    required this.donorId,
-    required this.neederId,
+    required this.donor,
+    required this.needer,
   });
-
   @override
   State<AgreementFormSheet> createState() => _AgreementFormSheetState();
 }
@@ -63,11 +56,16 @@ class _AgreementFormSheetState extends State<AgreementFormSheet> {
       child: BlocConsumer<AgreementCreateCubit, AgreementCreateState>(
         listener: (context, state) {
           if (state is AgreementCreateSuccess) {
-            CustomSnackBar.success(
-                message: "agreement_sent_successfully".tr(context));
+            successTopSnackBar(
+              context,
+              "agreement_sent_successfully".tr(context),
+            );
             Navigator.pop(context);
           } else if (state is AgreementCreateError) {
-            CustomSnackBar.error(message: "agreement_send_failed".tr(context));
+            failureTopSnackBar(
+              context,
+              "agreement_send_failed".tr(context),
+            );
           }
         },
         builder: (context, state) {
@@ -98,12 +96,12 @@ class _AgreementFormSheetState extends State<AgreementFormSheet> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildUserCircle(widget.neederName, widget.neederImage,
-                            "need".tr(context)),
+                        _buildUserCircle(widget.needer.name!,
+                            widget.needer.photoUrl, "need".tr(context)),
                         Icon(Icons.handshake_rounded,
                             color: AppColors.primaryColor, size: 35),
-                        _buildUserCircle(widget.donorName, widget.donorImage,
-                            "donor".tr(context)),
+                        _buildUserCircle(widget.donor.name!,
+                            widget.donor.photoUrl, "donor".tr(context)),
                       ],
                     ),
                     const SizedBox(height: 30),
@@ -166,11 +164,11 @@ class _AgreementFormSheetState extends State<AgreementFormSheet> {
                           BlocProvider.of<AgreementCreateCubit>(context)
                               .createNewAgreement(
                             context: context,
-                            donorName: widget.donorName,
+                            donorName: widget.donor.name!,
                             agreement: AgreementModel(
                               id: '',
-                              donorId: widget.donorId,
-                              neederId: widget.neederId,
+                              donorId: widget.donor.uId,
+                              neederId: widget.needer.uId,
                               status: 'pending',
                               donorDecision: 'none',
                               neederDecision: 'confirmed',

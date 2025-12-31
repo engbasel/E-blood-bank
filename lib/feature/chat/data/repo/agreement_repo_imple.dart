@@ -1,3 +1,4 @@
+import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/localization/app_localizations.dart';
 import 'package:blood_bank/feature/notification/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +28,34 @@ class AgreementRepoImpl implements AgreementRepo {
         "neederId": finalAgreement.neederId,
       },
     );
+  }
+
+  @override
+  Future<List<UserModel>> sortUsersByState(
+    String userId1,
+    String userId2,
+  ) async {
+    final firestore = FirebaseFirestore.instance;
+
+    final doc1 = await firestore.collection('users').doc(userId1).get();
+    final doc2 = await firestore.collection('users').doc(userId2).get();
+
+    if (!doc1.exists || !doc2.exists) {
+      throw Exception('User not found');
+    }
+
+    final user1 = UserModel.fromJson(doc1.data()!);
+    final user2 = UserModel.fromJson(doc2.data()!);
+
+    if (user1.userState == 'donor' && user2.userState != 'donor') {
+      return [user1, user2];
+    }
+
+    if (user2.userState == 'donor' && user1.userState != 'donor') {
+      return [user2, user1];
+    }
+
+    return [user1, user2];
   }
 
   @override

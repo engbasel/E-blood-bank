@@ -1,10 +1,15 @@
+import 'package:blood_bank/feature/auth/data/models/user_model.dart';
 import 'package:blood_bank/feature/chat/data/models/agreement_model.dart';
 import 'package:flutter/material.dart';
 
 abstract class AgreementRepo {
   Future<void> createAgreement(
       AgreementModel agreement, String donorName, BuildContext context);
-
+//to take two users and sort them by state
+  Future<List<UserModel>> sortUsersByState(
+    String userId1,
+    String userId2,
+  );
   // جلب اتفاقية معينة بواسطة المعرف
   Future<AgreementModel?> getAgreementById(String id);
 
