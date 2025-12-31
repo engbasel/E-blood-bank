@@ -165,6 +165,8 @@ class _AgreementFormSheetState extends State<AgreementFormSheet> {
                         if (_formKey.currentState!.validate()) {
                           BlocProvider.of<AgreementCreateCubit>(context)
                               .createNewAgreement(
+                            context: context,
+                            donorName: widget.donorName,
                             agreement: AgreementModel(
                               id: '',
                               donorId: widget.donorId,

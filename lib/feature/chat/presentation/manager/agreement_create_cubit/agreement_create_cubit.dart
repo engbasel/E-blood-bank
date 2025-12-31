@@ -10,14 +10,17 @@ class AgreementCreateCubit extends Cubit<AgreementCreateState> {
 
   AgreementCreateCubit(this._agreementRepo) : super(AgreementCreateInitial());
 
-  Future<void> createNewAgreement({required AgreementModel agreement}) async {
+  Future<void> createNewAgreement(
+      {required AgreementModel agreement,
+      required String donorName,
+      required context}) async {
     emit(AgreementCreateLoading());
 
     try {
-      await _agreementRepo.createAgreement(agreement);
+      await _agreementRepo.createAgreement(agreement, donorName, context);
       emit(AgreementCreateSuccess(agreement));
     } catch (e) {
-      emit(AgreementCreateError("فشل في إنشاء الاتفاقية: ${e.toString()}"));
+      emit(AgreementCreateError(e.toString()));
       log("Error in createNewAgreement: ${e.toString()}",
           name: "AgreementCreateCubit");
     }
